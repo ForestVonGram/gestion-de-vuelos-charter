@@ -19,8 +19,6 @@ public interface TripulanteRepository extends JpaRepository<Tripulante, Long> {
 
     List<Tripulante> findByEstado(EstadoTripulante estado);
 
-    List<Tripulante> findByCargo(String cargo);
-
     @Query("SELECT t FROM Tripulante t WHERE t.estado = :estado AND t.id NOT IN " +
            "(SELECT vt.id FROM Vuelo v JOIN v.tripulacion vt WHERE v.estado IN ('PROGRAMADO', 'EN_VUELO'))")
     List<Tripulante> findDisponibles(@Param("estado") EstadoTripulante estado);

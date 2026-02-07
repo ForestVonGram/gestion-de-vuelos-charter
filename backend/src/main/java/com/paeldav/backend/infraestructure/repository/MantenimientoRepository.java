@@ -19,11 +19,13 @@ public interface MantenimientoRepository extends JpaRepository<Mantenimiento, Lo
 
     List<Mantenimiento> findByAeronaveIdAndTipo(Long aeronaveId, TipoMantenimiento tipo);
 
-    @Query("SELECT m FROM Mantenimiento m WHERE m.fechaMantenimiento BETWEEN :inicio AND :fin")
-    List<Mantenimiento> findByFechaBetween(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
+    @Query("SELECT m FROM Mantenimiento m WHERE m.fechaInicio BETWEEN :inicio AND :fin")
+    List<Mantenimiento> findByFechaInicioBetween(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
 
-    @Query("SELECT m FROM Mantenimiento m WHERE m.aeronave.id = :aeronaveId ORDER BY m.fechaMantenimiento DESC")
+    @Query("SELECT m FROM Mantenimiento m WHERE m.aeronave.id = :aeronaveId ORDER BY m.fechaInicio DESC")
     List<Mantenimiento> findUltimosMantenimientos(@Param("aeronaveId") Long aeronaveId);
 
-    List<Mantenimiento> findByRealizadoPorId(Long personalId);
+    List<Mantenimiento> findByResponsableId(Long responsableId);
+
+    List<Mantenimiento> findByCompletado(Boolean completado);
 }

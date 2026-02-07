@@ -14,8 +14,6 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
 
     List<Incidencia> findByVueloId(Long vueloId);
 
-    List<Incidencia> findByReportadaPorId(Long tripulanteId);
-
     List<Incidencia> findByResuelta(Boolean resuelta);
 
     @Query("SELECT i FROM Incidencia i WHERE i.fechaReporte BETWEEN :inicio AND :fin")
@@ -23,6 +21,4 @@ public interface IncidenciaRepository extends JpaRepository<Incidencia, Long> {
 
     @Query("SELECT i FROM Incidencia i WHERE i.resuelta = false ORDER BY i.fechaReporte DESC")
     List<Incidencia> findPendientes();
-
-    List<Incidencia> findByTipoIncidencia(String tipoIncidencia);
 }

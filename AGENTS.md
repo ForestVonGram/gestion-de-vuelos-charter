@@ -4,61 +4,96 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Project Overview
 
-Charter Flight Management System (Sistema de gestión de vuelos charter) - A Spring Boot backend application for managing charter flights.
+**Charter Flight Management System** (Sistema de gestión integral de vuelos chárter) - Full-stack application for managing charter flights, fleet maintenance, and crew administration.
 
 ## Tech Stack
 
-- **Backend**: Spring Boot 4.0.2 with Java 21
-- **Build**: Gradle
-- **Databases**: PostgreSQL (JPA) + MongoDB
-- **Auth**: Spring Security with OAuth2 Resource Server
-- **Utilities**: Lombok, Bean Validation
+**Backend** (`backend/`)
+- Spring Boot 4.0.2 with Java 21
+- Gradle build system
+- PostgreSQL (JPA) + MongoDB (dual database)
+- Spring Security with OAuth2 Resource Server
+- MapStruct for DTO mapping, Lombok, Bean Validation
+- Cloudinary integration (image uploads)
+- WebSocket support
+
+**Frontend** (`frontend-files/frontend/`)
+- Angular 21 with TypeScript 5.9
+- TailwindCSS 4 for styling
+- Vitest for testing
 
 ## Common Commands
 
-### Build & Run
+### Backend (run from `backend/` directory)
 ```bash
-# Build the project
-./gradlew build
-
-# Run the application
-./gradlew bootRun
-
-# Clean build
-./gradlew clean build
+./gradlew build              # Build
+./gradlew bootRun            # Run application
+./gradlew clean build        # Clean build
+./gradlew test               # Run all tests (JUnit 5)
+./gradlew test --tests "com.paeldav.backend.SomeTestClass"           # Specific test class
+./gradlew test --tests "com.paeldav.backend.SomeTestClass.someMethod" # Specific method
 ```
 
-### Testing
+### Frontend (run from `frontend-files/frontend/` directory)
 ```bash
-# Run all tests
-./gradlew test
-
-# Run a specific test class
-./gradlew test --tests "com.paeldav.backend.SomeTestClass"
-
-# Run a specific test method
-./gradlew test --tests "com.paeldav.backend.SomeTestClass.someMethod"
+npm start           # Dev server (ng serve)
+npm run build       # Production build
+npm test            # Run tests (Vitest)
+npm run watch       # Build with watch mode
 ```
 
 ## Architecture
 
-### Package Structure
+### Backend - Clean Architecture
 Base package: `com.paeldav.backend`
 
-Recommended layered architecture:
-- `controller/` - REST API endpoints
-- `service/` - Business logic
-- `repository/` - Data access (JPA for PostgreSQL, MongoRepository for MongoDB)
-- `model/` or `entity/` - Domain entities
-- `dto/` - Data transfer objects
-- `config/` - Configuration classes (Security, Database, etc.)
+```
+backend/src/main/java/com/paeldav/backend/
+├── application/
+│   ├── dto/           # DTOs organized by domain (vuelo/, aeronave/, etc.)
+│   │                  # Pattern: {Entity}DTO, {Entity}CreateDTO, {Entity}UpdateDTO
+│   ├── mapper/        # MapStruct mappers (Spring component model)
+│   └── service/
+│       ├── base/      # Service interfaces
+│       ├── impl/      # Service implementations
+│       └── integration/  # External services (CloudinaryService, EmailService)
+├── domain/
+│   ├── entity/        # JPA entities with Lombok
+│   └── enums/         # EstadoVuelo, RolUsuario, TipoMantenimiento, etc.
+├── exception/         # Custom exceptions
+├── infraestructure/   # (note: Spanish spelling)
+│   ├── config/        # SecurityConfig, CorsConfig, WebSocketConfig, etc.
+│   ├── repository/    # Spring Data JPA repositories
+│   └── security/      # Security-related classes
+└── presentation/
+    └── controller/    # REST controllers
+```
 
-### Database Configuration
-The project uses dual databases:
-- **PostgreSQL** via Spring Data JPA for relational data
-- **MongoDB** via Spring Data MongoDB for document-based data
+### Domain Entities
+- **Vuelo**: Flight requests with scheduling, aircraft/crew assignment, status tracking
+- **Aeronave**: Fleet aircraft with technical specs and status
+- **Tripulante**: Crew members assigned to flights
+- **Personal**: Staff/personnel records
+- **Usuario**: System users with roles
+- **Mantenimiento**: Aircraft maintenance records
+- **Repostaje**: Refueling records
+- **Incidencia**: Incident reports
+- **RegistroHorasVuelo**: Flight hours tracking
+- **PasajeroVuelo**: Passenger-flight relationship
 
-Configure connections in `src/main/resources/application.properties` or use profile-specific files.
+### Key Enums
+- `EstadoVuelo`: SOLICITADO, PROGRAMADO, EN_VUELO, COMPLETADO, CANCELADO
+- `RolUsuario`: User roles for access control
+- `TipoMantenimiento`: PREVENTIVO, CORRECTIVO
+- `EstadoAeronave`, `EstadoPersonal`, `EstadoTripulante`, `CargoPersonal`
 
-### Security
-OAuth2 Resource Server is configured. JWT tokens should be validated against an authorization server.
+### MapStruct Pattern
+Mappers use `@Mapper(componentModel = "spring")` with `nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE`. Each mapper provides:
+- `toDTO(Entity)` / `toDTOList(List<Entity>)`
+- `toEntity(CreateDTO)`
+- `updateEntityFromDTO(UpdateDTO, @MappingTarget Entity)`
+
+### Database
+Configure in `backend/src/main/resources/application.properties`:
+- PostgreSQL for relational data (primary)
+- MongoDB for document storage
