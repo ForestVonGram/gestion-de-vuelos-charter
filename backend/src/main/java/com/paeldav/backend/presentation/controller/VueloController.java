@@ -1,8 +1,6 @@
 package com.paeldav.backend.presentation.controller;
 
-import com.paeldav.backend.application.dto.vuelo.VueloCreateDTO;
-import com.paeldav.backend.application.dto.vuelo.VueloDTO;
-import com.paeldav.backend.application.dto.vuelo.VueloUpdateDTO;
+import com.paeldav.backend.application.dto.vuelo.*;
 import com.paeldav.backend.application.service.base.VueloService;
 import com.paeldav.backend.domain.enums.EstadoVuelo;
 import jakarta.validation.Valid;
@@ -112,6 +110,98 @@ public class VueloController {
     public ResponseEntity<List<VueloDTO>> obtenerVuelosPorEstado(
             @PathVariable EstadoVuelo estado) {
         List<VueloDTO> vuelos = vueloService.obtenerVuelosPorEstado(estado);
+        return ResponseEntity.ok(vuelos);
+    }
+
+    // ==================== APROBACIÓN Y RECHAZO ====================
+
+    /**
+     * Aprueba una solicitud de vuelo.
+     *
+     * @param id ID del vuelo a aprobar
+     * @param dto DTO con datos de aprobación (opcional)
+     * @return ResponseEntity con el vuelo aprobado
+     */
+    @PostMapping("/{id}/aprobar")
+    public ResponseEntity<VueloDTO> aprobarSolicitud(
+            @PathVariable Long id,
+            @RequestBody(required = false) SolicitudAprobacionDTO dto) {
+        VueloDTO vueloDTO = vueloService.aprobarSolicitud(id, dto);
+        return ResponseEntity.ok(vueloDTO);
+    }
+
+    /**
+     * Rechaza una solicitud de vuelo.
+     *
+     * @param id ID del vuelo a rechazar
+     * @param dto DTO con motivo de rechazo (obligatorio)
+     * @return ResponseEntity con el vuelo rechazado
+     */
+    @PostMapping("/{id}/rechazar")
+    public ResponseEntity<VueloDTO> rechazarSolicitud(
+            @PathVariable Long id,
+            @Valid @RequestBody SolicitudRechazoDTO dto) {
+        VueloDTO vueloDTO = vueloService.rechazarSolicitud(id, dto);
+        return ResponseEntity.ok(vueloDTO);
+    }
+
+    // ==================== ASIGNACIÓN DE RECURSOS ====================
+
+    /**
+     * Asigna una aeronave a un vuelo.
+     *
+     * @param id ID del vuelo
+     * @param dto DTO con ID de aeronave a asignar
+     * @return ResponseEntity con el vuelo actualizado
+     */
+    @PutMapping("/{id}/aeronave")
+    public ResponseEntity<VueloDTO> asignarAeronave(
+            @PathVariable Long id,
+            @Valid @RequestBody AsignacionAeronaveDTO dto) {
+        VueloDTO vueloDTO = vueloService.asignarAeronave(id, dto);
+        return ResponseEntity.ok(vueloDTO);
+    }
+
+    /**
+     * Asigna tripulación a un vuelo.
+     *
+     * @param id ID del vuelo
+     * @param dto DTO con lista de IDs de tripulantes
+     * @return ResponseEntity con el vuelo actualizado
+     */
+    @PutMapping("/{id}/tripulacion")
+    public ResponseEntity<VueloDTO> asignarTripulacion(
+            @PathVariable Long id,
+            @Valid @RequestBody AsignacionTripulacionDTO dto) {
+        VueloDTO vueloDTO = vueloService.asignarTripulacion(id, dto);
+        return ResponseEntity.ok(vueloDTO);
+    }
+
+    // ==================== HISTORIAL Y CONSULTAS ====================
+
+    /**
+     * Obtiene el historial de cambios de un vuelo.
+     *
+     * @param id ID del vuelo
+     * @return ResponseEntity con el historial del vuelo
+     */
+    @GetMapping("/{id}/historial")
+    public ResponseEntity<List<HistorialVueloDTO>> obtenerHistorialVuelo(
+            @PathVariable Long id) {
+        List<HistorialVueloDTO> historial = vueloService.obtenerHistorialVuelo(id);
+        return ResponseEntity.ok(historial);
+    }
+
+    /**
+     * Obtiene todos los vuelos de un usuario específico.
+     *
+     * @param usuarioId ID del usuario
+     * @return ResponseEntity con la lista de vuelos del usuario
+     */
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<VueloDTO>> obtenerVuelosPorUsuario(
+            @PathVariable Long usuarioId) {
+        List<VueloDTO> vuelos = vueloService.obtenerVuelosPorUsuario(usuarioId);
         return ResponseEntity.ok(vuelos);
     }
 }

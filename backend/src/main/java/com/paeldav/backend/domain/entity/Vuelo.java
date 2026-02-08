@@ -99,6 +99,9 @@ public class Vuelo {
     @OneToMany(mappedBy = "vuelo")
     private List<Repostaje> repostajes;
 
+    @OneToMany(mappedBy = "vuelo", cascade = CascadeType.ALL)
+    private List<Pago> pagos;
+
     @PrePersist
     protected void onCreate() {
         this.fechaSolicitud = LocalDateTime.now();

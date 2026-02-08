@@ -1,18 +1,15 @@
 package com.paeldav.backend.vuelo;
 
-import com.paeldav.backend.application.dto.vuelo.VueloCreateDTO;
-import com.paeldav.backend.application.dto.vuelo.VueloDTO;
-import com.paeldav.backend.application.dto.vuelo.VueloUpdateDTO;
+import com.paeldav.backend.application.dto.vuelo.*;
+import com.paeldav.backend.application.mapper.HistorialVueloMapper;
 import com.paeldav.backend.application.mapper.VueloMapper;
 import com.paeldav.backend.application.service.impl.VueloServiceImpl;
-import com.paeldav.backend.domain.entity.Usuario;
-import com.paeldav.backend.domain.entity.Vuelo;
+import com.paeldav.backend.domain.entity.*;
+import com.paeldav.backend.domain.enums.EstadoAeronave;
+import com.paeldav.backend.domain.enums.EstadoTripulante;
 import com.paeldav.backend.domain.enums.EstadoVuelo;
-import com.paeldav.backend.exception.UsuarioNoEncontradoException;
-import com.paeldav.backend.exception.VueloEstadoInvalidoException;
-import com.paeldav.backend.exception.VueloNoEncontradoException;
-import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
-import com.paeldav.backend.infraestructure.repository.VueloRepository;
+import com.paeldav.backend.exception.*;
+import com.paeldav.backend.infraestructure.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,8 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,13 +42,28 @@ class VueloServiceTest {
     private UsuarioRepository usuarioRepository;
 
     @Mock
+    private AeronaveRepository aeronaveRepository;
+
+    @Mock
+    private TripulanteRepository tripulanteRepository;
+
+    @Mock
+    private HistorialVueloRepository historialVueloRepository;
+
+    @Mock
     private VueloMapper vueloMapper;
+
+    @Mock
+    private HistorialVueloMapper historialVueloMapper;
 
     @InjectMocks
     private VueloServiceImpl vueloService;
 
     private Usuario usuarioTest;
     private Vuelo vueloTest;
+    private Aeronave aeronaveTest;
+    private Tripulante tripulantePilotoTest;
+    private Tripulante tripulanteAuxiliarTest;
     private VueloCreateDTO vueloCreateDTOTest;
     private VueloDTO vueLoDTOTest;
 
@@ -101,6 +115,35 @@ class VueloServiceTest {
                 .estado(EstadoVuelo.SOLICITADO)
                 .proposito("Viaje de negocios")
                 .observaciones("Sin observaciones")
+                .build();
+
+        aeronaveTest = Aeronave.builder()
+                .id(1L)
+                .matricula("HK-1234")
+                .modelo("Cessna 208")
+                .capacidadPasajeros(14)
+                .capacidadTripulacion(2)
+                .estado(EstadoAeronave.DISPONIBLE)
+                .build();
+
+        tripulantePilotoTest = Tripulante.builder()
+                .id(1L)
+                .usuario(usuarioTest)
+                .numeroLicencia("PIL-001")
+                .tipoLicencia("ATP")
+                .esPiloto(true)
+                .estado(EstadoTripulante.DISPONIBLE)
+                .fechaVencimientoLicencia(LocalDate.now().plusYears(1))
+                .build();
+
+        tripulanteAuxiliarTest = Tripulante.builder()
+                .id(2L)
+                .usuario(usuarioTest)
+                .numeroLicencia("AUX-001")
+                .tipoLicencia("Auxiliar de vuelo")
+                .esPiloto(false)
+                .estado(EstadoTripulante.DISPONIBLE)
+                .fechaVencimientoLicencia(LocalDate.now().plusYears(1))
                 .build();
     }
 
@@ -526,6 +569,482 @@ class VueloServiceTest {
                     () -> vueloService.actualizarVuelo(999L, updateDTO)
             );
             assertEquals("Vuelo no encontrado con ID: 999", exception.getMessage());
+        }
+    }
+
+    // ==================== TESTS DE APROBACIÓN Y RECHAZO ====================
+
+    @Nested
+    @DisplayName("Aprobar Solicitud Tests")
+    class AprobarSolicitudTests {
+
+        @Test
+        @DisplayName("Aprobar solicitud con estado SOLICITADO cambia a CONFIRMADO")
+        void aprobarSolicitud_ConEstadoSolicitado_CambiaAConfirmado() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.SOLICITADO);
+            SolicitudAprobacionDTO dto = SolicitudAprobacionDTO.builder()
+                    .motivo("Vuelo aprobado por disponibilidad")
+                    .costoEstimado(5000.0)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.aprobarSolicitud(1L, dto);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(EstadoVuelo.CONFIRMADO, vueloTest.getEstado());
+            assertEquals(5000.0, vueloTest.getCostoEstimado());
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Aprobar solicitud con estado no SOLICITADO lanza excepción")
+        void aprobarSolicitud_ConEstadoNoSolicitado_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+
+            // Act & Assert
+            VueloEstadoInvalidoException exception = assertThrows(
+                    VueloEstadoInvalidoException.class,
+                    () -> vueloService.aprobarSolicitud(1L, null)
+            );
+            assertTrue(exception.getMessage().contains("SOLICITADO"));
+        }
+
+        @Test
+        @DisplayName("Aprobar solicitud registra en historial")
+        void aprobarSolicitud_RegistraHistorial() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.SOLICITADO);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            vueloService.aprobarSolicitud(1L, null);
+
+            // Assert
+            verify(historialVueloRepository).save(argThat(historial ->
+                    historial.getTipoAccion().equals("APROBACION") &&
+                    historial.getEstadoAnterior() == EstadoVuelo.SOLICITADO &&
+                    historial.getEstadoNuevo() == EstadoVuelo.CONFIRMADO
+            ));
+        }
+    }
+
+    @Nested
+    @DisplayName("Rechazar Solicitud Tests")
+    class RechazarSolicitudTests {
+
+        @Test
+        @DisplayName("Rechazar solicitud con estado SOLICITADO cambia a CANCELADO")
+        void rechazarSolicitud_ConEstadoSolicitado_CambiaACancelado() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.SOLICITADO);
+            SolicitudRechazoDTO dto = SolicitudRechazoDTO.builder()
+                    .motivo("No hay disponibilidad de aeronaves")
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.rechazarSolicitud(1L, dto);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(EstadoVuelo.CANCELADO, vueloTest.getEstado());
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Rechazar solicitud con estado no SOLICITADO lanza excepción")
+        void rechazarSolicitud_ConEstadoNoSolicitado_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            SolicitudRechazoDTO dto = SolicitudRechazoDTO.builder()
+                    .motivo("Motivo de rechazo")
+                    .build();
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+
+            // Act & Assert
+            VueloEstadoInvalidoException exception = assertThrows(
+                    VueloEstadoInvalidoException.class,
+                    () -> vueloService.rechazarSolicitud(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("SOLICITADO"));
+        }
+
+        @Test
+        @DisplayName("Rechazar solicitud registra historial con motivo")
+        void rechazarSolicitud_RegistraHistorialConMotivo() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.SOLICITADO);
+            String motivoRechazo = "Aeronave no disponible para la fecha solicitada";
+            SolicitudRechazoDTO dto = SolicitudRechazoDTO.builder()
+                    .motivo(motivoRechazo)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            vueloService.rechazarSolicitud(1L, dto);
+
+            // Assert
+            verify(historialVueloRepository).save(argThat(historial ->
+                    historial.getTipoAccion().equals("RECHAZO") &&
+                    historial.getMotivo().equals(motivoRechazo) &&
+                    historial.getEstadoNuevo() == EstadoVuelo.CANCELADO
+            ));
+        }
+    }
+
+    // ==================== TESTS DE ASIGNACIÓN DE RECURSOS ====================
+
+    @Nested
+    @DisplayName("Asignar Aeronave Tests")
+    class AsignarAeronaveTests {
+
+        @Test
+        @DisplayName("Asignar aeronave disponible exitosamente")
+        void asignarAeronave_ConAeronaveDisponible_AsignaExitosamente() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            AsignacionAeronaveDTO dto = AsignacionAeronaveDTO.builder()
+                    .aeronaveId(1L)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(aeronaveRepository.findById(1L)).thenReturn(Optional.of(aeronaveTest));
+            when(vueloRepository.findVuelosEnRangoPorAeronave(anyLong(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.asignarAeronave(1L, dto);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(aeronaveTest, vueloTest.getAeronave());
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Asignar aeronave en mantenimiento lanza excepción")
+        void asignarAeronave_ConAeronaveEnMantenimiento_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            aeronaveTest.setEstado(EstadoAeronave.EN_MANTENIMIENTO);
+            AsignacionAeronaveDTO dto = AsignacionAeronaveDTO.builder()
+                    .aeronaveId(1L)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(aeronaveRepository.findById(1L)).thenReturn(Optional.of(aeronaveTest));
+
+            // Act & Assert
+            AsignacionInvalidaException exception = assertThrows(
+                    AsignacionInvalidaException.class,
+                    () -> vueloService.asignarAeronave(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("no está disponible"));
+        }
+
+        @Test
+        @DisplayName("Asignar aeronave con capacidad insuficiente lanza excepción")
+        void asignarAeronave_ConCapacidadInsuficiente_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            vueloTest.setNumeroPasajeros(20); // Más que la capacidad de la aeronave (14)
+            AsignacionAeronaveDTO dto = AsignacionAeronaveDTO.builder()
+                    .aeronaveId(1L)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(aeronaveRepository.findById(1L)).thenReturn(Optional.of(aeronaveTest));
+
+            // Act & Assert
+            AsignacionInvalidaException exception = assertThrows(
+                    AsignacionInvalidaException.class,
+                    () -> vueloService.asignarAeronave(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("capacidad"));
+        }
+
+        @Test
+        @DisplayName("Asignar aeronave con conflicto de horario lanza excepción")
+        void asignarAeronave_ConConflictoHorario_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            vueloTest.setId(1L);
+            
+            Vuelo vueloConflicto = Vuelo.builder().id(2L).build();
+            AsignacionAeronaveDTO dto = AsignacionAeronaveDTO.builder()
+                    .aeronaveId(1L)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(aeronaveRepository.findById(1L)).thenReturn(Optional.of(aeronaveTest));
+            when(vueloRepository.findVuelosEnRangoPorAeronave(anyLong(), any(), any(), any()))
+                    .thenReturn(List.of(vueloConflicto));
+
+            // Act & Assert
+            ConflictoDisponibilidadException exception = assertThrows(
+                    ConflictoDisponibilidadException.class,
+                    () -> vueloService.asignarAeronave(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("conflictos de horario"));
+        }
+
+        @Test
+        @DisplayName("Asignar aeronave inexistente lanza excepción")
+        void asignarAeronave_ConAeronaveInexistente_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            AsignacionAeronaveDTO dto = AsignacionAeronaveDTO.builder()
+                    .aeronaveId(999L)
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(aeronaveRepository.findById(999L)).thenReturn(Optional.empty());
+
+            // Act & Assert
+            AeronaveNoEncontradaException exception = assertThrows(
+                    AeronaveNoEncontradaException.class,
+                    () -> vueloService.asignarAeronave(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("999"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Asignar Tripulación Tests")
+    class AsignarTripulacionTests {
+
+        @Test
+        @DisplayName("Asignar tripulación con piloto exitosamente")
+        void asignarTripulacion_ConTripulantesDisponibles_AsignaExitosamente() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            AsignacionTripulacionDTO dto = AsignacionTripulacionDTO.builder()
+                    .tripulanteIds(List.of(1L, 2L))
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(tripulanteRepository.findById(1L)).thenReturn(Optional.of(tripulantePilotoTest));
+            when(tripulanteRepository.findById(2L)).thenReturn(Optional.of(tripulanteAuxiliarTest));
+            when(vueloRepository.findVuelosEnRangoPorTripulante(anyLong(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(any(Vuelo.class))).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.asignarTripulacion(1L, dto);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(2, vueloTest.getTripulacion().size());
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Asignar tripulación sin piloto lanza excepción")
+        void asignarTripulacion_SinPiloto_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            AsignacionTripulacionDTO dto = AsignacionTripulacionDTO.builder()
+                    .tripulanteIds(List.of(2L)) // Solo auxiliar
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(tripulanteRepository.findById(2L)).thenReturn(Optional.of(tripulanteAuxiliarTest));
+            when(vueloRepository.findVuelosEnRangoPorTripulante(anyLong(), any(), any(), any()))
+                    .thenReturn(Collections.emptyList());
+
+            // Act & Assert
+            AsignacionInvalidaException exception = assertThrows(
+                    AsignacionInvalidaException.class,
+                    () -> vueloService.asignarTripulacion(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("piloto"));
+        }
+
+        @Test
+        @DisplayName("Asignar tripulante con licencia vencida lanza excepción")
+        void asignarTripulacion_ConLicenciaVencida_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            tripulantePilotoTest.setFechaVencimientoLicencia(LocalDate.now().minusDays(1));
+            AsignacionTripulacionDTO dto = AsignacionTripulacionDTO.builder()
+                    .tripulanteIds(List.of(1L))
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(tripulanteRepository.findById(1L)).thenReturn(Optional.of(tripulantePilotoTest));
+
+            // Act & Assert
+            AsignacionInvalidaException exception = assertThrows(
+                    AsignacionInvalidaException.class,
+                    () -> vueloService.asignarTripulacion(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("licencia vencida"));
+        }
+
+        @Test
+        @DisplayName("Asignar tripulante con conflicto de horario lanza excepción")
+        void asignarTripulacion_ConConflictoHorario_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            vueloTest.setId(1L);
+            Vuelo vueloConflicto = Vuelo.builder().id(2L).build();
+            AsignacionTripulacionDTO dto = AsignacionTripulacionDTO.builder()
+                    .tripulanteIds(List.of(1L))
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(tripulanteRepository.findById(1L)).thenReturn(Optional.of(tripulantePilotoTest));
+            when(vueloRepository.findVuelosEnRangoPorTripulante(anyLong(), any(), any(), any()))
+                    .thenReturn(List.of(vueloConflicto));
+
+            // Act & Assert
+            ConflictoDisponibilidadException exception = assertThrows(
+                    ConflictoDisponibilidadException.class,
+                    () -> vueloService.asignarTripulacion(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("conflictos de horario"));
+        }
+
+        @Test
+        @DisplayName("Asignar tripulante no disponible lanza excepción")
+        void asignarTripulacion_ConTripulanteNoDisponible_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            tripulantePilotoTest.setEstado(EstadoTripulante.EN_VUELO);
+            AsignacionTripulacionDTO dto = AsignacionTripulacionDTO.builder()
+                    .tripulanteIds(List.of(1L))
+                    .build();
+
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(tripulanteRepository.findById(1L)).thenReturn(Optional.of(tripulantePilotoTest));
+
+            // Act & Assert
+            AsignacionInvalidaException exception = assertThrows(
+                    AsignacionInvalidaException.class,
+                    () -> vueloService.asignarTripulacion(1L, dto)
+            );
+            assertTrue(exception.getMessage().contains("no está disponible"));
+        }
+    }
+
+    // ==================== TESTS DE HISTORIAL ====================
+
+    @Nested
+    @DisplayName("Historial Vuelo Tests")
+    class HistorialVueloTests {
+
+        @Test
+        @DisplayName("Obtener historial de vuelo existente")
+        void obtenerHistorialVuelo_RetornaHistorialOrdenado() {
+            // Arrange
+            HistorialVuelo historial1 = HistorialVuelo.builder()
+                    .id(1L)
+                    .vuelo(vueloTest)
+                    .estadoAnterior(EstadoVuelo.SOLICITADO)
+                    .estadoNuevo(EstadoVuelo.CONFIRMADO)
+                    .tipoAccion("APROBACION")
+                    .fechaCambio(LocalDateTime.now().minusHours(2))
+                    .build();
+
+            HistorialVuelo historial2 = HistorialVuelo.builder()
+                    .id(2L)
+                    .vuelo(vueloTest)
+                    .estadoAnterior(EstadoVuelo.CONFIRMADO)
+                    .estadoNuevo(EstadoVuelo.CONFIRMADO)
+                    .tipoAccion("ASIGNACION_AERONAVE")
+                    .fechaCambio(LocalDateTime.now().minusHours(1))
+                    .build();
+
+            List<HistorialVuelo> historialList = List.of(historial2, historial1);
+            List<HistorialVueloDTO> historialDTOList = List.of(
+                    HistorialVueloDTO.builder().id(2L).build(),
+                    HistorialVueloDTO.builder().id(1L).build()
+            );
+
+            when(vueloRepository.existsById(1L)).thenReturn(true);
+            when(historialVueloRepository.findByVueloIdOrderByFechaCambioDesc(1L))
+                    .thenReturn(historialList);
+            when(historialVueloMapper.toDTOList(historialList)).thenReturn(historialDTOList);
+
+            // Act
+            List<HistorialVueloDTO> resultado = vueloService.obtenerHistorialVuelo(1L);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(2, resultado.size());
+            verify(historialVueloRepository).findByVueloIdOrderByFechaCambioDesc(1L);
+        }
+
+        @Test
+        @DisplayName("Obtener historial de vuelo inexistente lanza excepción")
+        void obtenerHistorialVuelo_VueloInexistente_LanzaExcepcion() {
+            // Arrange
+            when(vueloRepository.existsById(999L)).thenReturn(false);
+
+            // Act & Assert
+            VueloNoEncontradoException exception = assertThrows(
+                    VueloNoEncontradoException.class,
+                    () -> vueloService.obtenerHistorialVuelo(999L)
+            );
+            assertTrue(exception.getMessage().contains("999"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Obtener Vuelos Por Usuario Tests")
+    class ObtenerVuelosPorUsuarioTests {
+
+        @Test
+        @DisplayName("Obtener vuelos de un usuario")
+        void obtenerVuelosPorUsuario_RetornaVuelosDelUsuario() {
+            // Arrange
+            List<Vuelo> vuelos = List.of(vueloTest);
+            List<VueloDTO> vuelosDTO = List.of(vueLoDTOTest);
+
+            when(vueloRepository.findByUsuarioId(1L)).thenReturn(vuelos);
+            when(vueloMapper.toDTOList(vuelos)).thenReturn(vuelosDTO);
+
+            // Act
+            List<VueloDTO> resultado = vueloService.obtenerVuelosPorUsuario(1L);
+
+            // Assert
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
+            verify(vueloRepository).findByUsuarioId(1L);
+        }
+
+        @Test
+        @DisplayName("Obtener vuelos de usuario sin vuelos retorna lista vacía")
+        void obtenerVuelosPorUsuario_SinVuelos_RetornaListaVacia() {
+            // Arrange
+            when(vueloRepository.findByUsuarioId(999L)).thenReturn(Collections.emptyList());
+            when(vueloMapper.toDTOList(Collections.emptyList())).thenReturn(Collections.emptyList());
+
+            // Act
+            List<VueloDTO> resultado = vueloService.obtenerVuelosPorUsuario(999L);
+
+            // Assert
+            assertNotNull(resultado);
+            assertTrue(resultado.isEmpty());
         }
     }
 }

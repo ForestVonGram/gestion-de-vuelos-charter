@@ -2,6 +2,7 @@ package com.paeldav.backend.application.mapper;
 
 import com.paeldav.backend.application.dto.aeronave.AeronaveCreateDTO;
 import com.paeldav.backend.application.dto.aeronave.AeronaveDTO;
+import com.paeldav.backend.application.dto.aeronave.AeronaveUpdateDTO;
 import com.paeldav.backend.domain.entity.Aeronave;
 import org.mapstruct.*;
 
@@ -27,4 +28,12 @@ public interface AeronaveMapper {
     @Mapping(target = "historialMantenimiento", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(AeronaveCreateDTO dto, @MappingTarget Aeronave entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "matricula", ignore = true)
+    @Mapping(target = "modelo", ignore = true)
+    @Mapping(target = "horasVueloTotales", ignore = true)
+    @Mapping(target = "historialMantenimiento", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromUpdateDTO(AeronaveUpdateDTO dto, @MappingTarget Aeronave entity);
 }

@@ -46,12 +46,24 @@ dependencies {
 	// Email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// HTTP Client
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+	// SDK oficial MercadoPago
+	implementation 'com.mercadopago:sdk-java:2.1.28'
+
+	// MercadoPago REST Client
+	implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+	implementation 'com.google.code.gson:gson:2.10.1'
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'com.h2database:h2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-validation'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
