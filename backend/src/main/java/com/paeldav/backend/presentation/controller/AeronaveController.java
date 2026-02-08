@@ -3,14 +3,18 @@ package com.paeldav.backend.presentation.controller;
 import com.paeldav.backend.application.dto.aeronave.AeronaveCreateDTO;
 import com.paeldav.backend.application.dto.aeronave.AeronaveDTO;
 import com.paeldav.backend.application.dto.aeronave.AeronaveUpdateDTO;
+import com.paeldav.backend.application.dto.aeronave.HistorialUsoAeronaveDTO;
+import com.paeldav.backend.application.dto.disponibilidad.ResumenDisponibilidadFlotaDTO;
 import com.paeldav.backend.application.service.base.AeronaveService;
 import com.paeldav.backend.domain.enums.EstadoAeronave;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -184,5 +188,67 @@ public class AeronaveController {
             @RequestParam Double horasVuelo) {
         aeronaveService.incrementarHorasVuelo(id, horasVuelo);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Obtiene el resumen de disponibilidad de toda la flota.
+     *
+     * @return ResponseEntity con el resumen de disponibilidad
+     */
+    @GetMapping("/disponibilidad/resumen")
+    public ResponseEntity<ResumenDisponibilidadFlotaDTO> obtenerResumenDisponibilidadFlota() {
+        ResumenDisponibilidadFlotaDTO resumen = aeronaveService.consultarResumenDisponibilidadFlota();
+        return ResponseEntity.ok(resumen);
+    }
+
+    /**
+     * Bloquea una aeronave, cambiándola a estado FUERA_DE_SERVICIO.
+     *
+     * @param id ID de la aeronave a bloquear
+     * @param motivo motivo del bloqueo (opcional)
+     * @return ResponseEntity con los datos de la aeronave bloqueada
+     */
+    @PostMapping("/{id}/bloquear")
+    public ResponseEntity<AeronaveDTO> bloquearAeronave(
+            @PathVariable Long id,
+            @RequestParam(required = false, defaultValue = "Bloqueo manual") String motivo) {
+        AeronaveDTO aeronaveDTO = aeronaveService.bloquearAeronave(id, motivo);
+        return ResponseEntity.ok(aeronaveDTO);
+    }
+
+    /**
+     * Desbloquea una aeronave, cambiándola de FUERA_DE_SERVICIO a DISPONIBLE.
+     *
+     * @param id ID de la aeronave a desbloquear
+     * @return ResponseEntity con los datos de la aeronave desbloqueada
+     */
+    @PostMapping("/{id}/desbloquear")
+    public ResponseEntity<AeronaveDTO> desbloquearAeronave(@PathVariable Long id) {
+        AeronaveDTO aeronaveDTO = aeronaveService.desbloquearAeronave(id);
+        return ResponseEntity.ok(aeronaveDTO);
+    }
+
+    /**
+     * Obtiene el historial de uso completo de una aeronave.
+     * Incluye vuelos, mantenimientos, repostajes y estadísticas.
+     *
+     * @param id ID de la aeronave
+     * @param fechaDesde fecha de inicio del período (opcional)
+     * @param fechaHasta fecha de fin del período (opcional)
+     * @return ResponseEntity con el historial de uso de la aeronave
+     */
+    @GetMapping("/{id}/historial-uso")
+    public ResponseEntity<HistorialUsoAeronaveDTO> obtenerHistorialUso(
+            @PathVariable Long id,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaDesde,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaHasta) {
+        
+        HistorialUsoAeronaveDTO historial;
+        if (fechaDesde != null && fechaHasta != null) {
+            historial = aeronaveService.obtenerHistorialUso(id, fechaDesde, fechaHasta);
+        } else {
+            historial = aeronaveService.obtenerHistorialUso(id);
+        }
+        return ResponseEntity.ok(historial);
     }
 }

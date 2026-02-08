@@ -3,8 +3,11 @@ package com.paeldav.backend.application.service.base;
 import com.paeldav.backend.application.dto.aeronave.AeronaveCreateDTO;
 import com.paeldav.backend.application.dto.aeronave.AeronaveDTO;
 import com.paeldav.backend.application.dto.aeronave.AeronaveUpdateDTO;
+import com.paeldav.backend.application.dto.aeronave.HistorialUsoAeronaveDTO;
+import com.paeldav.backend.application.dto.disponibilidad.ResumenDisponibilidadFlotaDTO;
 import com.paeldav.backend.domain.enums.EstadoAeronave;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -124,4 +127,65 @@ public interface AeronaveService {
      * @throws com.paeldav.backend.exception.AeronaveNoEncontradaException si no existe
      */
     void incrementarHorasVuelo(Long aeronaveId, Double horasVuelo);
+
+    /**
+     * Bloquea una aeronave, cambiándola a estado FUERA_DE_SERVICIO.
+     * No permite bloquear aeronaves que estén EN_VUELO.
+     *
+     * @param id ID de la aeronave a bloquear
+     * @param motivo motivo del bloqueo
+     * @return DTO de la aeronave bloqueada
+     * @throws com.paeldav.backend.exception.AeronaveNoEncontradaException si no existe
+     * @throws com.paeldav.backend.exception.AeronaveNoDisponibleException si está en vuelo
+     */
+    AeronaveDTO bloquearAeronave(Long id, String motivo);
+
+    /**
+     * Desbloquea una aeronave, cambiándola de FUERA_DE_SERVICIO a DISPONIBLE.
+     *
+     * @param id ID de la aeronave a desbloquear
+     * @return DTO de la aeronave desbloqueada
+     * @throws com.paeldav.backend.exception.AeronaveNoEncontradaException si no existe
+     * @throws com.paeldav.backend.exception.AeronaveNoDisponibleException si no está bloqueada
+     */
+    AeronaveDTO desbloquearAeronave(Long id);
+
+    /**
+     * Consulta el resumen de disponibilidad de toda la flota.
+     * Incluye contadores por estado y lista de aeronaves disponibles.
+     *
+     * @return DTO con el resumen de disponibilidad de la flota
+     */
+    ResumenDisponibilidadFlotaDTO consultarResumenDisponibilidadFlota();
+
+    /**
+     * Verifica si una transición de estado es válida.
+     *
+     * @param estadoActual estado actual de la aeronave
+     * @param nuevoEstado estado al que se desea cambiar
+     * @return true si la transición es válida, false en caso contrario
+     */
+    boolean esTransicionEstadoValida(EstadoAeronave estadoActual, EstadoAeronave nuevoEstado);
+
+    /**
+     * Obtiene el historial de uso completo de una aeronave.
+     * Incluye vuelos, mantenimientos, repostajes y estadísticas.
+     *
+     * @param aeronaveId ID de la aeronave
+     * @return DTO con el historial de uso completo
+     * @throws com.paeldav.backend.exception.AeronaveNoEncontradaException si no existe
+     */
+    HistorialUsoAeronaveDTO obtenerHistorialUso(Long aeronaveId);
+
+    /**
+     * Obtiene el historial de uso de una aeronave en un rango de fechas.
+     * Incluye vuelos, mantenimientos, repostajes y estadísticas del período.
+     *
+     * @param aeronaveId ID de la aeronave
+     * @param fechaDesde fecha de inicio del período
+     * @param fechaHasta fecha de fin del período
+     * @return DTO con el historial de uso del período
+     * @throws com.paeldav.backend.exception.AeronaveNoEncontradaException si no existe
+     */
+    HistorialUsoAeronaveDTO obtenerHistorialUso(Long aeronaveId, LocalDateTime fechaDesde, LocalDateTime fechaHasta);
 }
