@@ -53,18 +53,12 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
             throw new IllegalArgumentException("El archivo de imagen no puede estar vacío");
         }
 
-        // Validar tipo de archivo
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("El archivo debe ser una imagen válida");
-        }
-
         try {
             // Crear carpeta específica para la aeronave usando su matrícula
             String carpeta = CARPETA_IMAGENES + "/" + aeronave.getMatricula();
 
-            // Subir a Cloudinary
-            Map<String, Object> uploadResult = cloudinaryService.uploadFile(file, carpeta);
+            // Subir a Cloudinary (convierte a webp si el formato no es webp)
+            Map<String, Object> uploadResult = cloudinaryService.uploadImage(file, carpeta);
 
             // Crear entidad ImagenAeronave
             ImagenAeronave imagen = ImagenAeronave.builder()

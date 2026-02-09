@@ -1,0 +1,288 @@
+@startuml C4_Context_Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - C4 Model - Context Level
+
+Person(admin, "Administrator", "Manages flights, aircraft, and crew")
+Person(pilot, "Pilot", "Views assignments and flight details")
+Person(client, "Client", "Requests charter flights")
+
+System(cfs, "Charter Flight System", "Full-stack application for managing charter flights, fleet maintenance, and crew administration")
+
+System_Ext(cloudinary, "Cloudinary", "Cloud storage for images and documents")
+System_Ext(email, "Email Service", "Sends notifications and confirmations")
+System_Ext(mercadopago, "Mercado Pago", "Payment processing for flight reservations")
+System_Ext(recaptcha, "Google reCAPTCHA", "Bot detection and form protection")
+System_Ext(twofa, "2FA Provider", "Two-factor authentication (OTP via email/SMS)")
+
+Rel(admin, cfs, "Uses")
+Rel(pilot, cfs, "Uses")
+Rel(client, cfs, "Uses")
+Rel(cfs, cloudinary, "Uploads/retrieves images")
+Rel(cfs, email, "Sends emails")
+Rel(cfs, mercadopago, "Processes payments")
+Rel(cfs, recaptcha, "Validates forms")
+Rel(cfs, twofa, "Verifies 2FA codes")
+
+@enduml
+
+@startuml C4_Container_Diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - C4 Model - Container Level
+
+Person(admin, "Administrator")
+Person(pilot, "Pilot")
+Person(client, "Client")
+
+System_Boundary(cfs, "Charter Flight System") {
+    Container(web, "Web Application", "Angular 21, TypeScript 5.9, TailwindCSS 4", "Provides flight management, scheduling, and reporting UX")
+    Container(api, "REST API", "Spring Boot 4.0.2, Java 21, Spring Security OAuth2", "Handles business logic, data processing, and authentication")
+    ContainerDb(postgres, "PostgreSQL Database", "PostgreSQL", "Stores relational data: flights, aircraft, crew, personnel")
+    ContainerDb(mongodb, "MongoDB Database", "MongoDB", "Stores document data and flight logs")
+}
+
+System_Ext(cloudinary, "Cloudinary")
+System_Ext(email, "Email Service")
+System_Ext(mercadopago, "Mercado Pago")
+System_Ext(recaptcha, "Google reCAPTCHA")
+System_Ext(twofa, "2FA Provider")
+
+Rel(admin, web, "Uses [HTTPS]")
+Rel(pilot, web, "Uses [HTTPS]")
+Rel(client, web, "Uses [HTTPS]")
+Rel(web, api, "Calls [REST/JSON]")
+Rel(api, postgres, "Reads/Writes [SQL]")
+Rel(api, mongodb, "Reads/Writes [JSON]")
+Rel(api, cloudinary, "Uploads/Retrieves [HTTP API]")
+Rel(api, email, "Sends [SMTP]")
+Rel(api, mercadopago, "Processes payments [HTTPS API]")
+Rel(web, recaptcha, "Validates [HTTPS API]")
+Rel(api, recaptcha, "Verifies [HTTPS API]")
+Rel(api, twofa, "Sends OTP [HTTPS API]")
+
+@enduml
+
+@startuml C4_Component_Diagram_Backend
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Backend Components
+
+Container_Boundary(api, "REST API") {
+    Component(controller, "Controllers", "Spring REST Controllers", "Handle HTTP requests and responses")
+    Component(service, "Services", "Business Logic Layer", "Implement application use cases")
+    Component(mapper, "Mappers", "MapStruct Mappers", "Convert between DTOs and entities")
+    Component(security, "Security", "Spring Security + OAuth2 + 2FA", "Handle authentication, authorization, and 2FA")
+    Component(integration, "External Services", "CloudinaryService, EmailService, MercadoPagoService, reCAPTCHAService, 2FAService", "Integrate with external systems")
+    Component(entity, "Domain Entities", "JPA Entities", "Core business domain models")
+    Component(repository, "Repositories", "Spring Data JPA", "Data access layer")
+    Component(exception, "Exception Handling", "Custom exception handlers", "Handle application errors")
+}
+
+Container_Ext(postgres, "PostgreSQL")
+Container_Ext(mongodb, "MongoDB")
+Container_Ext(cloudinary, "Cloudinary API")
+Container_Ext(email, "Email Service")
+Container_Ext(mercadopago, "Mercado Pago API")
+Container_Ext(recaptcha, "Google reCAPTCHA API")
+Container_Ext(twofa, "2FA Service")
+
+Rel(controller, service, "Uses")
+Rel(controller, security, "Uses")
+Rel(service, mapper, "Uses")
+Rel(service, entity, "Uses")
+Rel(service, integration, "Uses")
+Rel(service, repository, "Uses")
+Rel(mapper, entity, "Converts")
+Rel(repository, postgres, "Reads/Writes")
+Rel(repository, mongodb, "Reads/Writes")
+Rel(integration, cloudinary, "Calls")
+Rel(integration, email, "Calls")
+Rel(integration, mercadopago, "Calls")
+Rel(integration, recaptcha, "Calls")
+Rel(integration, twofa, "Calls")
+Rel(controller, exception, "Uses")
+
+@enduml
+
+@startuml C4_Component_Diagram_Frontend
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Frontend Components
+
+Container_Boundary(web, "Web Application") {
+    Component(components, "Angular Components", "UI Components", "Reusable UI elements for forms, tables, dialogs")
+    Component(services, "Angular Services", "HTTP Communication", "Communicate with REST API")
+    Component(routing, "Router", "Angular Router", "Handle navigation between pages")
+    Component(state, "State Management", "TypeScript Models & Services", "Manage application state")
+    Component(guards, "Route Guards", "Authentication/Authorization + 2FA", "Protect routes based on permissions")
+    Component(styling, "Styling", "TailwindCSS 4", "Responsive design and styling")
+    Component(recaptcha_component, "reCAPTCHA Widget", "Google reCAPTCHA v3", "Bot detection on login and signup forms")
+}
+
+Container_Ext(api, "REST API")
+Container_Ext(recaptcha, "Google reCAPTCHA API")
+
+Rel(components, routing, "Uses")
+Rel(routing, guards, "Uses")
+Rel(components, services, "Uses")
+Rel(services, api, "Calls [HTTP]")
+Rel(components, recaptcha_component, "Uses")
+Rel(recaptcha_component, recaptcha, "Validates [HTTPS API]")
+Rel(components, state, "Uses")
+Rel(components, styling, "Uses")
+
+@enduml
+
+@startuml C4_System_Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Data Flow
+
+Person(user, "System User")
+System(cfs, "Charter Flight System", "Manages charter flights, aircraft, and crew")
+
+System_Boundary(External, "External Systems") {
+    System_Ext(cloudinary, "Cloudinary", "Image & Document Storage")
+    System_Ext(oauth2, "OAuth2 Provider", "Authentication")
+    System_Ext(email, "Email Service", "Notifications & 2FA OTP")
+    System_Ext(websocket, "WebSocket Server", "Real-time Updates")
+    System_Ext(mercadopago, "Mercado Pago", "Payment Processing")
+    System_Ext(recaptcha, "Google reCAPTCHA", "Bot Detection")
+}
+
+Rel(user, cfs, "Interacts")
+Rel(cfs, cloudinary, "Stores/Retrieves Images")
+Rel(cfs, oauth2, "Authenticates")
+Rel(cfs, email, "Sends Notifications & OTP")
+Rel(cfs, websocket, "Real-time Communication")
+Rel(cfs, mercadopago, "Processes payments")
+Rel(cfs, recaptcha, "Validates forms")
+
+@enduml
+
+@startuml C4_Database_Schema
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Database Schema
+
+Container_Boundary(databases, "Data Storage Layer") {
+    ContainerDb(postgres, "PostgreSQL", "Relational Data", "
+    Vuelo (Flights)
+    Aeronave (Aircraft)
+    Tripulante (Crew)
+    Personal (Staff)
+    Usuario (Users)
+    Mantenimiento (Maintenance)
+    Repostaje (Refueling)
+    Incidencia (Incidents)
+    RegistroHorasVuelo (Flight Hours)
+    PasajeroVuelo (Passengers)
+    Pago (Payments)
+    AutenticacionDosFactor (2FA)
+    ")
+    
+    ContainerDb(mongodb, "MongoDB", "Document Data", "
+    Flight Logs
+    Audit Trails
+    Configuration
+    Templates
+    Payment Records
+    Security Events (2FA, reCAPTCHA)
+    ")
+}
+
+@enduml
+
+@startuml C4_Deployment
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Deployment Diagram
+
+Deployment_Node(client, "Client Machine", "Windows/Mac/Linux") {
+    Container(browser, "Web Browser", "Chrome/Firefox/Safari", "Hosts the Angular application")
+}
+
+Deployment_Node(internet, "Internet")
+
+Deployment_Node(aws, "AWS Cloud (PRIMARY PRODUCTION)", "us-east-1") {
+    Deployment_Node(aws_compute, "EC2 Instance", "t3.large, Linux, Docker") {
+        Deployment_Node(aws_springboot, "Spring Boot Container", "Java 21, Gradle") {
+            Container(aws_api, "REST API", "Spring Boot 4.0.2", "Primary application server")
+        }
+    }
+    
+    Deployment_Node(aws_rds, "Amazon RDS", "Managed Relational Database") {
+        Container(aws_postgres, "PostgreSQL 15+", "Database", "Primary relational database")
+    }
+    
+    Deployment_Node(aws_nosql, "AWS Services", "Data & Integration") {
+        Container(aws_mongodb, "MongoDB Atlas", "Database", "Primary document database")
+        Container(aws_cloudinary, "Cloudinary", "CDN", "Image storage & delivery")
+        Container(aws_mercadopago, "Mercado Pago Integration", "Payment", "Payment processing")
+        Container(aws_recaptcha, "Google reCAPTCHA", "Security", "Bot detection")
+        Container(aws_twofa, "2FA Service", "Security", "Two-factor authentication")
+    }
+}
+
+Deployment_Node(azure, "Azure Cloud (BACKUP/DISASTER RECOVERY)", "East US") {
+    Deployment_Node(azure_compute, "Virtual Machine", "Standard_B2s, Linux, Docker") {
+        Deployment_Node(azure_springboot, "Spring Boot Container (Standby)", "Java 21, Gradle") {
+            Container(azure_api, "REST API (Backup)", "Spring Boot 4.0.2", "Backup application server")
+        }
+    }
+    
+    Deployment_Node(azure_db, "Azure SQL & Services", "Managed Databases") {
+        Container(azure_postgres, "PostgreSQL (Azure DB)", "Database", "Replicated database (read-only)")
+        Container(azure_mongodb, "Cosmos DB (MongoDB API)", "Database", "Replicated database (read-only)")
+    }
+}
+
+Rel(browser, aws_api, "REST/JSON [HTTPS]", "Primary")
+Rel(aws_api, aws_postgres, "SQL [Port 5432]", "Read/Write")
+Rel(aws_api, aws_mongodb, "MongoDB Protocol [Port 27017]", "Read/Write")
+Rel(aws_api, aws_cloudinary, "HTTPS API", "Upload/Retrieve")
+Rel(aws_api, aws_mercadopago, "HTTPS API", "Payment transactions")
+Rel(aws_api, aws_recaptcha, "HTTPS API", "Verify bot detection")
+Rel(aws_api, aws_twofa, "HTTPS API", "Verify 2FA codes")
+Rel(aws_postgres, azure_postgres, "Continuous Replication", "Failover data")
+Rel(aws_mongodb, azure_mongodb, "Continuous Replication", "Failover data")
+Rel(aws_api, azure_api, "Health Check & Sync", "Periodic")
+Rel(browser, azure_api, "REST/JSON [HTTPS]", "Failover (if AWS down)")
+
+@enduml
+
+@startuml C4_Infrastructure_Overview
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Charter Flight Management System - Infrastructure Overview
+
+Person(devops, "DevOps Team")
+
+System(aws_primary, "AWS Primary Infrastructure", "Primary production environment with EC2, RDS, MongoDB Atlas")
+System(azure_backup, "Azure Backup Infrastructure", "Disaster recovery environment with replicated databases")
+System(monitoring, "Monitoring & Logging", "CloudWatch, Application Insights, Log Analytics")
+
+Rel(devops, aws_primary, "Manages")
+Rel(devops, azure_backup, "Maintains")
+Rel(devops, monitoring, "Monitors")
+Rel(aws_primary, monitoring, "Sends metrics & logs")
+Rel(azure_backup, monitoring, "Sends metrics & logs")
+
+@enduml
