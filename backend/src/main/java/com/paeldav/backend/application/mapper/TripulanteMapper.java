@@ -2,6 +2,7 @@ package com.paeldav.backend.application.mapper;
 
 import com.paeldav.backend.application.dto.tripulante.TripulanteCreateDTO;
 import com.paeldav.backend.application.dto.tripulante.TripulanteDTO;
+import com.paeldav.backend.application.dto.tripulante.TripulanteUpdateDTO;
 import com.paeldav.backend.domain.entity.Tripulante;
 import com.paeldav.backend.domain.entity.Usuario;
 import org.mapstruct.*;
@@ -33,8 +34,17 @@ public interface TripulanteMapper {
     @Mapping(target = "horasVueloTotales", ignore = true)
     @Mapping(target = "horasVueloMes", ignore = true)
     @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "numeroLicencia", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(TripulanteCreateDTO dto, @MappingTarget Tripulante entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "numeroLicencia", ignore = true)
+    @Mapping(target = "horasVueloTotales", ignore = true)
+    @Mapping(target = "horasVueloMes", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromUpdateDTO(TripulanteUpdateDTO dto, @MappingTarget Tripulante entity);
 
     default String mapUsuarioNombre(Usuario usuario) {
         if (usuario == null) return null;

@@ -2,6 +2,7 @@ package com.paeldav.backend.application.mapper;
 
 import com.paeldav.backend.application.dto.personal.PersonalCreateDTO;
 import com.paeldav.backend.application.dto.personal.PersonalDTO;
+import com.paeldav.backend.application.dto.personal.PersonalUpdateDTO;
 import com.paeldav.backend.domain.entity.Personal;
 import com.paeldav.backend.domain.entity.Usuario;
 import org.mapstruct.*;
@@ -28,9 +29,15 @@ public interface PersonalMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuario", ignore = true)
-    @Mapping(target = "estado", ignore = true)
+    @Mapping(target = "numeroEmpleado", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(PersonalCreateDTO dto, @MappingTarget Personal entity);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "usuario", ignore = true)
+    @Mapping(target = "numeroEmpleado", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromUpdateDTO(PersonalUpdateDTO dto, @MappingTarget Personal entity);
 
     default String mapUsuarioNombre(Usuario usuario) {
         if (usuario == null) return null;
