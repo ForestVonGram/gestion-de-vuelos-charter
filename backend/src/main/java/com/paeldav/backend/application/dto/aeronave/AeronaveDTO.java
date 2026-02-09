@@ -4,6 +4,7 @@ import com.paeldav.backend.domain.enums.EstadoAeronave;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * DTO de respuesta para Aeronave.
@@ -27,4 +28,5 @@ public class AeronaveDTO {
     private Double horasVueloTotales;
     private EstadoAeronave estado;
     private String especificacionesTecnicas;
+    private List<ImagenAeronaveDTO> imagenes;
 }

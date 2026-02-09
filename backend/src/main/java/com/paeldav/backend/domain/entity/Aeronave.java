@@ -71,4 +71,7 @@ public class Aeronave {
 
     @OneToMany(mappedBy = "aeronave", cascade = CascadeType.ALL)
     private List<Mantenimiento> historialMantenimiento;
+
+    @OneToMany(mappedBy = "aeronave", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImagenAeronave> imagenes;
 }

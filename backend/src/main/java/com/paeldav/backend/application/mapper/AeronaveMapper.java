@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Mapper para convertir entre Aeronave entity y sus DTOs.
  */
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = ImagenAeronaveMapper.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AeronaveMapper {
 
     AeronaveDTO toDTO(Aeronave entity);
@@ -21,11 +21,13 @@ public interface AeronaveMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "horasVueloTotales", ignore = true)
     @Mapping(target = "historialMantenimiento", ignore = true)
+    @Mapping(target = "imagenes", ignore = true)
     Aeronave toEntity(AeronaveCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "horasVueloTotales", ignore = true)
     @Mapping(target = "historialMantenimiento", ignore = true)
+    @Mapping(target = "imagenes", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(AeronaveCreateDTO dto, @MappingTarget Aeronave entity);
 
@@ -34,6 +36,7 @@ public interface AeronaveMapper {
     @Mapping(target = "modelo", ignore = true)
     @Mapping(target = "horasVueloTotales", ignore = true)
     @Mapping(target = "historialMantenimiento", ignore = true)
+    @Mapping(target = "imagenes", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromUpdateDTO(AeronaveUpdateDTO dto, @MappingTarget Aeronave entity);
 }

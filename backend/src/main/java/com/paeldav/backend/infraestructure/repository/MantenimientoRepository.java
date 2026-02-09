@@ -28,4 +28,7 @@ public interface MantenimientoRepository extends JpaRepository<Mantenimiento, Lo
     List<Mantenimiento> findByResponsableId(Long responsableId);
 
     List<Mantenimiento> findByCompletado(Boolean completado);
+
+    @Query("SELECT m FROM Mantenimiento m WHERE m.aeronave.id = :aeronaveId AND m.completado = false AND m.fechaInicio < CURRENT_TIMESTAMP ORDER BY m.fechaInicio ASC")
+    List<Mantenimiento> findMantenimientosVencidosPorAeronave(@Param("aeronaveId") Long aeronaveId);
 }
