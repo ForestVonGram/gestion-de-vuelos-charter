@@ -58,6 +58,14 @@ public class Usuario {
     @Column(name = "activo")
     private Boolean activo = true;
 
+    @Column(name = "dos_factores_habilitado")
+    @Builder.Default
+    private Boolean dosFactoresHabilitado = false;
+
+    @Column(name = "metodo_dos_factores")
+    @Enumerated(EnumType.STRING)
+    private com.paeldav.backend.domain.enums.MetodoDosFactores metodoDosFactores;
+
     @PrePersist
     protected void onCreate() {
         this.fechaRegistro = LocalDateTime.now();

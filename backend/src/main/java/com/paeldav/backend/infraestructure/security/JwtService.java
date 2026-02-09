@@ -40,6 +40,10 @@ public class JwtService {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, long expirationMs) {
+        return buildToken(extraClaims, userDetails, expirationMs);
+    }
+
     public long getExpirationTime() {
         return jwtExpiration;
     }

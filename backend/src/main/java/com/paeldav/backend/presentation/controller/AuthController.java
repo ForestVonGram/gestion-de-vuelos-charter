@@ -1,9 +1,8 @@
 package com.paeldav.backend.presentation.controller;
 
-import com.paeldav.backend.application.dto.auth.AuthResponse;
-import com.paeldav.backend.application.dto.auth.LoginRequest;
-import com.paeldav.backend.application.dto.auth.RegisterRequest;
+import com.paeldav.backend.application.dto.auth.*;
 import com.paeldav.backend.application.service.base.AuthService;
+import com.paeldav.backend.application.service.base.DosFactoresService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final DosFactoresService dosFactoresService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(
@@ -47,6 +47,54 @@ public class AuthController {
             authService.logout(token);
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/verify-2fa")
+    public ResponseEntity<AuthResponse> verify2FA(
+            @Valid @RequestBody VerificacionCodigoRequest request,
+            HttpServletRequest httpRequest) {
+        String dispositivo = extraerDispositivo(httpRequest);
+        String direccionIp = extraerDireccionIp(httpRequest);
+        String userAgent = httpRequest.getHeader("User-Agent");
+
+        try {
+            AuthResponse response = authService.verificarDosFactores(request, dispositivo, direccionIp, userAgent);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).build();
+        }
+    }
+
+    @PostMapping("/enable-2fa")
+    public ResponseEntity<Void> habilitarDosFactores(
+            @Valid @RequestBody ConfiguracionDosFactoresDTO config,
+            HttpServletRequest httpRequest) {
+        try {
+            authService.habilitarDosFactores(config);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(400).build();
+        }
+    }
+
+    @PostMapping("/disable-2fa")
+    public ResponseEntity<Void> deshabilitarDosFactores() {
+        try {
+            authService.deshabilitarDosFactores();
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(400).build();
+        }
+    }
+
+    @GetMapping("/2fa-status")
+    public ResponseEntity<EstadoDosFactoresDTO> obtenerEstadoDosFactores() {
+        try {
+            EstadoDosFactoresDTO estado = authService.obtenerEstadoDosFactores();
+            return ResponseEntity.ok(estado);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).build();
+        }
     }
 
     private String extraerDispositivo(HttpServletRequest request) {

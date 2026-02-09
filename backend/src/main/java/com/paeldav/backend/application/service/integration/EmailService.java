@@ -85,4 +85,38 @@ public class EmailService {
             El equipo de Astra Nimbus Aviation
             """, nombre);
     }
+
+    @Async
+    public void enviarCodigoVerificacion2FA(String destinatario, String codigo, String nombreUsuario) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(destinatario);
+            message.setSubject("Tu código de autenticación de dos factores");
+            message.setText(buildMensajeCodigoVerificacion(nombreUsuario, codigo));
+
+            mailSender.send(message);
+            log.info("Código de verificación 2FA enviado a: {}", destinatario);
+        } catch (Exception e) {
+            log.error("Error al enviar código 2FA a {}: {}", destinatario, e.getMessage());
+        }
+    }
+
+    private String buildMensajeCodigoVerificacion(String nombre, String codigo) {
+        return String.format("""
+            Hola %s,
+            
+            Tu código de autenticación de dos factores es:
+            
+            %s
+            
+            Este código expirará en 10 minutos.
+            
+            IMPORTANTE: Nunca compartas este código con nadie. 
+            El equipo de Astra Nimbus Aviation nunca te pedirá este código por email.
+            
+            Saludos,
+            El equipo de Astra Nimbus Aviation
+            """, nombre, codigo);
+    }
 }

@@ -15,4 +15,6 @@ public class AuthResponse {
     private String email;
     private String nombreCompleto;
     private RolUsuario rol;
+    private Boolean requires2FA;
+    private String sessionToken; // Token temporal para verificación 2FA
 }

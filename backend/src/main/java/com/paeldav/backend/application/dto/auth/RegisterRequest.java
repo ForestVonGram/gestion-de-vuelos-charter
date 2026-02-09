@@ -30,4 +30,6 @@ public class RegisterRequest {
     private String telefono;
 
     private RolUsuario rol;
+
+    private String recaptchaToken;
 }

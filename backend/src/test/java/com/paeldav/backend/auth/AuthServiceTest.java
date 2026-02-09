@@ -1,12 +1,14 @@
 package com.paeldav.backend.auth;
 
-import com.paeldav.backend.application.dto.auth.AuthResponse;
-import com.paeldav.backend.application.dto.auth.LoginRequest;
-import com.paeldav.backend.application.dto.auth.RegisterRequest;
+import com.paeldav.backend.application.dto.auth.*;
+import com.paeldav.backend.application.service.base.DosFactoresService;
+import com.paeldav.backend.application.service.base.RecaptchaService;
 import com.paeldav.backend.application.service.base.SesionService;
 import com.paeldav.backend.application.service.impl.AuthServiceImpl;
 import com.paeldav.backend.domain.entity.SesionActiva;
 import com.paeldav.backend.domain.entity.Usuario;
+import com.paeldav.backend.domain.entity.VerificacionDosFactores;
+import com.paeldav.backend.domain.enums.MetodoDosFactores;
 import com.paeldav.backend.domain.enums.RolUsuario;
 import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
 import com.paeldav.backend.infraestructure.security.JwtService;
@@ -24,10 +26,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +52,12 @@ class AuthServiceTest {
 
     @Mock
     private SesionService sesionService;
+
+    @Mock
+    private DosFactoresService dosFactoresService;
+
+    @Mock
+    private RecaptchaService recaptchaService;
 
     @InjectMocks
     private AuthServiceImpl authService;
@@ -71,12 +81,17 @@ class AuthServiceTest {
         loginRequest = new LoginRequest();
         loginRequest.setEmail("juan@test.com");
         loginRequest.setPassword("password123");
+        loginRequest.setRecaptchaToken("valid-recaptcha");
 
         registerRequest = new RegisterRequest();
         registerRequest.setNombre("Juan");
         registerRequest.setApellido("Pérez");
         registerRequest.setEmail("juan@test.com");
         registerRequest.setPassword("password123");
+        registerRequest.setRecaptchaToken("valid-recaptcha");
+        
+        // Mock recaptcha por defecto como válido
+        when(recaptchaService.validarToken(anyString())).thenReturn(true);
     }
 
     @Nested
@@ -201,6 +216,135 @@ class AuthServiceTest {
 
             assertEquals("El email ya está registrado", exception.getMessage());
             verify(usuarioRepository, never()).save(any(Usuario.class));
+        }
+    }
+
+    @Nested
+    @DisplayName("Login con 2FA Tests")
+    class LoginDosFactoresTests {
+
+        @Test
+        @DisplayName("Login falla si reCAPTCHA no se valida")
+        void login_RecaptchaFalla_LanzaExcepcion() {
+            // Arrange
+            loginRequest.setRecaptchaToken("invalid-recaptcha");
+            when(recaptchaService.validarToken("invalid-recaptcha")).thenReturn(false);
+
+            // Act & Assert
+            assertThrows(BadCredentialsException.class, () -> {
+                authService.login(loginRequest, "Desktop", "127.0.0.1", "Mozilla");
+            });
+
+            verify(authenticationManager, never()).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        }
+
+        @Test
+        @DisplayName("Login exitoso con 2FA habilitado requiere verificación")
+        void login_Con2FAHabilitado_RequiereVerificacion() {
+            // Arrange
+            usuarioTest.setDosFactoresHabilitado(true);
+            usuarioTest.setMetodoDosFactores(MetodoDosFactores.EMAIL);
+            loginRequest.setRecaptchaToken("valid-recaptcha");
+
+            when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(new UsernamePasswordAuthenticationToken(usuarioTest.getEmail(), null));
+            when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioTest));
+            when(dosFactoresService.esActivo(usuarioTest)).thenReturn(true);
+            when(jwtService.generateToken(any(), any(), anyLong())).thenReturn("session-token-temporal");
+
+            // Act
+            AuthResponse response = authService.login(loginRequest, "Desktop", "127.0.0.1", "Mozilla");
+
+            // Assert
+            assertNotNull(response);
+            assertTrue(response.getRequires2FA());
+            assertNotNull(response.getSessionToken());
+            assertNull(response.getToken()); // No token JWT completo hasta verificar 2FA
+            verify(dosFactoresService).generarCodigoVerificacion(eq(usuarioTest), eq(MetodoDosFactores.EMAIL), anyString());
+        }
+
+        @Test
+        @DisplayName("Login exitoso sin 2FA genera token JWT inmediato")
+        void login_Sin2FA_GeneraTokenInmediato() {
+            // Arrange
+            usuarioTest.setDosFactoresHabilitado(false);
+            loginRequest.setRecaptchaToken("valid-recaptcha");
+
+            when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenReturn(new UsernamePasswordAuthenticationToken(usuarioTest.getEmail(), null));
+            when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioTest));
+            when(dosFactoresService.esActivo(usuarioTest)).thenReturn(false);
+            when(jwtService.generateToken(any())).thenReturn("jwt-token-completo");
+            when(sesionService.crearSesion(any(), anyString(), anyString(), anyString(), anyString()))
+                    .thenReturn(new SesionActiva());
+
+            // Act
+            AuthResponse response = authService.login(loginRequest, "Desktop", "127.0.0.1", "Mozilla");
+
+            // Assert
+            assertNotNull(response);
+            assertFalse(response.getRequires2FA());
+            assertEquals("jwt-token-completo", response.getToken());
+            verify(sesionService).crearSesion(any(), anyString(), anyString(), anyString(), anyString());
+        }
+    }
+
+    @Nested
+    @DisplayName("Verificación 2FA Tests")
+    class Verificacion2FATests {
+
+        private VerificacionCodigoRequest verificacionRequest;
+        private VerificacionDosFactores verificacionTest;
+
+        @BeforeEach
+        void setUp2FA() {
+            verificacionRequest = new VerificacionCodigoRequest();
+            verificacionRequest.setCodigo("123456");
+
+            verificacionTest = VerificacionDosFactores.builder()
+                    .id(1L)
+                    .usuario(usuarioTest)
+                    .codigo("123456")
+                    .verificado(false)
+                    .build();
+            
+            // Reset mocks para evitar stubbings innecesarios
+            reset(recaptchaService, authenticationManager, sesionService, dosFactoresService);
+        }
+
+        @Test
+        @DisplayName("Verificar código 2FA exitosamente")
+        void verificarCodigo_Exitoso_RetornaAuthResponse() {
+            // Arrange
+            when(dosFactoresService.verificarCodigo("123456")).thenReturn(verificacionTest);
+            when(jwtService.generateToken(any())).thenReturn("jwt-token-completo");
+            when(sesionService.crearSesion(any(), anyString(), anyString(), anyString(), anyString()))
+                    .thenReturn(new SesionActiva());
+
+            // Act
+            AuthResponse response = authService.verificarDosFactores(verificacionRequest, "Desktop", "127.0.0.1", "Mozilla");
+
+            // Assert
+            assertNotNull(response);
+            assertEquals("jwt-token-completo", response.getToken());
+            verify(dosFactoresService).marcarComoVerificado(verificacionTest);
+            verify(sesionService).crearSesion(any(), anyString(), anyString(), anyString(), anyString());
+        }
+
+        @Test
+        @DisplayName("Verificar código inválido lanza excepción")
+        void verificarCodigo_Invalido_LanzaExcepcion() {
+            // Arrange
+            when(dosFactoresService.verificarCodigo("000000"))
+                    .thenThrow(new NoSuchElementException("Código inválido"));
+            verificacionRequest.setCodigo("000000");
+
+            // Act & Assert
+            assertThrows(BadCredentialsException.class, () -> {
+                authService.verificarDosFactores(verificacionRequest, "Desktop", "127.0.0.1", "Mozilla");
+            });
         }
     }
 }
