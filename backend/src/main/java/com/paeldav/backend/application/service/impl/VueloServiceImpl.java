@@ -455,6 +455,77 @@ public class VueloServiceImpl implements VueloService {
 
     // ==================== MÉTODOS AUXILIARES ====================
 
+    // ==================== OPERACIONES DE VUELO ====================
+
+    @Override
+    @Transactional
+    public VueloDTO registrarSalidaVuelo(Long id) {
+        Vuelo vuelo = vueloRepository.findById(id)
+                .orElseThrow(() -> new VueloNoEncontradoException(
+                        "Vuelo no encontrado con ID: " + id
+                ));
+
+        // Validar que el vuelo esté en estado CONFIRMADO
+        if (vuelo.getEstado() != EstadoVuelo.CONFIRMADO) {
+            throw new VueloEstadoInvalidoException(
+                    "Solo se puede registrar salida de vuelos en estado CONFIRMADO. Estado actual: " + vuelo.getEstado()
+            );
+        }
+
+        // Registrar fecha de salida real
+        vuelo.setFechaSalidaReal(LocalDateTime.now());
+
+        // Cambiar estado a EN_VUELO
+        EstadoVuelo estadoAnterior = vuelo.getEstado();
+        vuelo.setEstado(EstadoVuelo.EN_CURSO);
+
+        vuelo = vueloRepository.save(vuelo);
+
+        // Registrar en historial
+        registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.EN_CURSO, "SALIDA_REGISTRADA",
+                "Vuelo despegó a las " + vuelo.getFechaSalidaReal());
+
+        return vueloMapper.toDTO(vuelo);
+    }
+
+    @Override
+    @Transactional
+    public VueloDTO registrarLlegadaVuelo(Long id) {
+        Vuelo vuelo = vueloRepository.findById(id)
+                .orElseThrow(() -> new VueloNoEncontradoException(
+                        "Vuelo no encontrado con ID: " + id
+                ));
+
+        // Validar que el vuelo esté en estado EN_VUELO
+        if (vuelo.getEstado() != EstadoVuelo.EN_CURSO) {
+            throw new VueloEstadoInvalidoException(
+                    "Solo se puede registrar llegada de vuelos en estado EN_VUELO. Estado actual: " + vuelo.getEstado()
+            );
+        }
+
+        // Validar que existe fecha de salida real
+        if (vuelo.getFechaSalidaReal() == null) {
+            throw new IllegalStateException(
+                    "No se puede registrar llegada sin una salida registrada anteriormente"
+            );
+        }
+
+        // Registrar fecha de llegada real
+        vuelo.setFechaLlegadaReal(LocalDateTime.now());
+
+        // Cambiar estado a COMPLETADO
+        EstadoVuelo estadoAnterior = vuelo.getEstado();
+        vuelo.setEstado(EstadoVuelo.COMPLETADO);
+
+        vuelo = vueloRepository.save(vuelo);
+
+        // Registrar en historial
+        registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.COMPLETADO, "LLEGADA_REGISTRADA",
+                "Vuelo aterrizó a las " + vuelo.getFechaLlegadaReal());
+
+        return vueloMapper.toDTO(vuelo);
+    }
+
     /**
      * Registra un cambio en el historial del vuelo.
      */

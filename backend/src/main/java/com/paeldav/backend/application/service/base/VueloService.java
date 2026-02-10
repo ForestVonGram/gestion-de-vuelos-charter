@@ -150,4 +150,30 @@ public interface VueloService {
      * @return lista de DTOs de vuelos del usuario
      */
     List<VueloDTO> obtenerVuelosPorUsuario(Long usuarioId);
+
+    // ==================== OPERACIONES DE VUELO ====================
+
+    /**
+     * Registra la salida de un vuelo.
+     * Actualiza la fecha de salida real y cambia el estado a EN_VUELO.
+     * Valida que el vuelo esté en estado CONFIRMADO.
+     *
+     * @param vueloId ID del vuelo
+     * @return DTO del vuelo con la salida registrada
+     * @throws com.paeldav.backend.exception.VueloNoEncontradoException si no existe el vuelo
+     * @throws com.paeldav.backend.exception.VueloEstadoInvalidoException si el vuelo no está en estado CONFIRMADO
+     */
+    VueloDTO registrarSalidaVuelo(Long vueloId);
+
+    /**
+     * Registra la llegada de un vuelo.
+     * Actualiza la fecha de llegada real y cambia el estado a COMPLETADO.
+     * Valida que el vuelo esté en estado EN_VUELO.
+     *
+     * @param vueloId ID del vuelo
+     * @return DTO del vuelo con la llegada registrada
+     * @throws com.paeldav.backend.exception.VueloNoEncontradoException si no existe el vuelo
+     * @throws com.paeldav.backend.exception.VueloEstadoInvalidoException si el vuelo no está en estado EN_VUELO
+     */
+    VueloDTO registrarLlegadaVuelo(Long vueloId);
 }

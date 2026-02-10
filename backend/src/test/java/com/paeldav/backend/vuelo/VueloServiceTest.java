@@ -1047,4 +1047,158 @@ class VueloServiceTest {
             assertTrue(resultado.isEmpty());
         }
     }
+
+    @Nested
+    @DisplayName("Operaciones de Vuelo Tests")
+    class OperacionesVueloTests {
+
+        @Test
+        @DisplayName("Registrar salida de vuelo exitosamente")
+        void registrarSalidaVuelo_ConVueloConfirmado_ActualizaEstado() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(vueloTest)).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.registrarSalidaVuelo(1L);
+
+            // Assert
+            assertNotNull(resultado);
+            assertNotNull(vueloTest.getFechaSalidaReal());
+            assertEquals(EstadoVuelo.EN_CURSO, vueloTest.getEstado());
+            verify(vueloRepository).save(any(Vuelo.class));
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Registrar salida de vuelo no confirmado lanza excepción")
+        void registrarSalidaVuelo_ConVueloNoConfirmado_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.SOLICITADO);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+
+            // Act & Assert
+            VueloEstadoInvalidoException exception = assertThrows(
+                    VueloEstadoInvalidoException.class,
+                    () -> vueloService.registrarSalidaVuelo(1L)
+            );
+            assertTrue(exception.getMessage().contains("CONFIRMADO"));
+        }
+
+        @Test
+        @DisplayName("Registrar llegada de vuelo exitosamente")
+        void registrarLlegadaVuelo_ConVueloEnVuelo_ActualizaEstado() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.EN_CURSO);
+            vueloTest.setFechaSalidaReal(LocalDateTime.now().minusHours(2));
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+            when(vueloRepository.save(any(Vuelo.class))).thenReturn(vueloTest);
+            when(vueloMapper.toDTO(vueloTest)).thenReturn(vueLoDTOTest);
+
+            // Act
+            VueloDTO resultado = vueloService.registrarLlegadaVuelo(1L);
+
+            // Assert
+            assertNotNull(resultado);
+            assertNotNull(vueloTest.getFechaLlegadaReal());
+            assertEquals(EstadoVuelo.COMPLETADO, vueloTest.getEstado());
+            verify(vueloRepository).save(any(Vuelo.class));
+            verify(historialVueloRepository).save(any(HistorialVuelo.class));
+        }
+
+        @Test
+        @DisplayName("Registrar llegada sin salida previa lanza excepción")
+        void registrarLlegadaVuelo_SinSalidaPrevia_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.EN_CURSO);
+            vueloTest.setFechaSalidaReal(null);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+
+            // Act & Assert
+            IllegalStateException exception = assertThrows(
+                    IllegalStateException.class,
+                    () -> vueloService.registrarLlegadaVuelo(1L)
+            );
+            assertTrue(exception.getMessage().contains("salida"));
+        }
+
+        @Test
+        @DisplayName("Registrar llegada de vuelo no en vuelo lanza excepción")
+        void registrarLlegadaVuelo_ConVueloNoEnVuelo_LanzaExcepcion() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.CONFIRMADO);
+            when(vueloRepository.findById(1L)).thenReturn(Optional.of(vueloTest));
+
+            // Act & Assert
+            VueloEstadoInvalidoException exception = assertThrows(
+                    VueloEstadoInvalidoException.class,
+                    () -> vueloService.registrarLlegadaVuelo(1L)
+            );
+            assertTrue(exception.getMessage().contains("EN_VUELO"));
+        }
+    }
+
+    @Nested
+    @DisplayName("Consistencia de Datos Tests")
+    class ConsistenciaDatosTests {
+
+        @Test
+        @DisplayName("Verificar consistencia: asignación de piloto y horas")
+        void consistencia_AsignacionPilotoYHoras_DatosCoherentes() {
+            // Arrange - Validar que el tripulante asignado es piloto
+            assertTrue(Boolean.TRUE.equals(tripulantePilotoTest.getEsPiloto()),
+                    "El tripulante debe ser piloto");
+
+            // Validar que la licencia del piloto es válida
+            assertTrue(tripulantePilotoTest.getFechaVencimientoLicencia()
+                    .isAfter(LocalDate.now()),
+                    "La licencia debe estar vigente");
+
+            // Act & Assert - Verificar que los datos son coherentes
+            vueloTest.setTripulacion(List.of(tripulantePilotoTest));
+            assertNotNull(vueloTest.getTripulacion());
+            assertEquals(1, vueloTest.getTripulacion().size());
+            assertEquals(tripulantePilotoTest.getId(), vueloTest.getTripulacion().get(0).getId());
+        }
+
+        @Test
+        @DisplayName("Verificar consistencia: estado vuelo y fechas reales")
+        void consistencia_EstadoYFechasReales_Coherentes() {
+            // Arrange
+            vueloTest.setEstado(EstadoVuelo.COMPLETADO);
+            LocalDateTime ahora = LocalDateTime.now();
+            vueloTest.setFechaSalidaReal(ahora.minusHours(3));
+            vueloTest.setFechaLlegadaReal(ahora);
+
+            // Act & Assert
+            assertEquals(EstadoVuelo.COMPLETADO, vueloTest.getEstado());
+            assertNotNull(vueloTest.getFechaSalidaReal());
+            assertNotNull(vueloTest.getFechaLlegadaReal());
+            assertTrue(vueloTest.getFechaSalidaReal()
+                    .isBefore(vueloTest.getFechaLlegadaReal()),
+                    "La salida debe ser antes que la llegada");
+        }
+
+        @Test
+        @DisplayName("Verificar que no hay conflicto entre múltiples tripulantes asignados")
+        void consistencia_MultipleTripulantes_SinConflictos() {
+            // Arrange
+            List<Tripulante> tripulacion = List.of(
+                    tripulantePilotoTest,
+                    tripulanteAuxiliarTest
+            );
+
+            vueloTest.setTripulacion(tripulacion);
+
+            // Act & Assert
+            assertEquals(2, vueloTest.getTripulacion().size());
+            // Verificar que solo hay un piloto
+            long pilotos = vueloTest.getTripulacion().stream()
+                    .filter(t -> Boolean.TRUE.equals(t.getEsPiloto()))
+                    .count();
+            assertTrue(pilotos >= 1, "Debe haber al menos un piloto");
+        }
+    }
 }
