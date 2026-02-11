@@ -78,4 +78,23 @@ public interface VueloRepository extends JpaRepository<Vuelo, Long> {
             @Param("fechaInicio") LocalDateTime fechaInicio,
             @Param("fechaFin") LocalDateTime fechaFin,
             @Param("estadosActivos") List<EstadoVuelo> estadosActivos);
+
+    /**
+     * Obtiene estadísticas de vuelos por aeronave en un rango de fechas.
+     * Retorna: [aeronaveId, matricula, totalVuelos, horasVuelo]
+     */
+    @Query("SELECT v.aeronave.id, v.aeronave.matricula, COUNT(v), COALESCE(SUM(CAST(EXTRACT(EPOCH FROM (v.fechaLlegadaReal - v.fechaSalidaReal))/3600 AS DOUBLE)), 0) " +
+           "FROM Vuelo v WHERE v.fechaSalidaReal BETWEEN :inicio AND :fin AND v.aeronave IS NOT NULL " +
+           "GROUP BY v.aeronave.id, v.aeronave.matricula")
+    List<Object[]> findEstadisticasPorAeronave(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin);
+
+    /**
+     * Encuentra vuelos de una aeronave en un rango de fechas con fecha real.
+     */
+    List<Vuelo> findByAeronaveIdAndFechaSalidaRealBetween(
+            Long aeronaveId,
+            LocalDateTime fechaInicio,
+            LocalDateTime fechaFin);
 }

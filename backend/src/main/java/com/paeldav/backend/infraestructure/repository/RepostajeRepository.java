@@ -31,4 +31,9 @@ public interface RepostajeRepository extends JpaRepository<Repostaje, Long> {
 
     @Query("SELECT r FROM Repostaje r WHERE r.aeronave.id = :aeronaveId ORDER BY r.fechaRepostaje DESC")
     List<Repostaje> findUltimosRepostajes(@Param("aeronaveId") Long aeronaveId);
+
+    /**
+     * Encuentra repostajes en un rango de fechas.
+     */
+    List<Repostaje> findByFechaRepostajeBetween(LocalDateTime inicio, LocalDateTime fin);
 }

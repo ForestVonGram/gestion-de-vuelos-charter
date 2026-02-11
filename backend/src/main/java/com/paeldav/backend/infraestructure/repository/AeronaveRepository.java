@@ -20,4 +20,9 @@ public interface AeronaveRepository extends JpaRepository<Aeronave, Long> {
     List<Aeronave> findByModelo(String modelo);
 
     List<Aeronave> findByCapacidadPasajerosGreaterThanEqual(Integer capacidad);
+
+    /**
+     * Cuenta aeronaves por estado.
+     */
+    long countByEstado(EstadoAeronave estado);
 }

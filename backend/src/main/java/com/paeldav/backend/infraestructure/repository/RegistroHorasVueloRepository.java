@@ -29,4 +29,17 @@ public interface RegistroHorasVueloRepository extends JpaRepository<RegistroHora
             @Param("fin") LocalDateTime fin);
 
     List<RegistroHorasVuelo> findByTripulanteIdAndAprobado(Long tripulanteId, Boolean aprobado);
+
+    /**
+     * Encuentra registros de horas en un rango de fechas.
+     */
+    @Query("SELECT r FROM RegistroHorasVuelo r WHERE r.fechaRegistro BETWEEN :inicio AND :fin")
+    List<RegistroHorasVuelo> findByFechaRegistroBetween(
+            @Param("inicio") LocalDateTime inicio,
+            @Param("fin") LocalDateTime fin);
+
+    /**
+     * Encuentra registros no aprobados.
+     */
+    List<RegistroHorasVuelo> findByAprobadoFalse();
 }
