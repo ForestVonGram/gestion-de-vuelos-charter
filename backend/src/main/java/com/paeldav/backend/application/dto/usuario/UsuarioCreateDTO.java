@@ -1,10 +1,7 @@
 package com.paeldav.backend.application.dto.usuario;
 
 import com.paeldav.backend.domain.enums.RolUsuario;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 /**
@@ -31,6 +28,7 @@ public class UsuarioCreateDTO {
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
     private String password;
 
+    @Pattern(regexp = "^[0-9]{7,15}$", message = "El teléfono debe contener entre 7 y 15 dígitos")
     private String telefono;
 
     @NotNull(message = "El rol es obligatorio")
