@@ -4,6 +4,7 @@ import com.paeldav.backend.exception.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -211,12 +212,19 @@ class GlobalExceptionHandlerTests {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(
                 null, bindingResult);
 
-        ResponseEntity<ValidationErrorResponse> response = exceptionHandler.handleValidationException(exception, webRequest);
+        ResponseEntity<Object> response = exceptionHandler.handleMethodArgumentNotValid(exception, new HttpHeaders(), HttpStatus.BAD_REQUEST, webRequest);
 
         assertNotNull(response);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("VALIDATION_ERROR", response.getBody().getCode());
-        assertEquals(2, response.getBody().getFieldErrors().size());
+
+        assertTrue(response.getBody() instanceof ValidationErrorResponse);
+        ValidationErrorResponse body = (ValidationErrorResponse) response.getBody();
+
+        assertEquals("VALIDATION_ERROR", body.getCode());
+        assertEquals(2, body.getFieldErrors().size());
+
+        // Verificación extra opcional
+        assertEquals("field1", body.getFieldErrors().get(0).getField());
     }
 
     @Test

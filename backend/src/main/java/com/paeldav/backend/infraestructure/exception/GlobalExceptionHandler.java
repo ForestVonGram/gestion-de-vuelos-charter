@@ -2,7 +2,9 @@ package com.paeldav.backend.infraestructure.exception;
 
 import com.paeldav.backend.exception.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -345,18 +347,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     // ============= Excepciones de Validación de Bean =============
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatusCode status,
+            WebRequest request) {
+
         log.warn("Error de validación en argumentos de método");
         List<FieldErrorDetail> fieldErrors = new ArrayList<>();
 
         ex.getBindingResult().getAllErrors().forEach(error -> {
             if (error instanceof FieldError) {
                 FieldError fieldError = (FieldError) error;
-                FieldErrorDetail errorDetail = FieldErrorDetail.builder()
+                FieldErrorDetail errorDetail = FieldErrorDetail.builder() // Asegúrate de tener este DTO/Builder
                         .field(fieldError.getField())
                         .message(fieldError.getDefaultMessage())
-                        .rejectedValue(fieldError.getRejectedValue())
+                        .rejectedValue(fieldError.getRejectedValue()) // Cuidado: esto devuelve Object, asegúrate que tu DTO lo acepte o conviértelo a String
                         .build();
                 fieldErrors.add(errorDetail);
             }
@@ -371,7 +378,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .path(request.getDescription(false).replace("uri=", ""))
                 .build();
 
-        return new ResponseEntity<>(validationResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(validationResponse, headers, status);
     }
 
     // ============= Excepción General =============
