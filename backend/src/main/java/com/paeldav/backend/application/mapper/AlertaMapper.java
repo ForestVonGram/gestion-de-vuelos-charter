@@ -28,6 +28,7 @@ public interface AlertaMapper {
     @Mapping(target = "mantenimientoRelacionado", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaResolucion", ignore = true)
+    @Mapping(target = "activa", constant = "true")
     Alerta toEntity(AlertaCreateDTO alertaCreateDTO);
 
     @Mapping(target = "id", ignore = true)
@@ -35,5 +36,6 @@ public interface AlertaMapper {
     @Mapping(target = "mantenimientoRelacionado", ignore = true)
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaResolucion", ignore = true)
+    @Mapping(target = "activa", ignore = true)
     void updateEntityFromDTO(AlertaCreateDTO alertaCreateDTO, @MappingTarget Alerta alerta);
 }

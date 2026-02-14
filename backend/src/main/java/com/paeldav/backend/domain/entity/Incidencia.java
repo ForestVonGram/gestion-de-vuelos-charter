@@ -52,6 +52,7 @@ public class Incidencia {
     private LocalDateTime fechaResolucion;
 
     @Column(name = "resuelta")
+    @Builder.Default
     private Boolean resuelta = false;
 
     @Column(name = "acciones_tomadas", columnDefinition = "TEXT")

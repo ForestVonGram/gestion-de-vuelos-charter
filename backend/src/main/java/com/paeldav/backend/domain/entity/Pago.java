@@ -47,6 +47,7 @@ public class Pago {
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private EstadoPago estado = EstadoPago.PENDIENTE;
 
     @Column(name = "referencia_mercadopago", unique = true)

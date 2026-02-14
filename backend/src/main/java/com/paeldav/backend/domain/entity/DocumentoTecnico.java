@@ -71,6 +71,7 @@ public class DocumentoTecnico {
     private String observaciones;
 
     @Column(name = "vigente")
+    @Builder.Default
     private Boolean vigente = true;
 
     @PrePersist

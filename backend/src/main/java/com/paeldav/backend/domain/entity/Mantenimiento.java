@@ -62,6 +62,7 @@ public class Mantenimiento {
     private String observaciones;
 
     @Column(name = "completado")
+    @Builder.Default
     private Boolean completado = false;
 
     @PrePersist

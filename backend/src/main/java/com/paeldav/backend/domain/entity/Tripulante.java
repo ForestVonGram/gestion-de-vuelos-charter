@@ -43,17 +43,21 @@ public class Tripulante {
     private LocalDate fechaVencimientoLicencia;
 
     @Column(name = "horas_vuelo_totales")
+    @Builder.Default
     private Double horasVueloTotales = 0.0;
 
     @Column(name = "horas_vuelo_mes")
+    @Builder.Default
     private Double horasVueloMes = 0.0;
 
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private EstadoTripulante estado = EstadoTripulante.DISPONIBLE;
 
     @Column(name = "es_piloto")
+    @Builder.Default
     private Boolean esPiloto = false;
 
     @Column(name = "certificaciones", columnDefinition = "TEXT")

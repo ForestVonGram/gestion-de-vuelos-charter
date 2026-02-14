@@ -59,11 +59,13 @@ public class Aeronave {
     private LocalDate fechaUltimaRevision;
 
     @Column(name = "horas_vuelo_totales")
+    @Builder.Default
     private Double horasVueloTotales = 0.0;
 
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private EstadoAeronave estado = EstadoAeronave.DISPONIBLE;
 
     @Column(name = "especificaciones_tecnicas", columnDefinition = "TEXT")

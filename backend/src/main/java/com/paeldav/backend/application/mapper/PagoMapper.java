@@ -24,6 +24,7 @@ public interface PagoMapper {
     @Mapping(source = "vuelo.id", target = "vueloId")
     @Mapping(source = "usuario.id", target = "usuarioId")
     @Mapping(source = "usuario.nombre", target = "usuarioNombre")
+    @Mapping(target = "urlPago", ignore = true)  // Generada por MercadoPago, no mapeada desde entity
     PagoDTO toDTO(Pago pago);
 
     /**

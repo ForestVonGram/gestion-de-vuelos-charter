@@ -21,10 +21,14 @@ public interface UsuarioMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaRegistro", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "dosFactoresHabilitado", constant = "false")
+    @Mapping(target = "metodoDosFactores", ignore = true)
     Usuario toEntity(UsuarioCreateDTO dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "fechaRegistro", ignore = true)
+    @Mapping(target = "dosFactoresHabilitado", ignore = true)
+    @Mapping(target = "metodoDosFactores", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(UsuarioUpdateDTO dto, @MappingTarget Usuario entity);
 }

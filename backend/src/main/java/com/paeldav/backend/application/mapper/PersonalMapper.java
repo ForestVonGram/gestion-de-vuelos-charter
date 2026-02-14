@@ -30,6 +30,7 @@ public interface PersonalMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuario", ignore = true)
     @Mapping(target = "numeroEmpleado", ignore = true)
+    @Mapping(target = "estado", ignore = true)  // El estado NO puede cambiar en actualización
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(PersonalCreateDTO dto, @MappingTarget Personal entity);
 

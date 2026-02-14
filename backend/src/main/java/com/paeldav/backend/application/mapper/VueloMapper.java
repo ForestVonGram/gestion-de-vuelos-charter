@@ -12,6 +12,12 @@ import java.util.List;
 
 /**
  * Mapper para convertir entre Vuelo entity y sus DTOs.
+ * 
+ * NOTA IMPORTANTE sobre relaciones:
+ * - pagos: Se gestiona INDEPENDIENTEMENTE a través de PagoService
+ *   Los pagos se crean/actualizan por separado, no como parte del mapeo de Vuelo
+ * - tripulacion: Se asigna a través de endpoint específico de asignación
+ * - incidencias, pasajeros, registrosHoras, repostajes: Relaciones inversas que se crean independientemente
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface VueloMapper {
@@ -49,6 +55,7 @@ public interface VueloMapper {
     @Mapping(target = "pasajeros", ignore = true)
     @Mapping(target = "registrosHoras", ignore = true)
     @Mapping(target = "repostajes", ignore = true)
+    @Mapping(target = "pagos", ignore = true)  // Gestión independiente a través de PagoService
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromDTO(VueloUpdateDTO dto, @MappingTarget Vuelo entity);
 

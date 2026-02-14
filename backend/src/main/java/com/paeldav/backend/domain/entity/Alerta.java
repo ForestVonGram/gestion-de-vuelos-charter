@@ -46,6 +46,7 @@ public class Alerta {
     private LocalDateTime fechaResolucion;
 
     @Column(name = "activa", nullable = false)
+    @Builder.Default
     private Boolean activa = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

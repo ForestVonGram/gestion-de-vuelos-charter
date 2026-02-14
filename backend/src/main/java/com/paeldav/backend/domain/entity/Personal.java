@@ -42,6 +42,7 @@ public class Personal {
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private EstadoPersonal estado = EstadoPersonal.ACTIVO;
 
     @Column(name = "area_especializacion")

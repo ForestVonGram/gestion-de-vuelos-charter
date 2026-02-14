@@ -56,6 +56,7 @@ public class Usuario {
     private LocalDateTime fechaRegistro;
 
     @Column(name = "activo")
+    @Builder.Default
     private Boolean activo = true;
 
     @Column(name = "dos_factores_habilitado")

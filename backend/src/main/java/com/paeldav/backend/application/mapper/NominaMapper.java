@@ -11,6 +11,12 @@ import java.util.List;
 
 /**
  * Mapper para convertir entre Nomina entity y sus DTOs.
+ * 
+ * NOTA IMPORTANTE sobre cálculos automáticos:
+ * - totalNeto: Se calcula automáticamente en @PrePersist/@PreUpdate usando la fórmula:
+ *   totalNeto = salarioBase + bonificaciones - deducciones
+ * - fechaGeneracion: Se asigna automáticamente en @PrePersist
+ * - estado: Se inicializa como PENDIENTE por defecto
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface NominaMapper {

@@ -12,6 +12,11 @@ import java.util.List;
 
 /**
  * Mapper MapStruct para conversión entre DocumentoTecnico y sus DTOs.
+ * 
+ * NOTA IMPORTANTE sobre cálculos automáticos:
+ * - vigente: Se asigna automáticamente como true en @PrePersist de la entidad
+ * - fechaCarga: Se asigna automáticamente en @PrePersist si es null
+ * - vigente se recalcula en @PreUpdate basado en fechaVencimiento
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface DocumentoTecnicoMapper {
@@ -32,6 +37,7 @@ public interface DocumentoTecnicoMapper {
     @Mapping(target = "fechaCarga", ignore = true)
     @Mapping(target = "tamañoBytes", ignore = true)
     @Mapping(target = "tipoArchivo", ignore = true)
+    @Mapping(target = "vigente", constant = "true")  // Asignado automáticamente en @PrePersist
     DocumentoTecnico toEntity(DocumentoTecnicoCreateDTO dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

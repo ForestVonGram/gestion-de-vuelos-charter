@@ -73,6 +73,7 @@ public class Vuelo {
     @NotNull(message = "El estado es obligatorio")
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private EstadoVuelo estado = EstadoVuelo.SOLICITADO;
 
     @Column(name = "proposito", columnDefinition = "TEXT")

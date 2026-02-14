@@ -61,6 +61,7 @@ public class RegistroHorasVuelo {
     private String observaciones;
 
     @Column(name = "aprobado")
+    @Builder.Default
     private Boolean aprobado = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
