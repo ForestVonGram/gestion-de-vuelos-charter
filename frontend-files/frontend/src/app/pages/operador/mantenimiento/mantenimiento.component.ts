@@ -4,8 +4,8 @@ import { MantenimientoService, Mantenimiento } from '../../../services/operador/
 
 @Component({
   selector: 'app-mantenimiento',
-  templateUrl: './mantenimiento.html',
-  styleUrls: ['./mantenimiento.css'],
+  templateUrl: './mantenimiento.component.html',
+  styleUrls: ['./mantenimiento.component.css'],
   standalone: true,
   imports: [CommonModule]
 })

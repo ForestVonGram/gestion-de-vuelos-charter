@@ -1,14 +1,19 @@
 import { Routes } from '@angular/router';
-import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento';
+import { LoginComponent } from './pages/auth/login/login.component';
 
 export const routes: Routes = [
   {
-    path: 'mantenimientos',
-    component: MantenimientoComponent
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
   },
   {
-    path: '',
-    redirectTo: 'mantenimientos',
-    pathMatch: 'full'
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        component: LoginComponent
+      }
+    ]
   }
 ];
