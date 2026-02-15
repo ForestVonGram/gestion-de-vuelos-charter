@@ -1,0 +1,92 @@
+<div class="dashboard-container">
+  <div class="detail-header">
+    <button class="back-button" (click)="volver()">
+      <span class="back-icon">←</span> Volver
+    </button>
+    <h1>Detalle de Mantenimiento</h1>
+  </div>
+
+  <div *ngIf="mantenimiento" class="detail-card">
+    <!-- Estado y título -->
+    <div class="detail-status-bar" [ngClass]="mantenimiento.completado ? 'status-completed' : 'status-pending'">
+      <div class="status-indicator">
+        <span class="status-dot"></span>
+        <span class="status-text">{{ mantenimiento.completado ? 'COMPLETADO' : 'EN PROCESO' }}</span>
+      </div>
+      <div class="matricula-badge">{{ mantenimiento.aeronaveMatricula }}</div>
+    </div>
+
+    <!-- Información principal -->
+    <div class="detail-content">
+      <div class="detail-section">
+        <h2>Información General</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Tipo de Mantenimiento:</span>
+            <span class="detail-value" [ngClass]="mantenimiento.tipo === 'PREVENTIVO' ? 'tipo-preventivo' : 'tipo-correctivo'">
+              {{ mantenimiento.tipo }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Descripción:</span>
+            <span class="detail-value">{{ mantenimiento.descripcion }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha Inicio:</span>
+            <span class="detail-value">{{ mantenimiento.fechaInicio | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha Fin:</span>
+            <span class="detail-value">{{ mantenimiento.fechaFin ? (mantenimiento.fechaFin | date:'dd/MM/yyyy HH:mm') : 'Pendiente' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Responsable:</span>
+            <span class="detail-value">{{ mantenimiento.responsableNombre }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Costo:</span>
+            <span class="detail-value costo">{{ mantenimiento.costo | currency:'USD':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reemplaza esta sección: -->
+      <div class="detail-section">
+        <h2>Datos de la Aeronave</h2>
+        <div class="detail-grid aeronave-grid">
+          <div class="detail-item">
+            <span class="detail-label">ID Aeronave</span>
+            <span class="detail-value">{{ mantenimiento.aeronaveId }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Kilometraje</span>
+            <span class="detail-value">{{ mantenimiento.kilometrajeAeronave | number }} km</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Horas de Vuelo</span>
+            <span class="detail-value">{{ mantenimiento.horasVueloAeronave | number }} hrs</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Observaciones -->
+      <div class="detail-section">
+        <h2>Observaciones</h2>
+        <div class="observations-box">
+          <p>{{ mantenimiento.observaciones || 'Sin observaciones registradas' }}</p>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="detail-actions" *ngIf="!mantenimiento.completado">
+        <button class="btn-primary" (click)="completarMantenimiento()">
+          Marcar como Completado
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!mantenimiento" class="loading">
+    Cargando detalle del mantenimiento...
+  </div>
+</div>

@@ -1,0 +1,254 @@
+<div class="form-container">
+  <!-- Header -->
+  <div class="form-header">
+    <button class="back-button" (click)="cancelar()">
+      <span class="back-icon">←</span> Volver
+    </button>
+    <h1>{{ isEditMode ? 'Editar Mantenimiento' : 'Nuevo Mantenimiento' }}</h1>
+    <div class="header-spacer"></div>
+  </div>
+
+  <!-- Formulario -->
+  <form [formGroup]="mantenimientoForm" (ngSubmit)="onSubmit()" class="elegant-form">
+
+    <!-- Estado (solo visible en edición) -->
+    <div class="status-section" *ngIf="isEditMode">
+      <div class="status-toggle">
+        <label class="toggle-label">
+          <span class="toggle-text">Completado</span>
+          <div class="toggle-switch">
+            <input type="checkbox" formControlName="completado" id="completado">
+            <label for="completado" class="toggle-slider"></label>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Sección: Información de la Aeronave -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="section-icon">✈️</span>
+        <h2>Información de la Aeronave</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="aeronave_matricula">
+            Matrícula
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="aeronave_matricula"
+            formControlName="aeronave_matricula"
+            placeholder="LV-ABC"
+            [class.invalid]="isFieldInvalid('aeronave_matricula')"
+          >
+          <span class="field-hint">Formato: LV-ABC</span>
+          <span class="error-message" *ngIf="isFieldInvalid('aeronave_matricula')">
+            {{ getErrorMessage('aeronave_matricula') }}
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="responsable_nombre">
+            Responsable
+            <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            id="responsable_nombre"
+            formControlName="responsable_nombre"
+            placeholder="Nombre del responsable"
+            [class.invalid]="isFieldInvalid('responsable_nombre')"
+          >
+          <span class="error-message" *ngIf="isFieldInvalid('responsable_nombre')">
+            {{ getErrorMessage('responsable_nombre') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Tipo y Descripción -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="section-icon">🔧</span>
+        <h2>Tipo y Descripción</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="tipo">
+            Tipo de Mantenimiento
+            <span class="required">*</span>
+          </label>
+          <div class="tipo-options">
+            <div class="tipo-option" *ngFor="let tipo of tipos_mantenimiento">
+              <input
+                type="radio"
+                [id]="'tipo_' + tipo.value"
+                [value]="tipo.value"
+                formControlName="tipo"
+              >
+              <label [for]="'tipo_' + tipo.value">
+                <span class="tipo-icon">{{ tipo.icon }}</span>
+                <span class="tipo-label">{{ tipo.label }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-field full-width">
+          <label for="descripcion">
+            Descripción
+            <span class="required">*</span>
+          </label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Describa el mantenimiento a realizar..."
+            [class.invalid]="isFieldInvalid('descripcion')"
+          ></textarea>
+          <span class="field-hint">Mínimo 10 caracteres</span>
+          <span class="error-message" *ngIf="isFieldInvalid('descripcion')">
+            {{ getErrorMessage('descripcion') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Fechas -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📅</span>
+        <h2>Fechas</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="fecha_inicio">
+            Fecha de Inicio
+            <span class="required">*</span>
+          </label>
+          <input
+            type="datetime-local"
+            id="fecha_inicio"
+            formControlName="fecha_inicio"
+            [class.invalid]="isFieldInvalid('fecha_inicio')"
+          >
+          <span class="error-message" *ngIf="isFieldInvalid('fecha_inicio')">
+            {{ getErrorMessage('fecha_inicio') }}
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="fecha_fin">Fecha de Finalización</label>
+          <input
+            type="datetime-local"
+            id="fecha_fin"
+            formControlName="fecha_fin"
+          >
+          <span class="field-hint">Dejar vacío si está en proceso</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Datos Técnicos -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📊</span>
+        <h2>Datos Técnicos</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="kilometraje_aeronave">
+            Kilometraje
+            <span class="required">*</span>
+          </label>
+          <input
+            type="number"
+            id="kilometraje_aeronave"
+            formControlName="kilometraje_aeronave"
+            placeholder="0"
+            [class.invalid]="isFieldInvalid('kilometraje_aeronave')"
+          >
+          <span class="field-hint">km</span>
+          <span class="error-message" *ngIf="isFieldInvalid('kilometraje_aeronave')">
+            {{ getErrorMessage('kilometraje_aeronave') }}
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="horas_vuelo_aeronave">
+            Horas de Vuelo
+            <span class="required">*</span>
+          </label>
+          <input
+            type="number"
+            id="horas_vuelo_aeronave"
+            formControlName="horas_vuelo_aeronave"
+            placeholder="0"
+            [class.invalid]="isFieldInvalid('horas_vuelo_aeronave')"
+          >
+          <span class="field-hint">hrs</span>
+          <span class="error-message" *ngIf="isFieldInvalid('horas_vuelo_aeronave')">
+            {{ getErrorMessage('horas_vuelo_aeronave') }}
+          </span>
+        </div>
+
+        <div class="form-field">
+          <label for="costo">
+            Costo
+            <span class="required">*</span>
+          </label>
+          <input
+            type="number"
+            id="costo"
+            formControlName="costo"
+            placeholder="0.00"
+            [class.invalid]="isFieldInvalid('costo')"
+          >
+          <span class="field-hint">USD</span>
+          <span class="error-message" *ngIf="isFieldInvalid('costo')">
+            {{ getErrorMessage('costo') }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección: Observaciones -->
+    <div class="form-section">
+      <div class="section-header">
+        <span class="section-icon">📝</span>
+        <h2>Observaciones</h2>
+      </div>
+
+      <div class="form-field full-width">
+        <textarea
+          id="observaciones"
+          formControlName="observaciones"
+          rows="4"
+          placeholder="Notas adicionales sobre el mantenimiento..."
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancelar()">
+        Cancelar
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="mantenimientoForm.invalid && submitted">
+        <span class="btn-icon">{{ isEditMode ? '💾' : '➕' }}</span>
+        {{ isEditMode ? 'Actualizar' : 'Crear' }} Mantenimiento
+      </button>
+    </div>
+
+    <!-- Mensaje de error general -->
+    <div class="form-error" *ngIf="submitted && mantenimientoForm.invalid">
+      Por favor, complete todos los campos requeridos correctamente.
+    </div>
+  </form>
+</div>
