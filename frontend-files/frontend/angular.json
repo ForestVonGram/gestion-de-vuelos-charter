@@ -16,6 +16,9 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "loader": {
+              ".ttf": "binary"
+            },
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [

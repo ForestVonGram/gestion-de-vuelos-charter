@@ -1,3 +1,25 @@
+/* Font Faces */
+@font-face {
+  font-family: 'Archivo Black';
+  src: url('../assets/fuentes/ArchivoBlack-Regular.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Jost';
+  src: url('../assets/fuentes/Jost-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Libre Franklin';
+  src: url('../assets/fuentes/LibreFranklin-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
 /* Color Palette - "Under the moonlight" */
 :root {
   --color-light: #CCCCFF;
