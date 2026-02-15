@@ -3,9 +3,17 @@ import { LoginComponent } from './pages/auth/login/login.component';
 
 export const routes: Routes = [
   {
-    path: 'login', component: LoginComponent
+    path: '',
+    redirectTo: 'auth/login',
+    pathMatch: 'full'
   },
   {
-    path: '', redirectTo: 'login', pathMatch: 'full'
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        component: LoginComponent
+      }
+    ]
   }
 ];
