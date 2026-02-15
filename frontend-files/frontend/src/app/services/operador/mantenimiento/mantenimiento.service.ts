@@ -19,6 +19,18 @@ export interface Mantenimiento {
   completado: boolean;
 }
 
+export interface MantenimientoCreate {
+  aeronaveId: number;
+  tipo: string;
+  descripcion: string;
+  fechaInicio?: string;
+  responsableId?: number;
+  costo?: number;
+  kilometrajeAeronave?: number;
+  horasVueloAeronave?: number;
+  observaciones?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -82,21 +94,50 @@ export class MantenimientoService {
 
   obtenerTodos(): Observable<Mantenimiento[]> {
     // return this.http.get<Mantenimiento[]>(this.apiUrl);
-    // Por ahora retornamos datos de prueba
     return of(this.datosPrueba);
   }
 
   obtenerPorId(id: number): Observable<Mantenimiento> {
     // return this.http.get<Mantenimiento>(`${this.apiUrl}/${id}`);
-    // Datos de prueba
     const mantenimiento = this.datosPrueba.find(m => m.id === id);
-
     if (mantenimiento) {
       return of(mantenimiento);
     } else {
-      // Si no encuentra el mantenimiento, retorna un error
       return throwError(() => new Error(`Mantenimiento con id ${id} no encontrado`));
     }
+  }
+
+  crearMantenimiento(data: MantenimientoCreate): Observable<Mantenimiento> {
+    // return this.http.post<Mantenimiento>(this.apiUrl, data);
+    // Simulación para pruebas
+    const nuevoMantenimiento: Mantenimiento = {
+      id: this.datosPrueba.length + 1,
+      aeronaveId: data.aeronaveId,
+      aeronaveMatricula: this.getMatriculaFromId(data.aeronaveId),
+      tipo: data.tipo,
+      descripcion: data.descripcion,
+      fechaInicio: data.fechaInicio || new Date().toISOString(),
+      fechaFin: '',
+      responsableId: data.responsableId || 1,
+      responsableNombre: this.getResponsableNombre(data.responsableId || 1),
+      costo: data.costo || 0,
+      kilometrajeAeronave: data.kilometrajeAeronave || 0,
+      horasVueloAeronave: data.horasVueloAeronave || 0,
+      observaciones: data.observaciones || '',
+      completado: false
+    };
+    this.datosPrueba.push(nuevoMantenimiento);
+    return of(nuevoMantenimiento);
+  }
+
+  actualizarMantenimiento(id: number, data: Partial<MantenimientoCreate>): Observable<Mantenimiento> {
+    // return this.http.put<Mantenimiento>(`${this.apiUrl}/${id}`, data);
+    const index = this.datosPrueba.findIndex(m => m.id === id);
+    if (index !== -1) {
+      this.datosPrueba[index] = { ...this.datosPrueba[index], ...data };
+      return of(this.datosPrueba[index]);
+    }
+    return throwError(() => new Error(`Mantenimiento con id ${id} no encontrado`));
   }
 
   obtenerPendientes(): Observable<Mantenimiento[]> {
@@ -114,5 +155,26 @@ export class MantenimientoService {
         }
       }
     );
+  }
+
+  // Métodos auxiliares para datos de prueba
+  private getMatriculaFromId(aeronaveId: number): string {
+    const mapa: { [key: number]: string } = {
+      101: 'LV-ABC',
+      102: 'LV-XYZ',
+      103: 'LV-DEF'
+    };
+    return mapa[aeronaveId] || 'LV-XXX';
+  }
+
+  private getResponsableNombre(responsableId: number): string {
+    const mapa: { [key: number]: string } = {
+      1: 'Carlos Rodríguez',
+      2: 'María González',
+      3: 'Juan Pérez',
+      4: 'Ana Martínez',
+      5: 'Luis Sánchez'
+    };
+    return mapa[responsableId] || 'Responsable';
   }
 }

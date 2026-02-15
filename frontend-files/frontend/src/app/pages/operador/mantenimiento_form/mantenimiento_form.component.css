@@ -413,3 +413,54 @@ input:checked + .toggle-slider:before {
 .form-section:nth-child(3) { animation-delay: 0.3s; }
 .form-section:nth-child(4) { animation-delay: 0.4s; }
 .form-section:nth-child(5) { animation-delay: 0.5s; }
+
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--color-light);
+  border-top-color: var(--color-mid);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Mejoras para los radio buttons */
+.tipo-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: #f8f9fa;
+  border: 2px solid var(--color-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tipo-desc {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-align: center;
+}
+
+.tipo-option input[type="radio"]:checked + label .tipo-desc {
+  color: var(--color-dark);
+}

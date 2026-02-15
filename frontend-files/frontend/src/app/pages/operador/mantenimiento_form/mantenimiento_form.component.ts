@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
 
 @Component({
   selector: 'app-mantenimiento-form',
@@ -14,44 +15,51 @@ export class MantenimientoFormComponent implements OnInit {
   mantenimientoForm: FormGroup;
   isEditMode: boolean = false;
   submitted = false;
+  loading = false;
+  mantenimientoId: number | null = null;
 
+  // Tipos de mantenimiento según el enum del backend
   tipos_mantenimiento = [
-    { value: 'PREVENTIVO', label: 'Preventivo', icon: '🔧' },
-    { value: 'CORRECTIVO', label: 'Correctivo', icon: '⚙️' },
-    { value: 'PREDICTIVO', label: 'Predictivo', icon: '📊' }
+    { value: 'PREVENTIVO', label: 'Preventivo', icon: '🔧', desc: 'Mantenimiento programado' },
+    { value: 'CORRECTIVO', label: 'Correctivo', icon: '⚙️', desc: 'Reparación de fallas' },
+    { value: 'REPOSTAJE', label: 'Repostaje', icon: '⛽', desc: 'Carga de combustible' },
+    { value: 'INSPECCION', label: 'Inspección', icon: '🔍', desc: 'Inspección técnica' }
+  ];
+
+  // Datos de ejemplo para selects (esto vendría del backend)
+  aeronaves = [
+    { id: 101, matricula: 'LV-ABC' },
+    { id: 102, matricula: 'LV-XYZ' },
+    { id: 103, matricula: 'LV-DEF' }
+  ];
+
+  responsables = [
+    { id: 1, nombre: 'Carlos Rodríguez' },
+    { id: 2, nombre: 'María González' },
+    { id: 3, nombre: 'Juan Pérez' },
+    { id: 4, nombre: 'Ana Martínez' },
+    { id: 5, nombre: 'Luis Sánchez' }
   ];
 
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private mantenimientoService: MantenimientoService
   ) {
     this.mantenimientoForm = this.fb.group({
-      // Información de la aeronave
-      aeronave_matricula: ['', [Validators.required, Validators.pattern('^[A-Z]{2}-[A-Z0-9]{3}$')]],
-
-      // Tipo y descripción
+      // Según MantenimientoCreateDTO
+      aeronaveId: ['', Validators.required],
       tipo: ['PREVENTIVO', Validators.required],
       descripcion: ['', [Validators.required, Validators.minLength(10)]],
-
-      // Fechas
-      fecha_inicio: [this.getCurrentDateTime(), Validators.required],
-      fecha_fin: [''],
-
-      // Responsable
-      responsable_nombre: ['', Validators.required],
-
-      // Costos
+      fechaInicio: [this.getCurrentDateTime(), Validators.required],
+      responsableId: ['', Validators.required],
       costo: ['', [Validators.required, Validators.min(0)]],
-
-      // Datos técnicos
-      kilometraje_aeronave: ['', [Validators.required, Validators.min(0)]],
-      horas_vuelo_aeronave: ['', [Validators.required, Validators.min(0)]],
-
-      // Observaciones
+      kilometrajeAeronave: ['', [Validators.required, Validators.min(0)]],
+      horasVueloAeronave: ['', [Validators.required, Validators.min(0)]],
       observaciones: [''],
 
-      // Estado
+      // Campo adicional para el DTO de respuesta (solo en edición)
       completado: [false]
     });
   }
@@ -60,8 +68,8 @@ export class MantenimientoFormComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEditMode = true;
-      // Aquí cargarías los datos del mantenimiento
-      this.cargarDatosPrueba();
+      this.mantenimientoId = Number(id);
+      this.cargarMantenimiento(this.mantenimientoId);
     }
   }
 
@@ -70,20 +78,30 @@ export class MantenimientoFormComponent implements OnInit {
     return now.toISOString().slice(0, 16);
   }
 
-  cargarDatosPrueba() {
-    // Datos de ejemplo para edición
-    this.mantenimientoForm.patchValue({
-      aeronave_matricula: 'LV-ABC',
-      tipo: 'PREVENTIVO',
-      descripcion: 'Inspección anual de motor y sistemas',
-      fecha_inicio: '2024-02-15T08:00',
-      fecha_fin: '',
-      responsable_nombre: 'Carlos Rodríguez',
-      costo: 2500,
-      kilometraje_aeronave: 15000,
-      horas_vuelo_aeronave: 1200,
-      observaciones: 'Cambio de aceite y filtros programado',
-      completado: false
+  cargarMantenimiento(id: number): void {
+    this.loading = true;
+    this.mantenimientoService.obtenerPorId(id).subscribe({
+      next: (data) => {
+        this.mantenimientoForm.patchValue({
+          aeronaveId: data.aeronaveId,
+          tipo: data.tipo,
+          descripcion: data.descripcion,
+          fechaInicio: data.fechaInicio.slice(0, 16),
+          responsableId: data.responsableId,
+          costo: data.costo,
+          kilometrajeAeronave: data.kilometrajeAeronave,
+          horasVueloAeronave: data.horasVueloAeronave,
+          observaciones: data.observaciones,
+          completado: data.completado
+        });
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar mantenimiento:', error);
+        alert('Error al cargar los datos del mantenimiento');
+        this.loading = false;
+        this.router.navigate(['/mantenimientos']);
+      }
     });
   }
 
@@ -95,16 +113,38 @@ export class MantenimientoFormComponent implements OnInit {
       return;
     }
 
-    console.log('Datos del formulario:', this.mantenimientoForm.value);
+    this.loading = true;
+    const formData = this.mantenimientoForm.value;
 
-    // Aquí iría la llamada al servicio
-    if (this.isEditMode) {
-      alert('Mantenimiento actualizado exitosamente');
+    if (this.isEditMode && this.mantenimientoId) {
+      // Actualizar mantenimiento existente
+      this.mantenimientoService.actualizarMantenimiento(this.mantenimientoId, formData).subscribe({
+        next: () => {
+          this.loading = false;
+          alert('Mantenimiento actualizado exitosamente');
+          this.router.navigate(['/mantenimientos', this.mantenimientoId]);
+        },
+        error: (error) => {
+          console.error('Error al actualizar:', error);
+          this.loading = false;
+          alert('Error al actualizar el mantenimiento');
+        }
+      });
     } else {
-      alert('Mantenimiento creado exitosamente');
+      // Crear nuevo mantenimiento
+      this.mantenimientoService.crearMantenimiento(formData).subscribe({
+        next: (nuevoMantenimiento) => {
+          this.loading = false;
+          alert('Mantenimiento creado exitosamente');
+          this.router.navigate(['/mantenimientos', nuevoMantenimiento.id]);
+        },
+        error: (error) => {
+          console.error('Error al crear:', error);
+          this.loading = false;
+          alert('Error al crear el mantenimiento');
+        }
+      });
     }
-
-    this.router.navigate(['/mantenimientos']);
   }
 
   markFormGroupTouched(formGroup: FormGroup) {
@@ -117,9 +157,8 @@ export class MantenimientoFormComponent implements OnInit {
   }
 
   cancelar(): void {
-    if (this.isEditMode) {
-      const id = this.route.snapshot.paramMap.get('id');
-      this.router.navigate(['/mantenimientos', id]);
+    if (this.isEditMode && this.mantenimientoId) {
+      this.router.navigate(['/mantenimientos', this.mantenimientoId]);
     } else {
       this.router.navigate(['/mantenimientos']);
     }
@@ -137,8 +176,12 @@ export class MantenimientoFormComponent implements OnInit {
     if (control.errors?.['required']) return 'Este campo es requerido';
     if (control.errors?.['minlength']) return `Mínimo ${control.errors['minlength'].requiredLength} caracteres`;
     if (control.errors?.['min']) return 'El valor debe ser mayor a 0';
-    if (control.errors?.['pattern']) return 'Formato inválido (ej: LV-ABC)';
 
     return '';
+  }
+
+  getAeronaveMatricula(aeronaveId: number): string {
+    const aeronave = this.aeronaves.find(a => a.id === aeronaveId);
+    return aeronave ? aeronave.matricula : '';
   }
 }
