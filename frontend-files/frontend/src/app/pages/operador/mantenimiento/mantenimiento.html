@@ -1,0 +1,56 @@
+<div class="dashboard-container">
+
+  <h1>Maintenance Control Center</h1>
+
+  <!-- KPIs -->
+  <div class="kpi-container">
+    <div class="kpi-card">
+      <h3>Pendientes</h3>
+      <p>{{ pendientes }}</p>
+    </div>
+
+    <div class="kpi-card">
+      <h3>En Proceso</h3>
+      <p>{{ enProceso }}</p>
+    </div>
+
+    <div class="kpi-card">
+      <h3>Completados</h3>
+      <p>{{ completados }}</p>
+    </div>
+
+    <div class="kpi-card">
+      <h3>Costo Total</h3>
+      <p>{{ costoTotal | currency }}</p>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+    <tr>
+      <th>Matrícula</th>
+      <th>Tipo</th>
+      <th>Fecha Inicio</th>
+      <th>Responsable</th>
+      <th>Costo</th>
+      <th>Estado</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let m of mantenimientos">
+      <td>{{ m.aeronaveMatricula }}</td>
+      <td>{{ m.tipo }}</td>
+      <td>{{ m.fechaInicio | date }}</td>
+      <td>{{ m.responsableNombre }}</td>
+      <td>{{ m.costo | currency }}</td>
+      <td>
+          <span [ngClass]="m.completado ? 'completed' : 'pending'">
+            {{ m.completado ? 'Completado' : 'Pendiente' }}
+          </span>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
