@@ -9,8 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 
 // Enum simulado basado en tu DTO (ajustalo según tu backend real)
 export enum RolUsuario {
-  CLIENTE = 'CLIENTE',
-  ADMIN = 'ADMIN'
+  USUARIO = 'USUARIO',
+  ADMINISTRADOR = 'ADMINISTRADOR'
 }
 
 @Component({
@@ -87,7 +87,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
             email: this.registerForm.get('email')?.value,
             password: this.registerForm.get('password')?.value,
             telefono: this.registerForm.get('telefono')?.value || null,
-            rol: RolUsuario.CLIENTE,
+            rol: RolUsuario.USUARIO,
             recaptchaToken: token
           };
 
