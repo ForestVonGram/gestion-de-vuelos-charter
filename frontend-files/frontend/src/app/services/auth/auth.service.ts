@@ -8,6 +8,16 @@ export interface LoginRequest {
   recaptchaToken?: string;
 }
 
+export interface RegisterRequest {
+  nombre: string;
+  apellido: string;
+  email: string;
+  password: string;
+  telefono?: string | null;
+  rol: string;
+  recaptchaToken?: string;
+}
+
 export interface AuthResponse {
   token: string;
   tokenType: string;
@@ -48,6 +58,13 @@ export class AuthService {
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request)
+      .pipe(
+        tap(response => this.handleAuthResponse(response))
+      );
+  }
+
+  register(request: RegisterRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request)
       .pipe(
         tap(response => this.handleAuthResponse(response))
       );
