@@ -19,7 +19,12 @@
       <div class="user-profile-container">
 
         <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
-          <i class="fas fa-user"></i>
+          <img
+            src="assets/icons/user_account.svg"
+            alt="Perfil"
+            class="avatar-img"
+            onerror="this.src='https://i.pravatar.cc/150?img=68'"
+            >
         </div>
 
         <div class="dropdown-menu" *ngIf="isDropdownOpen">

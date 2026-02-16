@@ -83,10 +83,16 @@
   text-shadow: 0 0 10px var(--color-mid);
 }
 
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* CRÍTICO: Recorta la imagen para que llene el círculo sin estirarse */
+  display: block;
+}
+
 .user-avatar {
   width: 45px;
   height: 45px;
-  background-color: var(--color-error);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -95,7 +101,10 @@
   cursor: pointer;
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
-  border: 2px solid transparent;
+  padding: 0;
+  background-color: transparent;
+  overflow: hidden; /* Asegura que la imagen no se salga de los bordes redondeados */
+  border: 2px solid var(--color-white); /* Opcional: un borde blanco fino queda elegante */
 }
 
 .user-avatar:hover, .user-avatar:active {
@@ -141,14 +150,16 @@
 .menu-user-name {
   font-family: 'Archivo Black', sans-serif;
   color: var(--color-dark);
-  font-size: 1rem;
+  font-size: 1.1rem;
+  margin-bottom: 2px;
 }
 
 .menu-user-email {
   font-family: 'Libre Franklin', sans-serif;
-  color: #666; /* Gris suave */
+  color: #555;
   font-size: 0.85rem;
   font-style: italic;
+  font-weight: 500;
 }
 
 .menu-divider {
@@ -162,7 +173,7 @@
   align-items: center;
   gap: 10px;
   padding: 0.8rem 1.5rem;
-  color: var(--color-dark);
+  color: var(--color-dark) !important;
   font-family: 'Libre Franklin', sans-serif;
   text-decoration: none;
   font-size: 0.95rem;
@@ -173,7 +184,7 @@
 .menu-item i {
   width: 20px;
   text-align: center;
-  color: var(--color-mid);
+  color: var(--color-dark);
 }
 
 .menu-item:hover {
@@ -182,11 +193,11 @@
 }
 
 .logout-item {
-  color: var(--color-error);
+  color: var(--color-error) !important;
 }
 
 .logout-item i {
-  color: var(--color-error);
+  color: var(--color-error) !important;
 }
 
 .logout-item:hover {
