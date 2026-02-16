@@ -1,0 +1,109 @@
+<div class="dashboard-container">
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-container">
+        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+      </div>
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a routerLink="/precios">Precios</a>
+      <a routerLink="/servicios">Servicios</a>
+      <a routerLink="/about">Sobre nosotros</a>
+
+      <div class="user-profile-container">
+
+        <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+          <i class="fas fa-user"></i>
+        </div>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+
+          <div class="menu-header">
+            <span class="menu-user-name">{{ userName }}</span>
+            <span class="menu-user-email">{{ userEmail }}</span>
+          </div>
+
+          <div class="menu-divider"></div>
+
+          <a href="#" class="menu-item">
+            <i class="fas fa-user-circle"></i> Mi Perfil
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-ticket-alt"></i> Mis Vuelos
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+
+          <div class="menu-divider"></div>
+
+          <a (click)="logout()" class="menu-item logout-item">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero-section">
+
+    <div class="search-widget">
+
+      <div class="input-group">
+        <label>¿Dónde estás?</label>
+        <select class="custom-select">
+          <option>Armenia</option>
+          <option>Bogotá</option>
+          <option>Medellín</option>
+        </select>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="input-group">
+        <label>¿A dónde vas?</label>
+        <select class="custom-select">
+          <option>Bogotá</option>
+          <option>Cartagena</option>
+          <option>Miami</option>
+        </select>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="input-group small">
+        <label>¿Cuántos son?</label>
+        <select class="custom-select">
+          <option>1</option>
+          <option>2</option>
+          <option>5</option>
+        </select>
+      </div>
+
+      <button class="search-btn" (click)="onSearchFlight()">
+        Buscar Vuelo
+      </button>
+
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="welcome-text">
+      <h1>Bienvenido {{ userName }}</h1>
+      <p>Tenemos una amplia flota de aviones esperando para ti</p>
+    </div>
+
+    <div class="fleet-showcase">
+      <div class="fleet-circle" *ngFor="let img of fleetImages">
+        <img [src]="img" alt="Avión de la flota" onerror="this.src='https://via.placeholder.com/200/5C5C99/FFFFFF?text=Avion'">
+      </div>
+    </div>
+  </section>
+
+</div>
