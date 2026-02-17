@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Subject } from 'rxjs';
@@ -10,7 +10,7 @@ import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RecaptchaV3Module],
+  imports: [ReactiveFormsModule, CommonModule, RecaptchaV3Module, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
