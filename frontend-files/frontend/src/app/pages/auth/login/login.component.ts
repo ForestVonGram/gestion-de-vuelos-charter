@@ -1,15 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NgOptimizedImage],
+  imports: [ReactiveFormsModule, CommonModule, RecaptchaV3Module, RouterModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -24,7 +25,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private recaptchaV3Service: ReCaptchaV3Service
   ) {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/dashboard']);
@@ -62,35 +64,50 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    const loginRequest = {
-      email: this.f['email'].value,
-      password: this.f['password'].value
-    };
-
-    this.authService.login(loginRequest)
+    // Ejecutar reCAPTCHA v3
+    this.recaptchaV3Service.execute('login')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
-          if (response.requires2FA) {
-            this.router.navigate(['/auth/verify-2fa'], {
-              queryParams: { sessionToken: response.sessionToken }
+        next: (token: string) => {
+          const loginRequest = {
+            email: this.f['email'].value,
+            password: this.f['password'].value,
+            recaptchaToken: token
+          };
+
+          this.authService.login(loginRequest)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (response) => {
+                if (response.requires2FA) {
+                  this.router.navigate(['/auth/verify-2fa'], {
+                    queryParams: { sessionToken: response.sessionToken }
+                  });
+                } else {
+                  this.router.navigate(['/dashboard']);
+                }
+              },
+              error: (error) => {
+                this.loading = false;
+                if (error.status === 401) {
+                  this.error = 'Email o contraseña inválidos';
+                } else if (error.status === 0) {
+                  this.error = 'Error de conexión con el servidor';
+                } else if (error.error?.message?.includes('reCAPTCHA')) {
+                  this.error = 'Validación reCAPTCHA fallida. Por favor intente nuevamente';
+                } else {
+                  this.error = error.error?.message || 'Error en el login';
+                }
+              },
+              complete: () => {
+                this.loading = false;
+              }
             });
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
         },
         error: (error) => {
           this.loading = false;
-          if (error.status === 401) {
-            this.error = 'Email o contraseña inválidos';
-          } else if (error.status === 0) {
-            this.error = 'Error de conexión con el servidor';
-          } else {
-            this.error = error.error?.message || 'Error en el login';
-          }
-        },
-        complete: () => {
-          this.loading = false;
+          this.error = 'Error en validación de seguridad. Por favor intente nuevamente';
+          console.error('reCAPTCHA v3 error:', error);
         }
       });
   }

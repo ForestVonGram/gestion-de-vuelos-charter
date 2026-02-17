@@ -1,14 +1,14 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
-import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
-import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
+import { LandingComponent } from './pages/landing/landing.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
+import {authGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'auth/login',
-    pathMatch: 'full'
+    component: LandingComponent
   },
   {
     path: 'auth',
@@ -16,32 +16,16 @@ export const routes: Routes = [
       {
         path: 'login',
         component: LoginComponent
+      },
+      {
+        path: 'register',
+        component: RegisterComponent
       }
     ]
   },
   {
-    path: 'mantenimientos',
-    children: [
-      {
-        path: '',
-        component: MantenimientoComponent
-      },
-      {
-        path: 'nuevo',
-        component: MantenimientoFormComponent
-      },
-      {
-        path: 'editar/:id',
-        component: MantenimientoFormComponent
-      },
-      {
-        path: ':id',
-        component: MantenimientoDetalleComponent
-      }
-    ]
-  },
-  {
-    path: '**',
-    redirectTo: 'auth/login'
+    path: 'dashboard',
+    component: ClientDashboardComponent,
+    canActivate: [authGuard]
   }
 ];
