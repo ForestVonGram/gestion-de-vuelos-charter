@@ -1,0 +1,284 @@
+/* Contenedor Principal */
+.pricing-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* El fondo ya viene del body global, pero aseguramos el padding */
+  padding-bottom: var(--spacing-2xl);
+}
+
+/* --- NAVBAR (Reutilizado y simplificado) --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 3rem;
+  background: transparent;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo-container { width: 50px; height: 50px; }
+.logo-header { width: 100%; height: 100%; object-fit: contain; cursor: pointer; }
+
+.navbar-text { display: flex; flex-direction: column; }
+
+.navbar-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.2rem;
+  color: var(--color-light);
+  margin: 0;
+  font-weight: 400;
+}
+
+.navbar-subtitle {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.7rem;
+  color: var(--color-light-mid);
+  margin: 0;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-light);
+  font-weight: 600;
+}
+
+.btn-login {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--color-light);
+  padding: 0.5rem 1.5rem;
+  border-radius: 50px;
+  color: var(--color-white);
+  font-family: 'Libre Franklin', sans-serif;
+  transition: all 0.3s;
+}
+
+.btn-login:hover {
+  background-color: var(--color-light);
+  color: var(--color-dark);
+}
+
+/* --- HEADER DE LA PÁGINA --- */
+.pricing-header {
+  text-align: center;
+  padding: 3rem 1rem;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.title {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 3rem;
+  color: var(--color-white);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.4rem;
+  color: var(--color-light);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* --- GRILLA DE PRECIOS --- */
+.pricing-container {
+  display: flex;
+  justify-content: center;
+  align-items: stretch; /* Para que todas tengan la misma altura */
+  gap: 2rem;
+  padding: 0 2rem 4rem 2rem;
+  flex-wrap: wrap;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* --- TARJETA DE PRECIO --- */
+.pricing-card {
+  background-color: var(--color-white);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+/* Tarjeta Popular (La del medio) */
+.pricing-card.popular {
+  transform: scale(1.05); /* Un poco más grande por defecto */
+  border: 4px solid var(--color-light); /* Borde lavanda */
+  z-index: 10;
+}
+
+.pricing-card.popular:hover {
+  transform: scale(1.08) translateY(-10px);
+}
+
+.popular-tag {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-mid); /* Morado */
+  color: var(--color-white);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Header Tarjeta */
+.card-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.plan-name {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.8rem;
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.plan-description {
+  font-family: 'Libre Franklin', sans-serif;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Precio */
+.card-price {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.currency {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.5rem;
+  color: var(--color-mid);
+}
+
+.period {
+  font-family: 'Libre Franklin', sans-serif;
+  color: #888;
+  font-size: 0.9rem;
+  display: block;
+}
+
+/* Lista de Características */
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  flex-grow: 1; /* Empuja el botón hacia abajo */
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-text-dark);
+  font-size: 0.95rem;
+}
+
+.feature-icon {
+  color: var(--color-success); /* Verde para el check */
+  font-size: 1rem;
+}
+
+/* Footer Tarjeta */
+.card-footer {
+  text-align: center;
+}
+
+.btn-plan {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  font-family: 'Jost', sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.btn-plan:hover {
+  background-color: var(--color-mid);
+}
+
+.popular .btn-plan {
+  background-color: var(--color-mid); /* Botón morado en el plan popular */
+}
+
+.popular .btn-plan:hover {
+  background-color: var(--color-dark);
+}
+
+/* Footer Simple */
+.simple-footer {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.simple-footer p {
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-light-mid);
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .pricing-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .pricing-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .pricing-card.popular {
+    transform: scale(1); /* Resetear escala en móvil */
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

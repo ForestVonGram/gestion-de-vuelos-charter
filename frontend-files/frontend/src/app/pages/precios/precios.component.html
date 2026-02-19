@@ -1,0 +1,62 @@
+<div class="pricing-page">
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-container">
+        <a routerLink="/">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </a>
+      </div>
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+    <div class="navbar-right">
+      <a routerLink="/" class="nav-link">Inicio</a>
+      <a routerLink="/auth/login" class="btn-login">Ingresar</a>
+    </div>
+  </nav>
+
+  <header class="pricing-header">
+    <h2 class="title">Nuestros Planes de Vuelo</h2>
+    <p class="subtitle">Elige la experiencia que mejor se adapte a tu destino</p>
+  </header>
+
+  <div class="pricing-container">
+
+    <div class="pricing-card" *ngFor="let plan of plans" [class.popular]="plan.isPopular">
+
+      <div class="popular-tag" *ngIf="plan.isPopular">Más Elegido</div>
+
+      <div class="card-header">
+        <h3 class="plan-name">{{ plan.name }}</h3>
+        <p class="plan-description">{{ plan.description }}</p>
+      </div>
+
+      <div class="card-price">
+        <span class="currency">{{ plan.price }}</span>
+        <span class="period">{{ plan.period }}</span>
+      </div>
+
+      <ul class="features-list">
+        <li *ngFor="let feature of plan.features">
+          <i class="fas fa-check feature-icon"></i>
+          <span>{{ feature }}</span>
+        </li>
+      </ul>
+
+      <div class="card-footer">
+        <a routerLink="/auth/register" class="btn-plan">{{ plan.buttonText }}</a>
+      </div>
+
+    </div>
+
+  </div>
+
+  <footer class="simple-footer">
+    <p>© 2026 Astra Nimbus Aviation. Todos los precios están en USD e incluyen impuestos.</p>
+  </footer>
+
+</div>
