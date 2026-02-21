@@ -6,6 +6,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
+import { RolUsuario } from '../../../models/auth.models';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +30,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     private recaptchaV3Service: ReCaptchaV3Service
   ) {
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      const currentUser = this.authService.currentUserValue;
+      if (currentUser?.rol === RolUsuario.ADMINISTRADOR) {
+        this.router.navigate(['/admin/dashboard']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
     }
   }
 
@@ -84,7 +90,11 @@ export class LoginComponent implements OnInit, OnDestroy {
                     queryParams: { sessionToken: response.sessionToken }
                   });
                 } else {
-                  this.router.navigate(['/dashboard']);
+                  if (response.rol === RolUsuario.ADMINISTRADOR) {
+                    this.router.navigate(['/admin/dashboard']);
+                  } else {
+                    this.router.navigate(['/dashboard']);
+                  }
                 }
               },
               error: (error) => {

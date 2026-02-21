@@ -7,6 +7,9 @@ import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimi
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
 import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
 import {authGuard} from './guards/auth.guard';
+import {adminGuard} from './guards/admin.guard';
+import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
+import {PreciosComponent} from './pages/precios/precios.component';
 
 export const routes: Routes = [
   {
@@ -30,5 +33,20 @@ export const routes: Routes = [
     path: 'dashboard',
     component: ClientDashboardComponent,
     canActivate: [authGuard]
-  }
+  },
+  {
+    path: 'precios',
+    component: PreciosComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard], // Esta línea bloquea a los que no son ADMIN
+    children: [
+      {
+        path: 'dashboard', // La ruta completa será: /admin/dashboard
+        component: AdminDashboardComponent
+      }
+    ]
+  },
 ];
