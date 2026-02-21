@@ -317,6 +317,56 @@
   margin: 0;
 }
 
+/* --- Botón al inicio --- */
+
+.back-btn {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 255, 255, 0.1); /* Efecto vidrio sutil */
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+  color: var(--color-white); /* Icono blanco por el fondo oscuro */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.back-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto Hover */
+.back-btn:hover {
+  background-color: var(--color-white); /* Se vuelve blanco sólido */
+  color: var(--color-dark); /* Icono se vuelve oscuro */
+  transform: translateY(-2px); /* Flota un poco */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:hover .back-icon {
+  transform: translateX(-3px); /* La flecha se mueve a la izquierda */
+}
+
+/* Ajuste móvil para que no estorbe */
+@media (max-width: 480px) {
+  .back-btn {
+    top: 15px;
+    left: 15px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
 .link {
   color: var(--color-mid);
   font-weight: 600;

@@ -5,8 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paeldav.backend.application.service.base.RecaptchaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -79,19 +84,34 @@ public class RecaptchaServiceImpl implements RecaptchaService {
     }
 
     private boolean validarConGoogle(String token) throws IOException {
-        String requestBody = "secret=" + recaptchaSecretKey + "&response=" + token;
-        String response = restTemplate.postForObject(verifyUrl, requestBody, String.class);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+        map.add("secret", recaptchaSecretKey);
+        map.add("response", token);
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        String response = restTemplate.postForObject(verifyUrl, request, String.class);
 
         if (response == null) {
-            log.warn("Respuesta vacia de Google reCAPTCHA");
+            log.warn("Respuesta vacía de Google reCAPTCHA");
             return false;
         }
 
         JsonNode jsonNode = objectMapper.readTree(response);
+
+        // Loguear error si Google rechaza la petición (útil para debug)
+        if (jsonNode.has("error-codes")) {
+            log.error("Google rechazó el token. Errores: {}", jsonNode.get("error-codes"));
+        }
+
         boolean success = jsonNode.get("success").asBoolean(false);
-        
+
         if (!success) {
-            log.warn("reCAPTCHA validation failed");
+            log.warn("reCAPTCHA validation failed (Success=false)");
             return false;
         }
 
@@ -102,7 +122,7 @@ public class RecaptchaServiceImpl implements RecaptchaService {
             return scorePassed;
         }
 
-        log.debug("reCAPTCHA v2 validation successful");
+        // Si no tiene score (v2 legacy), asumimos éxito si success=true
         return true;
     }
 }

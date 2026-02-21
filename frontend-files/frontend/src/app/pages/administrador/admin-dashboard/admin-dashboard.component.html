@@ -1,0 +1,104 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item active">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/usuarios"><i class="fas fa-users-cog"></i> Usuarios</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/vuelos"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/reportes"><i class="fas fa-chart-line"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Panel de Control</h1>
+        <p>Bienvenido de nuevo, {{ currentUser?.nombreCompleto || 'Administrador' }}</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <section class="stats-grid">
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="stat-icon" [style.color]="stat.color">
+          <i [class]="stat.icon"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stat.value }}</span>
+          <span class="stat-title">{{ stat.title }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-panel">
+      <div class="panel-header">
+        <h3>Vuelos Recientes</h3>
+        <button class="btn-action">Ver Todos</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+          <tr>
+            <th>ID Vuelo</th>
+            <th>Piloto</th>
+            <th>Ruta</th>
+            <th>Estado</th>
+            <th>Duración</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let flight of recentFlights">
+            <td class="id-cell">#{{ flight.id }}</td>
+            <td>{{ flight.pilot }}</td>
+            <td>{{ flight.route }}</td>
+            <td>
+                <span class="status-badge" [ngClass]="getStatusClass(flight.status)">
+                  {{ flight.status }}
+                </span>
+            </td>
+            <td>{{ flight.time }}</td>
+            <td>
+              <button class="icon-btn"><i class="fas fa-ellipsis-v"></i></button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>

@@ -1,14 +1,19 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
-import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
-import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
-import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
+
+import { LandingComponent } from './pages/landing/landing.component';
+import { RegisterComponent } from './pages/auth/register/register.component';
+import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
+import {authGuard} from './guards/auth.guard';
+import {adminGuard} from './guards/admin.guard';
+import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
+import {PreciosComponent} from './pages/precios/precios.component';
+
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'auth/login',
-    pathMatch: 'full'
+    component: LandingComponent
   },
   {
     path: 'auth',
@@ -16,32 +21,31 @@ export const routes: Routes = [
       {
         path: 'login',
         component: LoginComponent
+      },
+      {
+        path: 'register',
+        component: RegisterComponent
       }
     ]
   },
   {
-    path: 'mantenimientos',
+    path: 'dashboard',
+    component: ClientDashboardComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'precios',
+    component: PreciosComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard], // Esta línea bloquea a los que no son ADMIN
     children: [
       {
-        path: '',
-        component: MantenimientoComponent
-      },
-      {
-        path: 'nuevo',
-        component: MantenimientoFormComponent
-      },
-      {
-        path: 'editar/:id',
-        component: MantenimientoFormComponent
-      },
-      {
-        path: ':id',
-        component: MantenimientoDetalleComponent
+        path: 'dashboard', // La ruta completa será: /admin/dashboard
+        component: AdminDashboardComponent
       }
     ]
   },
-  {
-    path: '**',
-    redirectTo: 'auth/login'
-  }
 ];
