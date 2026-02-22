@@ -8,7 +8,7 @@ import {adminGuard} from './guards/admin.guard';
 import {PreciosComponent} from './pages/precios/precios.component';
 
 import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
-//import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
+import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
 import { EstadisticasAdminComponent } from './pages/administrador/estadisticas-admin/estadisticas-admin.component';
 import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admin/flota-aerea-admin.component';
 //import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-admin.component';
@@ -55,13 +55,10 @@ export const routes: Routes = [
         path: 'dashboard', // La ruta completa será: /admin/dashboard
         component: AdminDashboardComponent
       },
-      /*
       {
         path: 'vuelos',
         component: VuelosAdminComponent
       },
-
-      */
       {
         path: 'estadisticas',
         component: EstadisticasAdminComponent

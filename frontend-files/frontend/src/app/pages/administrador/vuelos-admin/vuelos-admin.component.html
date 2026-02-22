@@ -1,0 +1,120 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item active">
+          <a routerLink="/admin/vuelos"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Centro de Operaciones</h1>
+        <p>Gestión y programación de vuelos</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Directorio de Vuelos</h2>
+      <button class="btn-primary"><i class="fas fa-plus"></i> Programar Vuelo</button>
+    </div>
+
+    <section class="content-panel">
+      <div class="panel-header">
+        <h3>Registro General</h3>
+        <div class="filter-group">
+          <button class="filter-btn active">Todos</button>
+          <button class="filter-btn">Pendientes</button>
+          <button class="filter-btn">En Vuelo</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+          <tr>
+            <th>ID Vuelo</th>
+            <th>Solicitante</th>
+            <th>Ruta</th>
+            <th>Fecha Programada</th>
+            <th>Aeronave</th>
+            <th>Estado</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let vuelo of vuelos">
+            <td class="id-cell">#{{ vuelo.id }}</td>
+            <td>{{ vuelo.usuarioNombre }}</td>
+            <td class="route-cell">
+              <span class="city">{{ vuelo.origen.substring(0, 3) }}</span>
+              <i class="fas fa-plane route-icon"></i>
+              <span class="city">{{ vuelo.destino.substring(0, 3) }}</span>
+            </td>
+            <td>
+              <div class="date-block">
+                <span class="date">{{ vuelo.fechaSalidaProgramada | date:'dd MMM, yyyy' }}</span>
+                <span class="time">{{ vuelo.fechaSalidaProgramada | date:'HH:mm' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="aircraft-badge" *ngIf="vuelo.aeronaveMatricula">{{ vuelo.aeronaveMatricula }}</span>
+              <span class="unassigned-text" *ngIf="!vuelo.aeronaveMatricula">Sin asignar</span>
+            </td>
+            <td>
+                <span class="status-badge" [ngClass]="getEstadoClase(vuelo.estado)">
+                  {{ vuelo.estado | titlecase }}
+                </span>
+            </td>
+            <td class="action-cell">
+              <button class="icon-btn edit-btn" title="Editar Vuelo">
+                <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
