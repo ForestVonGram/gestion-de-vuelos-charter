@@ -1,0 +1,154 @@
+/* =========================================
+   ESTILOS GLOBALES DEL LAYOUT (No tocar)
+   ========================================= */
+.admin-container { display: flex; height: 100vh; width: 100vw; background-color: var(--color-dark); overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 260px; background: linear-gradient(180deg, rgba(41, 41, 102, 0.95) 0%, rgba(20, 20, 50, 0.98) 100%); border-right: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; padding: 2rem 1.5rem; flex-shrink: 0; z-index: 10; }
+.sidebar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+.sidebar-logo { width: 45px; height: 45px; object-fit: contain; }
+.brand-name { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.1rem; margin: 0; line-height: 1.2; }
+.brand-role { font-family: 'Libre Franklin', sans-serif; color: var(--color-light-mid); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Navegación */
+.sidebar-nav ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.nav-item a { display: flex; align-items: center; gap: 1rem; padding: 12px 15px; border-radius: 12px; color: var(--color-light-mid); font-family: 'Jost', sans-serif; font-weight: 500; text-decoration: none; transition: all 0.3s ease; }
+.nav-item a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--color-white); }
+.nav-item.active a { background-color: var(--color-mid); color: var(--color-white); box-shadow: 0 4px 15px rgba(92, 92, 153, 0.4); }
+.nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+
+/* Footer Sidebar */
+.sidebar-footer { margin-top: auto; }
+.logout-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid rgba(231, 76, 60, 0.3); color: var(--color-error); border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-family: 'Jost', sans-serif; font-weight: 600; transition: all 0.3s; }
+.logout-btn:hover { background-color: rgba(231, 76, 60, 0.1); border-color: var(--color-error); }
+
+/* CONTENIDO PRINCIPAL */
+.main-content { flex: 1; background: radial-gradient(circle at top right, #3a3a75 0%, var(--color-dark) 40%); padding: 2.5rem 3rem; overflow-y: auto; }
+
+/* Topbar */
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.welcome-box h1 { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 2.2rem; margin-bottom: 0.3rem; }
+.welcome-box p { color: var(--color-light-mid); font-family: 'Libre Franklin', sans-serif; font-size: 0.9rem; }
+.avatar-circle { width: 50px; height: 50px; background-color: var(--color-mid); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-white); font-weight: bold; font-size: 1.2rem; font-family: 'Archivo Black', sans-serif; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+/* Cabecera de Sección */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.8rem; margin: 0; }
+.btn-primary { background-color: var(--color-mid); color: var(--color-white); border: none; padding: 10px 20px; border-radius: 12px; font-family: 'Jost', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+.btn-primary:hover { background-color: var(--color-light-mid); }
+
+/* =========================================
+   ESTILOS ESPECÍFICOS: NÓMINA
+   ========================================= */
+
+.content-panel {
+  background-color: rgba(20, 20, 40, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.panel-header h3 { font-family: 'Jost', sans-serif; color: var(--color-white); font-size: 1.3rem; margin: 0; }
+
+/* Filtros */
+.filter-group { display: flex; gap: 0.5rem; background-color: rgba(0,0,0,0.2); padding: 5px; border-radius: 12px; }
+.filter-btn { background: transparent; color: var(--color-light-mid); border: none; padding: 8px 16px; border-radius: 8px; font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+.filter-btn:hover { color: var(--color-white); }
+.filter-btn.active { background-color: var(--color-mid); color: var(--color-white); }
+
+/* Tabla de Nómina */
+.table-responsive { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; }
+
+.admin-table th {
+  text-align: left;
+  padding: 1.2rem 1rem;
+  color: var(--color-light-mid);
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-table td {
+  padding: 1.2rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-family: 'Jost', sans-serif;
+  color: var(--color-light);
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+/* Celdas Específicas */
+.id-cell { font-weight: 700; color: var(--color-white); font-family: 'Libre Franklin', sans-serif; }
+
+.empleado-cell { display: flex; flex-direction: column; }
+.empleado-cell .nombre { font-weight: 600; color: var(--color-white); }
+.empleado-cell .id-ref { font-size: 0.75rem; color: var(--color-light-mid); font-family: 'Libre Franklin', sans-serif; }
+
+.periodo-badge {
+  background-color: rgba(255,255,255,0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.dinero { font-family: 'Libre Franklin', sans-serif; font-weight: 500; }
+.total-neto { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.1rem; }
+
+/* Colores de texto (Ingresos/Egresos) */
+.text-success { color: #2ecc71; }
+.text-error { color: #e74c3c; }
+.text-neutral { color: var(--color-light-mid); }
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Libre Franklin', sans-serif;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.status-draft { background: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
+.status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
+.status-success { background: rgba(39, 174, 96, 0.2); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.4); }
+.status-error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
+
+/* Acciones (Igual que en vuelos y flota) */
+.text-right { text-align: right; }
+.action-cell { text-align: right; white-space: nowrap; }
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-light);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover { background: var(--color-mid); color: var(--color-white); border-color: var(--color-mid); transform: translateY(-2px); }
+.svg-icon { width: 55%; height: 55%; object-fit: contain; }
+
+/* Responsividad */
+@media (max-width: 1024px) {
+  .admin-table th, .admin-table td { padding: 1rem 0.5rem; }
+}
+@media (max-width: 900px) {
+  .admin-container { flex-direction: column; overflow-y: auto; }
+  .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }
+  .panel-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}

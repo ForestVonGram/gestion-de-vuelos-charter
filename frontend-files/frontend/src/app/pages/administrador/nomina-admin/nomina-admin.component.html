@@ -1,0 +1,132 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/vuelos"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
+        </li>
+        <li class="nav-item active">
+          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión Financiera</h1>
+        <p>Administración de nóminas, pagos y retenciones del personal</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Directorio de Nóminas</h2>
+      <button class="btn-primary"><i class="fas fa-plus"></i> Generar Nómina</button>
+    </div>
+
+    <section class="content-panel">
+      <div class="panel-header">
+        <h3>Historial de Pagos</h3>
+        <div class="filter-group">
+          <button class="filter-btn active">Todas</button>
+          <button class="filter-btn">Pendientes</button>
+          <button class="filter-btn">Pagadas</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Empleado</th>
+            <th>Período</th>
+            <th>Salario Base</th>
+            <th>Adicionales</th>
+            <th>Retenciones</th>
+            <th>Total Neto</th>
+            <th>Estado</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let nomina of nominas">
+            <td class="id-cell">#{{ nomina.id }}</td>
+            <td class="empleado-cell">
+              <span class="nombre">{{ nomina.personalNombre }} {{ nomina.personalApellido }}</span>
+              <span class="id-ref">Cod: {{ nomina.personalId }}</span>
+            </td>
+            <td>
+              <span class="periodo-badge">{{ getNombreMes(nomina.mes) }} {{ nomina.ano }}</span>
+            </td>
+            <td class="dinero">{{ nomina.salarioBase | currency:'USD':'symbol':'1.0-0' }}</td>
+
+            <td class="dinero text-success" *ngIf="nomina.bonificaciones > nomina.deducciones">
+              +{{ (nomina.bonificaciones - nomina.deducciones) | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+            <td class="dinero text-error" *ngIf="nomina.bonificaciones < nomina.deducciones">
+              -{{ (nomina.deducciones - nomina.bonificaciones) | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+            <td class="dinero text-neutral" *ngIf="nomina.bonificaciones === nomina.deducciones">
+              $0
+            </td>
+
+            <td class="dinero text-error">
+              -{{ (nomina.descuentoImpuesto + nomina.descuentoAfiliacion) | currency:'USD':'symbol':'1.0-0' }}
+            </td>
+
+            <td class="dinero total-neto">{{ nomina.totalNeto | currency:'USD':'symbol':'1.0-0' }}</td>
+
+            <td>
+                <span class="status-badge" [ngClass]="getEstadoClase(nomina.estado)">
+                  {{ nomina.estado | titlecase }}
+                </span>
+            </td>
+
+            <td class="action-cell">
+              <button class="icon-btn edit-btn" title="Editar Nómina">
+                <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
