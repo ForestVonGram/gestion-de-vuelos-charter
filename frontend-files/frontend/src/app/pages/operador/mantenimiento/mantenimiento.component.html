@@ -1,4 +1,55 @@
 <div class="dashboard-container">
+  <!-- Navbar agregada para consistencia -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-container">
+        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+      </div>
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a routerLink="/operador/mantenimientos/ofrecidos">Mantenimientos ofrecidos</a>
+      <a routerLink="/about/operadores">Conoce el equipo</a>
+
+      <div class="user-profile-container">
+        <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+          <img
+            src="assets/icons/user_account.svg"
+            alt="Perfil"
+            class="avatar-img"
+            onerror="this.src='https://i.pravatar.cc/150?img=68'"
+          >
+        </div>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+          <div class="menu-header">
+            <span class="menu-user-name">{{ userName }}</span>
+            <span class="menu-user-email">{{ userEmail }}</span>
+          </div>
+          <div class="menu-divider"></div>
+          <a href="#" class="menu-item">
+            <i class="fas fa-user-circle"></i> Mi Perfil
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-ticket-alt"></i> Mis Vuelos
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <div class="menu-divider"></div>
+          <a (click)="logout()" class="menu-item logout-item">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido original -->
   <div class="header-section">
     <h1>Centro de control de mantenimientos</h1>
     <button class="btn-primary" (click)="nuevoMantenimiento()">
@@ -8,6 +59,7 @@
 
   <!-- KPIs -->
   <div class="kpi-container">
+    <!-- ... resto del contenido igual ... -->
     <div class="kpi-card">
       <div class="kpi-icon pending">⏳</div>
       <div class="kpi-content">
@@ -97,18 +149,18 @@
           <span class="matricula-badge">{{ m.aeronaveMatricula }}</span>
         </td>
         <td>
-            <span class="tipo-badge" [ngClass]="m.tipo === 'PREVENTIVO' ? 'tipo-preventivo' : 'tipo-correctivo'">
-              {{ m.tipo }}
-            </span>
+          <span class="tipo-badge" [ngClass]="m.tipo === 'PREVENTIVO' ? 'tipo-preventivo' : 'tipo-correctivo'">
+            {{ m.tipo }}
+          </span>
         </td>
         <td class="descripcion-cell">{{ m.descripcion | truncate:50 }}</td>
         <td>{{ m.fechaInicio | date:'dd/MM/yyyy' }}</td>
         <td>{{ m.responsableNombre }}</td>
         <td class="costo-cell">{{ m.costo | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
-            <span class="status-badge" [ngClass]="m.completado ? 'status-completed' : 'status-pending'">
-              {{ m.completado ? 'Completado' : 'Pendiente' }}
-            </span>
+          <span class="status-badge" [ngClass]="m.completado ? 'status-completed' : 'status-pending'">
+            {{ m.completado ? 'Completado' : 'Pendiente' }}
+          </span>
         </td>
         <td>
           <button class="action-btn" (click)="verDetalle(m.id); $event.stopPropagation()">

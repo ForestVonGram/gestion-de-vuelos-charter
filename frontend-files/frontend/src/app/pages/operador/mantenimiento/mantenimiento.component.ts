@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
 import { TruncatePipe } from '../pipes/truncate.pipe';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-mantenimiento',
   templateUrl: './mantenimiento.component.html',
   styleUrls: ['./mantenimiento.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, TruncatePipe]
+  imports: [CommonModule, FormsModule, TruncatePipe, RouterModule]
 })
 export class MantenimientoComponent implements OnInit {
   mantenimientos: Mantenimiento[] = [];
@@ -24,13 +25,37 @@ export class MantenimientoComponent implements OnInit {
   filtroBusqueda: string = '';
   filtroEstado: string = 'todos';
 
+  // Propiedades para el dropdown de usuario
+  userName: string = 'Operador';
+  userEmail: string = '';
+  isDropdownOpen: boolean = false;
+
   constructor(
     private mantenimientoService: MantenimientoService,
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.cargarMantenimientos();
+    this.cargarDatosUsuario();
+  }
+
+  cargarDatosUsuario(): void {
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser) {
+      this.userName = currentUser.nombreCompleto || 'Operador';
+      this.userEmail = currentUser.email || '';
+    }
+  }
+
+  toggleDropdown(): void {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 
   cargarMantenimientos() {
@@ -59,11 +84,9 @@ export class MantenimientoComponent implements OnInit {
 
   aplicarFiltros() {
     this.mantenimientosFiltrados = this.mantenimientos.filter(m => {
-      // Filtro por estado
       if (this.filtroEstado === 'pendientes' && m.completado) return false;
       if (this.filtroEstado === 'completados' && !m.completado) return false;
 
-      // Filtro por búsqueda
       if (this.filtroBusqueda) {
         const busqueda = this.filtroBusqueda.toLowerCase();
         return m.aeronaveMatricula.toLowerCase().includes(busqueda) ||
@@ -80,6 +103,6 @@ export class MantenimientoComponent implements OnInit {
   }
 
   nuevoMantenimiento() {
-    this.router.navigate(['/mantenimientos/nuevo']);
+    this.router.navigate(['/operador/mantenimiento/nuevo']);
   }
 }

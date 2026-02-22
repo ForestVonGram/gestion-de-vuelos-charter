@@ -6,10 +6,10 @@ import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dash
 import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
 import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
-import {authGuard} from './guards/auth.guard';
-import {adminGuard} from './guards/admin.guard';
-import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
-import {PreciosComponent} from './pages/precios/precios.component';
+import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/admin-dashboard.component';
+import { PreciosComponent } from './pages/precios/precios.component';
+import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_ofrecido/mantenimiento_ofrecido.component';
+import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
 
 export const routes: Routes = [
   {
@@ -31,22 +31,44 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    component: ClientDashboardComponent,
-    canActivate: [authGuard]
+    component: ClientDashboardComponent
+  },
+  {
+    path: 'terminos-condiciones',
+    component: TerminosCondicionesComponent
   },
   {
     path: 'precios',
-    component: PreciosComponent,
-    canActivate: [authGuard]
+    component: PreciosComponent
   },
   {
     path: 'admin',
-    canActivate: [adminGuard], // Esta línea bloquea a los que no son ADMIN
     children: [
       {
-        path: 'dashboard', // La ruta completa será: /admin/dashboard
+        path: 'dashboard',
         component: AdminDashboardComponent
       }
     ]
   },
+  {
+    path: 'operador',
+    children: [
+      {
+        path: 'mantenimiento',
+        component: MantenimientoComponent
+      },
+      {
+        path: 'mantenimiento/nuevo',
+        component: MantenimientoFormComponent
+      },
+      {
+        path: 'mantenimientos/ofrecidos',
+        component: MantenimientoOfrecidoComponent
+      },
+      {
+        path: 'mantenimiento/:id',
+        component: MantenimientoDetalleComponent
+      }
+    ]
+  }
 ];
