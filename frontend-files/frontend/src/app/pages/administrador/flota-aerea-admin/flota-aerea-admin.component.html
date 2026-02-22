@@ -1,0 +1,104 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/vuelos"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+        </li>
+        <li class="nav-item active">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de Flota</h1>
+        <p>Administra las aeronaves registradas en el sistema</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Aeronaves</h2>
+      <button class="btn-primary"><i class="fas fa-plus"></i> Nueva Aeronave</button>
+    </div>
+
+    <div class="aircraft-grid">
+      <div class="aircraft-card" *ngFor="let avion of aeronaves">
+
+        <div class="card-header">
+          <h3 class="matricula">{{ avion.matricula }}</h3>
+          <span class="status-badge" [ngClass]="getEstadoClase(avion.estado)">
+            {{ avion.estado | titlecase }}
+          </span>
+        </div>
+
+        <div class="card-body">
+          <h4 class="modelo">{{ avion.fabricante }} {{ avion.modelo }}</h4>
+
+          <div class="specs-grid">
+            <div class="spec-item">
+              <i class="fas fa-users"></i>
+              <span>Pasajeros: {{ avion.capacidadPasajeros }}</span>
+            </div>
+            <div class="spec-item">
+              <i class="fas fa-tachometer-alt"></i>
+              <span>Velocidad: {{ avion.velocidadCruceroKmh }} km/h</span>
+            </div>
+            <div class="spec-item">
+              <i class="fas fa-route"></i>
+              <span>Autonomía: {{ avion.autonomiaKm }} km</span>
+            </div>
+            <div class="spec-item">
+              <i class="fas fa-tools"></i>
+              <span>Rev: {{ avion.fechaUltimaRevision | date:'mediumDate' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <button class="btn-action edit" title="Editar aeronave">
+            <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
