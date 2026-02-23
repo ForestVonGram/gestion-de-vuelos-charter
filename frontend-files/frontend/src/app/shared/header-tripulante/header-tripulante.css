@@ -1,0 +1,180 @@
+.header {
+  color: var(--color-dark);
+  padding: 10px 40px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  color: var(--color-dark);
+}
+
+/* ===== LEFT SIDE ===== */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-header {
+  height: 60px;
+  width: 60px;
+}
+
+.navbar-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-light);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.navbar-subtitle {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--color-light-mid);
+  margin: 0;
+}
+
+/* ===== RIGHT LINKS ===== */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem; 
+  margin-left: auto;
+}
+
+.nav-link {
+  display: flex;
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-text-light);
+  font-weight: 500;
+  text-decoration: none;
+  transition: 0.2s ease;
+  gap: 2rem;
+}
+
+.nav-link:hover {
+  color: var(--color-white);
+  text-shadow: 0 0 10px var(--color-mid);
+}
+
+/* ===== USER AVATAR ===== */
+.navbar-user {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  border: 2px solid var(--color-white);
+  background-color: transparent;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-profile-container {
+  position: relative;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  border-color: var(--color-light);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 60px; /* Distancia desde el avatar */
+  right: 0;
+  width: 250px;
+  background-color: var(--color-white);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  padding: 0.5rem 0;
+  animation: fadeIn 0.2s ease-out;
+  overflow: hidden;
+  z-index: 1001;
+}
+
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 15px;
+  width: 16px;
+  height: 16px;
+  background-color: var(--color-white);
+  transform: rotate(45deg);
+  border-radius: 2px;
+}
+
+.menu-header {
+  padding: 1rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-user-name {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-dark);
+  font-size: 1.1rem;
+  margin-bottom: 2px;
+}
+
+.menu-user-email {
+  font-family: 'Libre Franklin', sans-serif;
+  color: #555;
+  font-size: 0.85rem;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.menu-divider {
+  height: 1px;
+  background-color: #eee;
+  margin: 0.5rem 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.8rem 1.5rem;
+  color: var(--color-dark) !important;
+  font-family: 'Libre Franklin', sans-serif;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.menu-item i {
+  width: 20px;
+  text-align: center;
+  color: var(--color-dark);
+}
+
+.menu-item:hover {
+  background-color: #f5f5ff; /* Lavanda muy suave */
+  color: var(--color-mid);
+}

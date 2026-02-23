@@ -8,6 +8,11 @@ import {authGuard} from './guards/auth.guard';
 import {adminGuard} from './guards/admin.guard';
 import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import {PreciosComponent} from './pages/precios/precios.component';
+import { Tripulante } from './pages/personal/tripulante/tripulante'; 
+import { Tripulacion } from './pages/personal/tripulacion/tripulacion';
+import { Vuelos } from './pages/personal/vuelos/vuelos';
+import { Certificados } from './pages/personal/certificados/certificados';
+import { Reportes } from './pages/personal/reportes/reportes';
 
 
 export const routes: Routes = [
@@ -27,6 +32,31 @@ export const routes: Routes = [
         component: RegisterComponent
       }
     ]
+  },
+  {
+    path: 'tripulante',
+    component: Tripulante,
+    canActivate: [] 
+  },
+  {
+    path: 'tripulacion',
+    component: Tripulacion,
+    canActivate: [] 
+  },
+  {
+    path: 'vuelos',
+    component: Vuelos,
+    canActivate: [] 
+  },
+  {
+    path: 'certificados',
+    component: Certificados,
+    canActivate: [] 
+  },
+  {
+    path: 'reportes',
+    component: Reportes,
+    canActivate: []
   },
   {
     path: 'dashboard',
