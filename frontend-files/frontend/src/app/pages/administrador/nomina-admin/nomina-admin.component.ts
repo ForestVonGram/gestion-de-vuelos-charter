@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
+import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs (Reflejo de tu backend Java) ---
 export enum EstadoNomina {
@@ -34,7 +35,7 @@ export interface NominaDTO {
 @Component({
   selector: 'app-nomina-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent],
   templateUrl: './nomina-admin.component.html',
   styleUrls: ['./nomina-admin.component.css']
 })

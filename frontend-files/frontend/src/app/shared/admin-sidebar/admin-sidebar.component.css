@@ -1,0 +1,130 @@
+/* =========================================
+   ESTILOS EXCLUSIVOS DEL SIDEBAR COMPARTIDO
+   ========================================= */
+
+.sidebar {
+  width: 260px;
+  /* El sidebar debe ocupar el 100% del alto de la pantalla */
+  height: 100vh;
+  background: linear-gradient(180deg, rgba(41, 41, 102, 0.95) 0%, rgba(20, 20, 50, 0.98) 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  flex-shrink: 0;
+  z-index: 10;
+  /* Opcional: Para que se quede fijo a la izquierda si el contenido derecho scrollea */
+  position: sticky;
+  top: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+.sidebar-logo {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-white);
+  font-size: 1.1rem;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.brand-role {
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-light-mid);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Navegación */
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 15px;
+  border-radius: 12px;
+  color: var(--color-light-mid);
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.nav-item a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-white);
+}
+
+/* IMPORTANTE: Nota cómo la clase es ahora .active a (sin espacio)
+   para que funcione bien con routerLinkActive de Angular */
+.nav-item.active a,
+.nav-item a.active {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+  box-shadow: 0 4px 15px rgba(92, 92, 153, 0.4);
+}
+
+.nav-item i {
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+/* Footer Sidebar (Logout) */
+.sidebar-footer {
+  margin-top: auto;
+}
+
+.logout-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+  color: var(--color-error);
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  border-color: var(--color-error);
+}
+
+/* Responsividad del Sidebar */
+@media (max-width: 900px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 1.5rem;
+    position: relative;
+  }
+  .sidebar-header { margin-bottom: 1.5rem; }
+}

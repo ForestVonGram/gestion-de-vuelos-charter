@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
+import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs (Reflejo de tu backend Java) ---
 export enum TipoReporte {
@@ -27,7 +28,7 @@ export interface ReporteDTO {
 @Component({
   selector: 'app-reportes-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent],
   templateUrl: './reportes-admin.component.html',
   styleUrls: ['./reportes-admin.component.css']
 })

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service'; // Ajusta la ruta si es necesario
+import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs ---
 export enum EstadoAeronave {
@@ -30,7 +31,7 @@ export interface AeronaveDTO {
 @Component({
   selector: 'app-flota-aerea-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent],
   templateUrl: './flota-aerea-admin.component.html',
   styleUrls: ['./flota-aerea-admin.component.css']
 })

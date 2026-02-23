@@ -110,3 +110,103 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-light-mid);
 }
+
+/* =========================================
+   LAYOUT ADMINISTRADOR (ESTILOS COMPARTIDOS)
+   ========================================= */
+
+/* Contenedor principal que divide Sidebar y Contenido */
+.admin-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--color-dark);
+  overflow: hidden;
+}
+
+/* Área de contenido derecho (con scroll independiente) */
+.main-content {
+  flex: 1;
+  background: radial-gradient(circle at top right, #3a3a75 0%, var(--color-dark) 40%);
+  padding: 2.5rem 3rem;
+  overflow-y: auto;
+}
+
+/* --- Topbar (Cabecera superior) --- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.welcome-box h1 {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-white);
+  font-size: 2.2rem;
+  margin-bottom: 0.3rem;
+}
+
+.welcome-box p {
+  color: var(--color-light-mid);
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.95rem;
+}
+
+.avatar-circle {
+  width: 50px;
+  height: 50px;
+  background-color: var(--color-mid);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);
+  font-weight: bold;
+  font-size: 1.2rem;
+  font-family: 'Archivo Black', sans-serif;
+  border: 2px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* --- Títulos de Página y Botones Principales --- */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-title {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-white);
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.btn-primary {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-light-mid);
+}
+
+/* Responsividad general del Layout */
+@media (max-width: 900px) {
+  .admin-container { flex-direction: column; overflow-y: auto; }
+  .main-content { padding: 1.5rem; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
