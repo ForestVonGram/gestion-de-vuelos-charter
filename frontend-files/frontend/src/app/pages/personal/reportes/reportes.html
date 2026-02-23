@@ -1,0 +1,56 @@
+<app-header-tripulante></app-header-tripulante>
+
+<div class="reportes">
+    <h2>Mis Reportes</h2>
+    <p>Aquí puedes ver y descargar tus reportes de vuelo.</p>
+    
+    <div class="reportes-container">
+        @for (reporte of reportes(); track reporte.id) {
+        <div class="reporte-card">
+            <div class="reporte-info">
+            <h3>{{ reporte.nombre }}</h3>
+            <p>Fecha de emisión: {{ reporte.fechaEmision }}</p>
+            </div>
+            <a [href]="reporte.urlDescarga" target="_blank" class="btn-descargar">
+            Descargar
+            </a>
+        </div>
+        }
+    </div>
+
+    <div class="subir-reporte">
+        <h2>Crear nuevo reporte</h2>
+
+        <form [formGroup]="createReportForm" (ngSubmit)="createReport()" novalidate="">
+
+            <div>
+                <label for="nombre">Nombre del reporte</label>
+                <input type="text" placeholder="Nombre del reporte" />
+            </div>
+
+            <div>
+                <label for="fecha">Fecha del vuelo</label>
+                <input type="text" placeholder="Fecha del vuelo" />
+            </div>
+            <div>
+                <label for="duracion">Duración del vuelo</label>
+                <input type="text" placeholder="Duración del vuelo" />
+            </div>
+
+            <div>
+                <label for="descripcion">Descripción del vuelo</label>
+                <textarea formControlName="descripcion" placeholder="Descripción del reporte"></textarea>
+            </div>
+
+            <div>
+                <label for="gravedad">Gravedad del incidente</label>
+                <input type="text" placeholder="Gravedad del incidente" />
+            </div>
+
+            <div>
+                <button type="submit" class="btn-crear">Crear Reporte</button>
+            </div>
+            
+        </form>
+
+</div>

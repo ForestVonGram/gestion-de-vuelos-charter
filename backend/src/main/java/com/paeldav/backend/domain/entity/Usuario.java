@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Entidad que representa a los usuarios del sistema.
@@ -66,6 +67,10 @@ public class Usuario {
     @Column(name = "metodo_dos_factores")
     @Enumerated(EnumType.STRING)
     private com.paeldav.backend.domain.enums.MetodoDosFactores metodoDosFactores;
+
+    @Column(name="vuelo_actual")
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<PasajeroVuelo> vuelos;
 
     @PrePersist
     protected void onCreate() {

@@ -6,6 +6,18 @@ import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dash
 import {authGuard} from './guards/auth.guard';
 import {adminGuard} from './guards/admin.guard';
 import {PreciosComponent} from './pages/precios/precios.component';
+import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
+
+import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
+import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
+import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
+import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_ofrecido/mantenimiento_ofrecido.component';
+
+import { Tripulante } from './pages/personal/tripulante/tripulante';
+import { Tripulacion } from './pages/personal/tripulacion/tripulacion';
+import { Vuelos } from './pages/personal/vuelos/vuelos';
+import { Certificados } from './pages/personal/certificados/certificados';
+import { Reportes } from './pages/personal/reportes/reportes';
 
 import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
@@ -38,9 +50,38 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'terminos-condiciones',
+    component: TerminosCondicionesComponent
+  },
+  {
     path: 'precios',
     component: PreciosComponent,
     canActivate: [authGuard]
+  },
+  {
+    path: 'tripulante',
+    component: Tripulante,
+    canActivate: []
+  },
+  {
+    path: 'tripulacion',
+    component: Tripulacion,
+    canActivate: []
+  },
+  {
+    path: 'vuelos',
+    component: Vuelos,
+    canActivate: []
+  },
+  {
+    path: 'certificados',
+    component: Certificados,
+    canActivate: []
+  },
+  {
+    path: 'reportes',
+    component: Reportes,
+    canActivate: []
   },
   {
     path: 'admin',
@@ -56,7 +97,7 @@ export const routes: Routes = [
         component: AdminDashboardComponent
       },
       {
-        path: 'vuelos',
+        path: 'vuelos-admin',
         component: VuelosAdminComponent
       },
       {
@@ -78,4 +119,25 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'operador',
+    children: [
+      {
+        path: 'mantenimiento',
+        component: MantenimientoComponent
+      },
+      {
+        path: 'mantenimiento/nuevo',
+        component: MantenimientoFormComponent
+      },
+      {
+        path: 'mantenimientos/ofrecidos',
+        component: MantenimientoOfrecidoComponent
+      },
+      {
+        path: 'mantenimiento/:id',
+        component: MantenimientoDetalleComponent
+      }
+    ]
+  }
 ];

@@ -1,0 +1,311 @@
+<div class="dashboard-container">
+  <!-- Navbar agregada para consistencia -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-container">
+        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+      </div>
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <a routerLink="/operador/mantenimiento">Mantenimientos</a>
+      <a routerLink="/about/operadores">Conoce el equipo</a>
+
+      <div class="user-profile-container">
+        <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+          <img
+            src="assets/icons/user_account.svg"
+            alt="Perfil"
+            class="avatar-img"
+            onerror="this.src='https://i.pravatar.cc/150?img=68'"
+          >
+        </div>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+          <div class="menu-header">
+            <span class="menu-user-name">{{ userName }}</span>
+            <span class="menu-user-email">{{ userEmail }}</span>
+          </div>
+          <div class="menu-divider"></div>
+          <a href="#" class="menu-item">
+            <i class="fas fa-user-circle"></i> Mi Perfil
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-ticket-alt"></i> Mis Tareas
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <div class="menu-divider"></div>
+          <a (click)="logout()" class="menu-item logout-item">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido del formulario -->
+  <div class="form-content">
+    <!-- Header -->
+    <div class="form-header">
+      <button class="back-button" (click)="cancelar()" type="button">
+        <span class="back-icon">←</span> Volver
+      </button>
+      <h1>{{ isEditMode ? 'Editar Mantenimiento' : 'Nuevo Mantenimiento' }}</h1>
+      <div class="header-spacer"></div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="loading-spinner"></div>
+      <p>Cargando...</p>
+    </div>
+
+    <!-- Formulario -->
+    <form [formGroup]="mantenimientoForm" (ngSubmit)="onSubmit()" class="elegant-form" *ngIf="!loading">
+
+      <!-- Estado (solo visible en edición) -->
+      <div class="status-section" *ngIf="isEditMode">
+        <div class="status-toggle">
+          <label class="toggle-label">
+            <span class="toggle-text">Completado</span>
+            <div class="toggle-switch">
+              <input type="checkbox" formControlName="completado" id="completado">
+              <label for="completado" class="toggle-slider"></label>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Sección: Información de la Aeronave -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">✈️</span>
+          <h2>Información de la Aeronave</h2>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="aeronaveId">
+              Aeronave
+              <span class="required">*</span>
+            </label>
+            <select
+              id="aeronaveId"
+              formControlName="aeronaveId"
+              [class.invalid]="isFieldInvalid('aeronaveId')"
+            >
+              <option value="">Seleccione una aeronave</option>
+              <option *ngFor="let a of aeronaves" [value]="a.id">
+                {{ a.matricula }} (ID: {{ a.id }})
+              </option>
+            </select>
+            <span class="error-message" *ngIf="isFieldInvalid('aeronaveId')">
+              {{ getErrorMessage('aeronaveId') }}
+            </span>
+          </div>
+
+          <div class="form-field">
+            <label for="responsableId">
+              Responsable
+              <span class="required">*</span>
+            </label>
+            <select
+              id="responsableId"
+              formControlName="responsableId"
+              [class.invalid]="isFieldInvalid('responsableId')"
+            >
+              <option value="">Seleccione un responsable</option>
+              <option *ngFor="let r of responsables" [value]="r.id">
+                {{ r.nombre }}
+              </option>
+            </select>
+            <span class="error-message" *ngIf="isFieldInvalid('responsableId')">
+              {{ getErrorMessage('responsableId') }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Tipo y Descripción -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">🔧</span>
+          <h2>Tipo y Descripción</h2>
+        </div>
+
+        <div class="form-field full-width">
+          <label for="tipo">
+            Tipo de Mantenimiento
+            <span class="required">*</span>
+          </label>
+          <div class="tipo-options">
+            <div class="tipo-option" *ngFor="let tipo of tipos_mantenimiento">
+              <input
+                type="radio"
+                [id]="'tipo_' + tipo.value"
+                [value]="tipo.value"
+                formControlName="tipo"
+              >
+              <label [for]="'tipo_' + tipo.value">
+                <span class="tipo-icon">{{ tipo.icon }}</span>
+                <span class="tipo-label">{{ tipo.label }}</span>
+                <span class="tipo-desc">{{ tipo.desc }}</span>
+              </label>
+            </div>
+          </div>
+          <span class="error-message" *ngIf="isFieldInvalid('tipo')">
+            {{ getErrorMessage('tipo') }}
+          </span>
+        </div>
+
+        <div class="form-field full-width">
+          <label for="descripcion">
+            Descripción
+            <span class="required">*</span>
+          </label>
+          <textarea
+            id="descripcion"
+            formControlName="descripcion"
+            rows="3"
+            placeholder="Describa el mantenimiento a realizar..."
+            [class.invalid]="isFieldInvalid('descripcion')"
+          ></textarea>
+          <span class="field-hint">Mínimo 10 caracteres</span>
+          <span class="error-message" *ngIf="isFieldInvalid('descripcion')">
+            {{ getErrorMessage('descripcion') }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Sección: Fechas -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📅</span>
+          <h2>Fecha de Inicio</h2>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="fechaInicio">
+              Fecha y Hora
+              <span class="required">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              id="fechaInicio"
+              formControlName="fechaInicio"
+              [class.invalid]="isFieldInvalid('fechaInicio')"
+            >
+            <span class="error-message" *ngIf="isFieldInvalid('fechaInicio')">
+            {{ getErrorMessage('fechaInicio') }}
+          </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Datos Técnicos -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📊</span>
+          <h2>Datos Técnicos</h2>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="kilometrajeAeronave">
+              Kilometraje
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="kilometrajeAeronave"
+              formControlName="kilometrajeAeronave"
+              placeholder="0"
+              [class.invalid]="isFieldInvalid('kilometrajeAeronave')"
+            >
+            <span class="field-hint">km</span>
+            <span class="error-message" *ngIf="isFieldInvalid('kilometrajeAeronave')">
+            {{ getErrorMessage('kilometrajeAeronave') }}
+          </span>
+          </div>
+
+          <div class="form-field">
+            <label for="horasVueloAeronave">
+              Horas de Vuelo
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="horasVueloAeronave"
+              formControlName="horasVueloAeronave"
+              placeholder="0"
+              [class.invalid]="isFieldInvalid('horasVueloAeronave')"
+            >
+            <span class="field-hint">hrs</span>
+            <span class="error-message" *ngIf="isFieldInvalid('horasVueloAeronave')">
+            {{ getErrorMessage('horasVueloAeronave') }}
+          </span>
+          </div>
+
+          <div class="form-field">
+            <label for="costo">
+              Costo
+              <span class="required">*</span>
+            </label>
+            <input
+              type="number"
+              id="costo"
+              formControlName="costo"
+              placeholder="0.00"
+              [class.invalid]="isFieldInvalid('costo')"
+            >
+            <span class="field-hint">USD</span>
+            <span class="error-message" *ngIf="isFieldInvalid('costo')">
+            {{ getErrorMessage('costo') }}
+          </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Observaciones -->
+      <div class="form-section">
+        <div class="section-header">
+          <span class="section-icon">📝</span>
+          <h2>Observaciones</h2>
+        </div>
+
+        <div class="form-field full-width">
+        <textarea
+          id="observaciones"
+          formControlName="observaciones"
+          rows="4"
+          placeholder="Notas adicionales sobre el mantenimiento..."
+        ></textarea>
+          <span class="field-hint">Opcional</span>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="cancelar()" [disabled]="loading">
+          Cancelar
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="mantenimientoForm.invalid && submitted || loading">
+          <span class="btn-icon">{{ isEditMode ? '💾' : '➕' }}</span>
+          {{ isEditMode ? 'Actualizar' : 'Crear' }} Mantenimiento
+        </button>
+      </div>
+
+      <!-- Mensaje de error general -->
+      <div class="form-error" *ngIf="submitted && mantenimientoForm.invalid">
+        Por favor, complete todos los campos requeridos correctamente.
+      </div>
+    </form>
+  </div>
+</div>

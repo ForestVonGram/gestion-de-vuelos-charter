@@ -1,0 +1,29 @@
+<app-header-tripulante></app-header-tripulante>
+
+<div class="certificados-page">
+
+  <h2>Mis Certificados</h2>
+  <p>Aquí puedes ver y descargar tus certificados de vuelo.</p>
+
+  <div class="certificados-container">
+    @for (certificado of certificados(); track certificado.id) {
+      <div class="certificado-card">
+        <div class="certificado-info">
+          <h3>{{ certificado.nombre }}</h3>
+          <p>Fecha de emisión: {{ certificado.fechaEmision }}</p>
+        </div>
+        <a [href]="certificado.urlDescarga" target="_blank" class="btn-descargar">
+          Descargar
+        </a>
+      </div>
+    }
+  </div>
+
+  <div class="subir-certificado">
+    <h2>Subir nuevo certificado</h2>
+
+    <input type="file" (change)="onFileSelected($event)" />
+    <button (click)="onFileSelected($event)">Subir</button>
+  </div>
+
+</div>
