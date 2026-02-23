@@ -1,0 +1,64 @@
+<header class="header">
+  <nav class="navbar">
+
+    <div class="navbar-left">
+      <div class="logo-container">
+        <img
+          src="assets/logo/logo_astranimbus_svg.svg"
+          alt="Astra Nimbus Logo"
+          class="logo-header"
+          routerLink="/tripulante" />
+      </div>
+
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+
+    <div class="navbar-right">
+
+      <div class="nav-link">
+        <a routerLink="/vuelos" class="nav-link">Mis Vuelos</a>
+        <a routerLink="/tripulacion" class="nav-link">Tripulación</a>
+        <a routerLink="/reportes" class="nav-link">Reportes</a>
+        <a routerLink="/certificados" class="nav-link">Certificados</a>
+      </div>
+
+      <div class="user-profile-container">
+
+        <div class="user-avatar" (click)="toggleDropdown()">
+          <img
+            src="assets/icons/user_account.svg"
+            alt="Perfil"
+            class="avatar-img"
+            onerror="this.src='https://i.pravatar.cc/150?img=68'"
+          >
+        </div>
+
+        @if(isDropdownOpen){
+          <div class="dropdown-menu" >
+            <div class="menu-header">
+              <span class="menu-user-name">{{ userName }}</span>
+              <span class="menu-user-email">{{ userEmail }}</span>
+            </div>
+
+            <div class="menu-divider"></div>
+
+            <a href="perfil" class="menu-item">Mi Perfil</a>
+            <a href="#" class="menu-item">Mis Vuelos</a>
+            <a href="#" class="menu-item">Configuración</a>
+
+            <div class="menu-divider"></div>
+
+            <a (click)="logOut()" class="menu-item logout-item">
+              Cerrar Sesión
+            </a>
+          </div>}
+
+      </div>
+    </div>
+
+  </nav>
+</header>

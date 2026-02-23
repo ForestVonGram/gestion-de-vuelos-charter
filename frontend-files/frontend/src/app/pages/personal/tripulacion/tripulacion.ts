@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante";
+import { HeaderTripulante } from "../../../shared/header-tripulante";
 
 @Component({
   selector: 'app-tripulacion',
