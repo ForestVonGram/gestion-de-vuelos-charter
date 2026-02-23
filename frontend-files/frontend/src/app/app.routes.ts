@@ -10,6 +10,11 @@ import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/a
 import { PreciosComponent } from './pages/precios/precios.component';
 import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_ofrecido/mantenimiento_ofrecido.component';
 import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
+import { Tripulante } from './pages/personal/tripulante/tripulante';
+import { Tripulacion } from './pages/personal/tripulacion/tripulacion';
+import { Vuelos } from './pages/personal/vuelos/vuelos';
+import { Certificados } from './pages/personal/certificados/certificados';
+import { Reportes } from './pages/personal/reportes/reportes';
 
 export const routes: Routes = [
   {
@@ -40,6 +45,31 @@ export const routes: Routes = [
   {
     path: 'precios',
     component: PreciosComponent
+  },
+  {
+    path: 'tripulante',
+    component: Tripulante,
+    canActivate: []
+  },
+  {
+    path: 'tripulacion',
+    component: Tripulacion,
+    canActivate: []
+  },
+  {
+    path: 'vuelos',
+    component: Vuelos,
+    canActivate: []
+  },
+  {
+    path: 'certificados',
+    component: Certificados,
+    canActivate: []
+  },
+  {
+    path: 'reportes',
+    component: Reportes,
+    canActivate: []
   },
   {
     path: 'admin',
