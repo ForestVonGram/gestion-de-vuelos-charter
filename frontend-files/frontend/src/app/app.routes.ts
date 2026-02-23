@@ -12,7 +12,7 @@ import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-
 import { EstadisticasAdminComponent } from './pages/administrador/estadisticas-admin/estadisticas-admin.component';
 import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admin/flota-aerea-admin.component';
 import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-admin.component';
-//import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
+import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
 
 export const routes: Routes = [
   {
@@ -72,13 +72,10 @@ export const routes: Routes = [
         path: 'nomina',
         component: NominaAdminComponent
       },
-      /*
       {
         path: 'reportes',
         component: ReportesAdminComponent
       }
-
-       */
     ]
   },
 ];
