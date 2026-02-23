@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante";
 
 @Component({
@@ -9,4 +9,12 @@ import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripu
 })
 export class Certificados {
 
+  certificados = input<any[]>([]);
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      console.log("Selected file:", file.name);
+    }
+  }
 }
