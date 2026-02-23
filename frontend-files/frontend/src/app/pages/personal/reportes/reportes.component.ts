@@ -1,15 +1,15 @@
 import { Component, input } from '@angular/core';
-import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante";
+import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-reportes',
   imports: [HeaderTripulante, ReactiveFormsModule],
-  templateUrl: './reportes.html',
-  styleUrl: './reportes.css',
+  templateUrl: './reportes.component.html',
+  styleUrl: './reportes.component.css',
 })
-export class Reportes {
+export class ReportesComponent {
 
   reportes = input<any[]>([]);
   createReportForm!: FormGroup;
@@ -21,7 +21,7 @@ export class Reportes {
 
   private createForm() {
     this.createReportForm = this.formBuilder.group({
-      nombre: ['',[Validators.required]], 
+      nombre: ['',[Validators.required]],
       descripcion: ['',[Validators.required]],
       fechaVuelo: ['',[Validators.required]],
       duracionVuelo: ['',[Validators.required]],

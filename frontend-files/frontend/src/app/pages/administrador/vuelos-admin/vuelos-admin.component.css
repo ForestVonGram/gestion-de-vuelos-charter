@@ -132,7 +132,7 @@
 }
 .unassigned-text { color: var(--color-warning); font-size: 0.85rem; font-style: italic; }
 
-/* Status Badges para Vuelos */
+/* Status Badges para VuelosComponent */
 .status-badge {
   padding: 6px 12px;
   border-radius: 20px;

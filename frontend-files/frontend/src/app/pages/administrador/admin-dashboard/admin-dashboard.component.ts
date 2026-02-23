@@ -18,7 +18,7 @@ export class AdminDashboardComponent implements OnInit {
 
   // KPIs / Estadísticas
   stats = [
-    { title: 'Vuelos Activos', value: '12', icon: 'fas fa-plane-departure', color: 'var(--color-info)' },
+    { title: 'VuelosComponent Activos', value: '12', icon: 'fas fa-plane-departure', color: 'var(--color-info)' },
     { title: 'Ingresos (Mes)', value: '$45,200', icon: 'fas fa-dollar-sign', color: 'var(--color-success)' },
     { title: 'Nuevos Usuarios', value: '18', icon: 'fas fa-users', color: 'var(--color-warning)' },
     { title: 'Incidencias', value: '2', icon: 'fas fa-exclamation-triangle', color: 'var(--color-error)' }

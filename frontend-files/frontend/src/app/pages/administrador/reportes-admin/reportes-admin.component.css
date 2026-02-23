@@ -58,7 +58,7 @@
 .filter-btn:hover { color: var(--color-white); }
 .filter-btn.active { background-color: var(--color-mid); color: var(--color-white); }
 
-/* Tabla de Reportes */
+/* Tabla de ReportesComponent */
 .table-responsive { overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; }
 

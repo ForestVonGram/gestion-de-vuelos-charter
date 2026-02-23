@@ -13,11 +13,11 @@ import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_de
 import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
 import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_ofrecido/mantenimiento_ofrecido.component';
 
-import { Tripulante } from './pages/personal/tripulante/tripulante';
-import { Tripulacion } from './pages/personal/tripulacion/tripulacion';
-import { Vuelos } from './pages/personal/vuelos/vuelos';
-import { Certificados } from './pages/personal/certificados/certificados';
-import { Reportes } from './pages/personal/reportes/reportes';
+import { TripulanteComponent } from './pages/personal/tripulante/tripulante.component';
+import { TripulacionComponent } from './pages/personal/tripulacion/tripulacion.component';
+import { VuelosComponent } from './pages/personal/vuelos/vuelos.component';
+import { CertificadosComponent } from './pages/personal/certificados/certificados.component';
+import { ReportesComponent } from './pages/personal/reportes/reportes.component';
 
 import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
@@ -60,27 +60,27 @@ export const routes: Routes = [
   },
   {
     path: 'tripulante',
-    component: Tripulante,
+    component: TripulanteComponent,
     canActivate: []
   },
   {
     path: 'tripulacion',
-    component: Tripulacion,
+    component: TripulacionComponent,
     canActivate: []
   },
   {
     path: 'vuelos',
-    component: Vuelos,
+    component: VuelosComponent,
     canActivate: []
   },
   {
     path: 'certificados',
-    component: Certificados,
+    component: CertificadosComponent,
     canActivate: []
   },
   {
     path: 'reportes',
-    component: Reportes,
+    component: ReportesComponent,
     canActivate: []
   },
   {
