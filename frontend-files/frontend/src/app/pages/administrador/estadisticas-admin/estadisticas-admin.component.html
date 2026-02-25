@@ -1,0 +1,193 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/vuelos-admin"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item active">
+          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Análisis y Rendimiento</h1>
+        <p>Actualizado: {{ metricas.fechaActualizacion | date:'medium' }}</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Métricas Generales</h2>
+      <button class="btn-primary"><i class="fas fa-download"></i> Descargar Reporte</button>
+    </div>
+
+    <div class="kpi-top-grid">
+      <div class="kpi-card highlight">
+        <div class="kpi-icon">
+          <img src="assets/icons/income.svg" alt="Ingresos" class="svg-kpi-icon">
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Ingresos Totales</span>
+          <span class="kpi-value">{{ metricas.metricasVuelos.ingresoTotalVuelos | currency:'USD':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <img src="assets/icons/profitability.svg" alt="Rentabilidad" class="svg-kpi-icon">
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Rentabilidad Promedio</span>
+          <span class="kpi-value">{{ metricas.rentabilidadPromedio }}%</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">
+          <img src="assets/icons/occupation.svg" alt="Ocupación" class="svg-kpi-icon">
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-label">Ocupación Promedio</span>
+          <span class="kpi-value">{{ metricas.ocupacionPromedio }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detailed-stats-grid">
+
+      <div class="stats-panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-route"></i> Operativa de Vuelos</h3>
+        </div>
+        <div class="panel-body">
+          <div class="stat-row">
+            <span>Totales Históricos</span>
+            <span class="stat-num">{{ metricas.metricasVuelos.vuelosTotales | number }}</span>
+          </div>
+          <div class="stat-row text-success">
+            <span>Completados</span>
+            <span class="stat-num">{{ metricas.metricasVuelos.vuelosCompletados | number }}</span>
+          </div>
+          <div class="stat-row text-warning">
+            <span>En Proceso / Programados</span>
+            <span class="stat-num">{{ metricas.metricasVuelos.vuelosEnProceso + metricas.metricasVuelos.vuelosProgramados }}</span>
+          </div>
+          <div class="stat-row text-error">
+            <span>Cancelados</span>
+            <span class="stat-num">{{ metricas.metricasVuelos.vuelosCancelados }}</span>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-labels">
+              <span>Tasa de Compleción</span>
+              <span>{{ metricas.metricasVuelos.porcentajeComplecion }}%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" [style.width]="metricas.metricasVuelos.porcentajeComplecion + '%'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-plane"></i> Estado de la Flota</h3>
+        </div>
+        <div class="panel-body">
+          <div class="stat-row">
+            <span>Aeronaves Totales</span>
+            <span class="stat-num">{{ metricas.metricasFlota.aeronavesTotales }}</span>
+          </div>
+          <div class="stat-row text-info">
+            <span>Activas / Disponibles</span>
+            <span class="stat-num">{{ metricas.metricasFlota.aeronavesActivas }} / {{ metricas.metricasFlota.aeronavesDisponibles }}</span>
+          </div>
+          <div class="stat-row text-warning">
+            <span>En Mantenimiento</span>
+            <span class="stat-num">{{ metricas.metricasFlota.aeronavesEnMantenimiento }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Total Horas Vuelo</span>
+            <span class="stat-num">{{ metricas.metricasFlota.horasTotalVuelo | number:'1.0-0' }}h</span>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-labels">
+              <span>Disponibilidad de Flota</span>
+              <span>{{ metricas.metricasFlota.porcentajeDisponibilidad }}%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill info-fill" [style.width]="metricas.metricasFlota.porcentajeDisponibilidad + '%'"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-user-tie"></i> Recursos Humanos</h3>
+        </div>
+        <div class="panel-body">
+          <div class="stat-row">
+            <span>Personal Total</span>
+            <span class="stat-num">{{ metricas.metricasPersonal.personalTotal }}</span>
+          </div>
+          <div class="stat-row">
+            <span>Personal en Licencia</span>
+            <span class="stat-num text-warning">{{ metricas.metricasPersonal.personalEnLicencia }}</span>
+          </div>
+          <hr class="divider">
+          <div class="stat-row">
+            <span>Tripulación Total</span>
+            <span class="stat-num">{{ metricas.metricasPersonal.tripulantesTotal }}</span>
+          </div>
+          <div class="stat-row text-success">
+            <span>Tripulantes Disponibles</span>
+            <span class="stat-num">{{ metricas.metricasPersonal.tripulantesDisponibles }}</span>
+          </div>
+          <div class="stat-row text-info">
+            <span>Tripulantes en Vuelo</span>
+            <span class="stat-num">{{ metricas.metricasPersonal.tripulantesEnVuelo }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>

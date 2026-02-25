@@ -1,0 +1,129 @@
+<div class="admin-container">
+
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
+      <div class="brand-info">
+        <h2 class="brand-name">Astra Nimbus</h2>
+        <span class="brand-role">Administrator</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+        <li class="nav-item">
+          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/vuelos-admin"><i class="fas fa-route"></i> Vuelos</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
+        </li>
+        <li class="nav-item active">
+          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Centro de Reportes</h1>
+        <p>Generación y consulta de documentos operativos y consolidados</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Historial de Reportes</h2>
+      <button class="btn-primary"><i class="fas fa-magic"></i> Generar Nuevo Reporte</button>
+    </div>
+
+    <section class="content-panel">
+      <div class="panel-header">
+        <h3>Documentos Generados</h3>
+        <div class="filter-group">
+          <button class="filter-btn active">Todos</button>
+          <button class="filter-btn">Operativos</button>
+          <button class="filter-btn">Flota</button>
+          <button class="filter-btn">Horas</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Rango Evaluado</th>
+            <th>Generado Por</th>
+            <th>Fecha de Creación</th>
+            <th class="text-right">Descargar</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let reporte of reportes">
+            <td class="id-cell">#{{ reporte.id }}</td>
+
+            <td>
+                <span class="type-badge" [ngClass]="getTipoClase(reporte.tipo)">
+                  {{ reporte.tipo }}
+                </span>
+            </td>
+
+            <td class="desc-cell">
+              <span class="desc-text">{{ reporte.descripcion }}</span>
+              <span class="records-info">{{ reporte.numeroRegistros }} registros consolidados</span>
+            </td>
+
+            <td>
+              <div class="date-range">
+                <span><i class="fas fa-calendar-alt"></i> {{ reporte.fechaInicioRango | date:'dd MMM, yy' }}</span>
+                <i class="fas fa-arrow-right arrow-divider"></i>
+                <span>{{ reporte.fechaFinRango | date:'dd MMM, yy' }}</span>
+              </div>
+            </td>
+
+            <td>{{ reporte.generadoPorNombre }}</td>
+
+            <td>
+              <div class="date-block">
+                <span class="date">{{ reporte.fechaGeneracion | date:'dd MMM, yyyy' }}</span>
+                <span class="time">{{ reporte.fechaGeneracion | date:'HH:mm' }}</span>
+              </div>
+            </td>
+
+            <td class="action-cell">
+              <button class="icon-btn download-btn" title="Descargar Reporte">
+                <img src="assets/icons/downloading.svg" alt="Descargar" class="svg-icon">
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>

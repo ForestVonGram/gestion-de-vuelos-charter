@@ -1,0 +1,210 @@
+/* =========================================
+   ESTILOS GLOBALES DEL LAYOUT (No tocar)
+   ========================================= */
+.admin-container { display: flex; height: 100vh; width: 100vw; background-color: var(--color-dark); overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 260px; background: linear-gradient(180deg, rgba(41, 41, 102, 0.95) 0%, rgba(20, 20, 50, 0.98) 100%); border-right: 1px solid rgba(255, 255, 255, 0.05); display: flex; flex-direction: column; padding: 2rem 1.5rem; flex-shrink: 0; z-index: 10; }
+.sidebar-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+.sidebar-logo { width: 45px; height: 45px; object-fit: contain; }
+.brand-name { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.1rem; margin: 0; line-height: 1.2; }
+.brand-role { font-family: 'Libre Franklin', sans-serif; color: var(--color-light-mid); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Navegación */
+.sidebar-nav ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.nav-item a { display: flex; align-items: center; gap: 1rem; padding: 12px 15px; border-radius: 12px; color: var(--color-light-mid); font-family: 'Jost', sans-serif; font-weight: 500; text-decoration: none; transition: all 0.3s ease; }
+.nav-item a:hover { background-color: rgba(255, 255, 255, 0.05); color: var(--color-white); }
+.nav-item.active a { background-color: var(--color-mid); color: var(--color-white); box-shadow: 0 4px 15px rgba(92, 92, 153, 0.4); }
+.nav-item i { width: 20px; text-align: center; font-size: 1.1rem; }
+
+/* Footer Sidebar */
+.sidebar-footer { margin-top: auto; }
+.logout-btn { width: 100%; padding: 12px; background: transparent; border: 1px solid rgba(231, 76, 60, 0.3); color: var(--color-error); border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-family: 'Jost', sans-serif; font-weight: 600; transition: all 0.3s; }
+.logout-btn:hover { background-color: rgba(231, 76, 60, 0.1); border-color: var(--color-error); }
+
+/* CONTENIDO PRINCIPAL */
+.main-content { flex: 1; background: radial-gradient(circle at top right, #3a3a75 0%, var(--color-dark) 40%); padding: 2.5rem 3rem; overflow-y: auto; }
+
+/* Topbar */
+.topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.welcome-box h1 { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 2.2rem; margin-bottom: 0.3rem; }
+.welcome-box p { color: var(--color-light-mid); font-family: 'Libre Franklin', sans-serif; font-size: 0.9rem; }
+.avatar-circle { width: 50px; height: 50px; background-color: var(--color-mid); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-white); font-weight: bold; font-size: 1.2rem; font-family: 'Archivo Black', sans-serif; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+/* Cabecera de Sección */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.8rem; margin: 0; }
+.btn-primary { background-color: var(--color-mid); color: var(--color-white); border: none; padding: 10px 20px; border-radius: 12px; font-family: 'Jost', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px; }
+.btn-primary:hover { background-color: var(--color-light-mid); }
+
+
+/* =========================================
+   ESTILOS ESPECÍFICOS: ESTADÍSTICAS
+   ========================================= */
+
+/* KPIs Superiores */
+.kpi-top-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.kpi-card {
+  background-color: rgba(20, 20, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.kpi-card.highlight {
+  background-color: var(--color-mid);
+  border-color: rgba(255,255,255,0.1);
+}
+
+.kpi-card.highlight .kpi-icon { background-color: rgba(255,255,255,0.2); color: white;}
+.kpi-card.highlight .kpi-label { color: rgba(255,255,255,0.8); }
+
+.kpi-icon {
+  width: 55px;
+  height: 55px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--color-light);
+}
+
+.svg-kpi-icon {
+  width: 60%;   /* Ocupará el 60% del ancho del cuadro gris/azul de fondo */
+  height: 60%;  /* Ocupará el 60% del alto */
+  object-fit: contain; /* Garantiza que el SVG nunca se deforme ni se recorte */
+  transition: transform 0.3s ease; /* Transición suave para el hover */
+}
+
+/* Efecto hover: El ícono crece un poco al pasar el mouse sobre toda la tarjeta */
+.kpi-card:hover .svg-kpi-icon {
+  transform: scale(1.15);
+}
+
+.kpi-info { display: flex; flex-direction: column; }
+.kpi-label { font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; color: var(--color-light-mid); text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-value { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: var(--color-white); line-height: 1.2; }
+
+/* Paneles Detallados (Color Lavanda de la Flota) */
+.detailed-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.stats-panel {
+  background-color: var(--color-light); /* Lavanda */
+  border-radius: 20px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header {
+  border-bottom: 1px solid rgba(41, 41, 102, 0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-header h3 {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-dark);
+  font-size: 1.2rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  flex-grow: 1;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-text-dark);
+}
+
+.stat-num {
+  font-family: 'Jost', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Colores de texto para métricas */
+.text-success { color: var(--color-success); font-weight: 600; }
+.text-warning { color: #d35400; font-weight: 600; } /* Un naranja más oscuro para que lea bien en lavanda */
+.text-error { color: var(--color-error); font-weight: 600; }
+.text-info { color: var(--color-mid); font-weight: 600; }
+
+.divider {
+  border: none;
+  border-top: 1px dashed rgba(41, 41, 102, 0.2);
+  margin: 0.5rem 0;
+}
+
+/* Barras de Progreso */
+.progress-section {
+  margin-top: auto; /* Empuja la barra al final de la tarjeta */
+  padding-top: 1.5rem;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-dark);
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar-bg {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(41, 41, 102, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--color-success);
+  border-radius: 10px;
+  transition: width 1s ease-in-out;
+}
+
+.progress-bar-fill.info-fill {
+  background-color: var(--color-mid);
+}
+
+/* Responsividad */
+@media (max-width: 1200px) {
+  .kpi-top-grid, .detailed-stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .admin-container { flex-direction: column; overflow-y: auto; }
+  .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }
+  .kpi-top-grid, .detailed-stats-grid { grid-template-columns: 1fr; }
+  .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}

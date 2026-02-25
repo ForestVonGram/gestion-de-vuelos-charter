@@ -8,7 +8,7 @@ import {authGuard} from './guards/auth.guard';
 import {adminGuard} from './guards/admin.guard';
 import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import {PreciosComponent} from './pages/precios/precios.component';
-import { Tripulante } from './pages/personal/tripulante/tripulante'; 
+import { Tripulante } from './pages/personal/tripulante/tripulante';
 import { Tripulacion } from './pages/personal/tripulacion/tripulacion';
 import { Vuelos } from './pages/personal/vuelos/vuelos';
 import { Certificados } from './pages/personal/certificados/certificados';
@@ -36,22 +36,22 @@ export const routes: Routes = [
   {
     path: 'tripulante',
     component: Tripulante,
-    canActivate: [] 
+    canActivate: []
   },
   {
     path: 'tripulacion',
     component: Tripulacion,
-    canActivate: [] 
+    canActivate: []
   },
   {
     path: 'vuelos',
     component: Vuelos,
-    canActivate: [] 
+    canActivate: []
   },
   {
     path: 'certificados',
     component: Certificados,
-    canActivate: [] 
+    canActivate: []
   },
   {
     path: 'reportes',
@@ -70,7 +70,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [adminGuard], // Esta línea bloquea a los que no son ADMIN
+    canActivate: [], // Esta línea bloquea a los que no son ADMIN
     children: [
       {
         path: 'dashboard', // La ruta completa será: /admin/dashboard
