@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
 
 @Component({
@@ -7,6 +7,9 @@ import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripu
   templateUrl: './tripulacion.component.html',
   styleUrl: './tripulacion.component.css',
 })
-export class TripulacionComponent {
+export class TripulacionComponent implements OnInit {
+  personal!: any;
+
+  ngOnInit(): void {}
 
 }

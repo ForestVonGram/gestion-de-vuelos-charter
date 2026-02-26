@@ -1,0 +1,102 @@
+
+.filtros-container {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.filtro-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtro-grupo label {
+  font-size: 0.85rem;
+  color: var(--color-light-mid);
+}
+
+.filtro-grupo input,
+.filtro-grupo select {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: none;
+  background-color: rgba(255,255,255,0.1);
+  color: var(--color-white);
+}
+
+.filtro-grupo input:focus,
+.filtro-grupo select:focus {
+  outline: 2px solid var(--color-mid);
+}
+
+
+.tabla-container {
+  background: rgba(255,255,255,0.05);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-xl);
+  overflow-x: auto;
+}
+
+.tabla-vuelos {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-white);
+}
+
+.tabla-vuelos thead {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.tabla-vuelos th {
+  padding: 14px;
+  text-align: left;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tabla-vuelos td {
+  padding: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 0.9rem;
+}
+
+.tabla-vuelos tbody tr {
+  transition: var(--transition-fast);
+}
+
+.tabla-vuelos tbody tr:hover {
+  background-color: rgba(255,255,255,0.07);
+}
+
+
+
+.estado-badge {
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.pendiente {
+  background-color: var(--color-warning);
+  color: var(--color-white);
+}
+
+.realizado {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.cancelado {
+  background-color: var(--color-error);
+  color: var(--color-white);
+}

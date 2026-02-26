@@ -9,4 +9,6 @@ import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripu
 })
 export class VuelosComponent {
 
+  vuelos!: any;
+
 }

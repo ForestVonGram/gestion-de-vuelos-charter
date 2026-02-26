@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/auth/login/login.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
+import { MyProfile } from './shared/my-profile/my-profile';
 import {authGuard} from './guards/auth.guard';
 import {adminGuard} from './guards/admin.guard';
 import {PreciosComponent} from './pages/precios/precios.component';
@@ -85,7 +86,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [adminGuard], // Esta línea bloquea a los que no son ADMIN
+    canActivate: [], // Esta línea bloquea a los que no son ADMIN
     children: [
       {
         path: '',
@@ -139,5 +140,10 @@ export const routes: Routes = [
         component: MantenimientoDetalleComponent
       }
     ]
+  },
+  {
+    path: 'profile',
+    component: MyProfile
   }
+  
 ];
