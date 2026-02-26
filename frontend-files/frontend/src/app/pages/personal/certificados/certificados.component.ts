@@ -1,13 +1,13 @@
 import { Component, input } from '@angular/core';
-import { HeaderTripulante } from "../../../shared/header-tripulante";
+import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
 
 @Component({
   selector: 'app-certificados',
   imports: [HeaderTripulante],
-  templateUrl: './certificados.html',
-  styleUrl: './certificados.css',
+  templateUrl: './certificados.component.html',
+  styleUrl: './certificados.component.css',
 })
-export class Certificados {
+export class CertificadosComponent {
 
   certificados = input<any[]>([]);
 

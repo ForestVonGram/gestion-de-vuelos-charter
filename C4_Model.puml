@@ -182,7 +182,7 @@ Container_Boundary(databases, "Data Storage Layer") {
     ContainerDb(postgres, "PostgreSQL", "Relational Data", "
     Vuelo (Flights)
     Aeronave (Aircraft)
-    Tripulante (Crew)
+    TripulanteComponent (Crew)
     Personal (Staff)
     Usuario (Users)
     Mantenimiento (Maintenance)

@@ -1,0 +1,75 @@
+<app-header-tripulante></app-header-tripulante>
+
+
+<div class="main-content">
+
+  <div class="section-header">
+    <h2 class="page-title">Mi Historial de Vuelos</h2>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filtros-container">
+
+    <div class="filtro-grupo">
+      <label>Estado</label>
+      <select>
+        <option value="">Todos</option>
+        <option value="PENDIENTE">Pendiente</option>
+        <option value="REALIZADO">Realizado</option>
+        <option value="CANCELADO">Cancelado</option>
+      </select>
+    </div>
+
+    <div class="filtro-grupo">
+      <label>Desde</label>
+      <input type="date">
+    </div>
+
+    <div class="filtro-grupo">
+      <label>Hasta</label>
+      <input type="date">
+    </div>
+
+    <button class="btn-primary">Filtrar</button>
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="tabla-container">
+    <table class="tabla-vuelos">
+
+      <thead>
+        <tr>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Salida</th>
+          <th>Llegada</th>
+          <th>Pasajeros</th>
+          <th>Estado</th>
+          <th>Costo</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (vuelo of vuelos; track vuelo.id) {
+        <tr>
+          <td>{{ vuelo.origen }}</td>
+          <td>{{ vuelo.destino }}</td>
+          <td>{{ vuelo.fechaSalidaProgramada }}</td>
+          <td>{{ vuelo.fechaLlegadaProgramada }}</td>
+          <td>{{ vuelo.numeroPasajeros }}</td>
+          <td>
+            <span class="estado-badge">
+              {{ vuelo.estado }}
+            </span>
+          </td>
+          <td>{{ vuelo.costoEstimado }</td>
+        </tr>
+    }
+      </tbody>
+
+    </table>
+  </div>
+
+</div>
+

@@ -1,0 +1,30 @@
+<app-header-tripulante></app-header-tripulante>
+
+<div  class="tabla-container">
+<table class="tabla-general">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Cargo</th>
+      <th>Área</th>
+      <th>Turno</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    @for (p of personal; track $index) {
+    <tr >
+      <td>{{ p.usuarioNombre }}</td>
+      <td>{{ p.cargo }}</td>
+      <td>{{ p.areaEspecializacion }}</td>
+      <td>{{ p.turno }}</td>
+      <td>{{ p.estado }}</td>
+    </tr>}
+  </tbody>
+</table>
+</div>
+    
+
+
+    

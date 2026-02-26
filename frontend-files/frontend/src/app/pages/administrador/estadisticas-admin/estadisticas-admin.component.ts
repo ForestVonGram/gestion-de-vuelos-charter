@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
+import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- DTOs (Espejo de tu backend Java) ---
 export interface MetricasVuelosDTO {
@@ -47,7 +48,7 @@ export interface MetricasDTO {
 @Component({
   selector: 'app-estadisticas-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent],
   templateUrl: './estadisticas-admin.component.html',
   styleUrls: ['./estadisticas-admin.component.css']
 })

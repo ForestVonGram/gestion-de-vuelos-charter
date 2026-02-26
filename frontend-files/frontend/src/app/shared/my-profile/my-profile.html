@@ -1,0 +1,56 @@
+<app-header-tripulante></app-header-tripulante>
+
+
+
+<div class="perfil-page">
+
+  <div class="perfil-header-top">
+    <h1 class="page-title">Mi Perfil</h1>
+  </div>
+
+  <div class="perfil-card">
+
+    <div class="perfil-left">
+      <div class="perfil-avatar">
+        {{ user?.nombre?.charAt(0) }}{{ user.apellido?.charAt(0) }}
+      </div>
+
+      <h2 class="perfil-nombre">
+        {{ user.nombre }} {{ user.apellido }}
+      </h2>
+
+      <p class="perfil-rol">{{ user.rol }}</p>
+    </div>
+
+    <div class="perfil-right">
+
+      <div class="perfil-item">
+        <label>Email</label>
+        <span>{{ user.email }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Teléfono</label>
+        <span>{{ user.telefono }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Estado</label>
+        <span 
+          class="estado-badge">
+          {{ user.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Fecha de Registro</label>
+        <span>{{ user.fechaRegistro  }}</span>
+      </div>
+
+    </div>
+    <div class="perfil-actions">
+      <button class="btn-secondary">Editar Perfil</button>
+      <button class="btn-danger">Eliminar Cuenta</button>
+        </div>
+    </div>
+</div>

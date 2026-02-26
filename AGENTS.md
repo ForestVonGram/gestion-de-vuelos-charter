@@ -72,7 +72,7 @@ backend/src/main/java/com/paeldav/backend/
 ### Domain Entities
 - **Vuelo**: Flight requests with scheduling, aircraft/crew assignment, status tracking
 - **Aeronave**: Fleet aircraft with technical specs and status
-- **Tripulante**: Crew members assigned to flights
+- **TripulanteComponent**: Crew members assigned to flights
 - **Personal**: Staff/personnel records
 - **Usuario**: System users with roles
 - **Mantenimiento**: Aircraft maintenance records

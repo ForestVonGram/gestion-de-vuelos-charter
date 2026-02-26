@@ -1,43 +1,6 @@
 <div class="admin-container">
 
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="sidebar-logo">
-      <div class="brand-info">
-        <h2 class="brand-name">Astra Nimbus</h2>
-        <span class="brand-role">Administrator</span>
-      </div>
-    </div>
-
-    <nav class="sidebar-nav">
-      <ul>
-        <li class="nav-item">
-          <a routerLink="/admin/dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/admin/vuelos-admin"><i class="fas fa-route"></i> Vuelos</a>
-        </li>
-        <li class="nav-item active">
-          <a routerLink="/admin/estadisticas"><i class="fas fa-chart-pie"></i> Estadísticas</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/admin/flota"><i class="fas fa-plane"></i> Flota aérea</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/admin/nomina"><i class="fas fa-money-check-alt"></i> Nómina</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/admin/reportes"><i class="fas fa-file-alt"></i> Reportes</a>
-        </li>
-      </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-      <button class="logout-btn" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-      </button>
-    </div>
-  </aside>
+  <app-admin-sidebar></app-admin-sidebar>
 
   <main class="main-content">
 
@@ -92,7 +55,7 @@
 
       <div class="stats-panel">
         <div class="panel-header">
-          <h3><i class="fas fa-route"></i> Operativa de Vuelos</h3>
+          <h3><i class="fas fa-route"></i> Operativa de VuelosComponent</h3>
         </div>
         <div class="panel-body">
           <div class="stat-row">
