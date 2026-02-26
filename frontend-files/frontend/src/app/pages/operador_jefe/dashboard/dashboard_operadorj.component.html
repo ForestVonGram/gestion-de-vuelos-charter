@@ -1,0 +1,253 @@
+<div class="dashboard-container">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <div class="logo-container">
+        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+      </div>
+      <div class="navbar-text">
+        <h1 class="navbar-title">Astra Nimbus</h1>
+        <p class="navbar-subtitle">Aviation</p>
+      </div>
+    </div>
+
+    <div class="nav-links">
+      <span class="welcome-text">Panel del Operador Jefe</span>
+      <div class="user-profile-container">
+        <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
+          <img
+            src="assets/icons/user_account.svg"
+            alt="Perfil"
+            class="avatar-img"
+            onerror="this.src='https://i.pravatar.cc/150?img=68'"
+          >
+        </div>
+
+        <div class="dropdown-menu" *ngIf="isDropdownOpen">
+          <div class="menu-header">
+            <span class="menu-user-name">{{ userName }}</span>
+            <span class="menu-user-email">{{ userEmail }}</span>
+            <span class="menu-user-role">Operador Jefe</span>
+          </div>
+          <div class="menu-divider"></div>
+          <a href="#" class="menu-item">
+            <i class="fas fa-user-circle"></i> Mi Perfil
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-tasks"></i> Mis Tareas
+          </a>
+          <a href="#" class="menu-item">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <div class="menu-divider"></div>
+          <a (click)="logout()" class="menu-item logout-item">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="dashboard-content">
+    <!-- Header de bienvenida -->
+    <div class="welcome-header">
+      <h1>Bienvenido, {{ userName }}</h1>
+      <p>Panel de control del Operador Jefe - Gestione el equipo de mantenimiento y operaciones</p>
+    </div>
+
+    <!-- Tarjetas de KPIs principales -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-info">
+          <h3>Equipo Activo</h3>
+          <p class="kpi-number">12</p>
+          <span class="kpi-trend positive">+2 esta semana</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">🔧</div>
+        <div class="kpi-info">
+          <h3>Mantenimientos</h3>
+          <p class="kpi-number">24</p>
+          <span class="kpi-trend">8 pendientes</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">✈️</div>
+        <div class="kpi-info">
+          <h3>Aeronaves</h3>
+          <p class="kpi-number">8</p>
+          <span class="kpi-trend">2 en mantenimiento</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon">📋</div>
+        <div class="kpi-info">
+          <h3>Certificaciones</h3>
+          <p class="kpi-number">34</p>
+          <span class="kpi-trend warning">3 por vencer</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de acceso rápido a módulos -->
+    <div class="modules-section">
+      <h2>Módulos de Gestión</h2>
+      <div class="modules-grid">
+
+        <!-- Mantenimiento -->
+        <div class="module-card" (click)="irAMantenimiento()">
+          <div class="module-icon maintenance">🔧</div>
+          <h3>Mantenimiento</h3>
+          <p>Gestión completa de mantenimientos preventivos y correctivos</p>
+          <div class="module-stats">
+            <span class="stat-badge">12 activos</span>
+            <span class="stat-badge">4 pendientes</span>
+          </div>
+          <button class="module-btn">Acceder →</button>
+        </div>
+
+        <!-- Mantenimientos Ofrecidos -->
+        <div class="module-card" (click)="irAMantenimientosOfrecidos()">
+          <div class="module-icon services">⚙️</div>
+          <h3>Servicios Ofrecidos</h3>
+          <p>Catálogo completo de servicios de mantenimiento disponibles</p>
+          <div class="module-stats">
+            <span class="stat-badge">4 tipos</span>
+            <span class="stat-badge">24 realizados</span>
+          </div>
+          <button class="module-btn">Explorar →</button>
+        </div>
+
+        <!-- Tripulación -->
+        <div class="module-card" (click)="irATripulacion()">
+          <div class="module-icon crew">👥</div>
+          <h3>Tripulación</h3>
+          <p>Gestión de personal, horarios y asignaciones</p>
+          <div class="module-stats">
+            <span class="stat-badge">12 miembros</span>
+            <span class="stat-badge">5 disponibles</span>
+          </div>
+          <button class="module-btn">Gestionar →</button>
+        </div>
+
+        <!-- Tripulantes -->
+        <div class="module-card" (click)="irATripulante()">
+          <div class="module-icon member">🧑‍✈️</div>
+          <h3>Tripulantes</h3>
+          <p>Perfiles individuales y certificaciones</p>
+          <div class="module-stats">
+            <span class="stat-badge">8 pilotos</span>
+            <span class="stat-badge">4 técnicos</span>
+          </div>
+          <button class="module-btn">Ver perfiles →</button>
+        </div>
+
+        <!-- Vuelos -->
+        <div class="module-card" (click)="irAVuelos()">
+          <div class="module-icon flights">✈️</div>
+          <h3>Vuelos</h3>
+          <p>Programación y seguimiento de vuelos</p>
+          <div class="module-stats">
+            <span class="stat-badge">6 hoy</span>
+            <span class="stat-badge">3 en curso</span>
+          </div>
+          <button class="module-btn">Ver programación →</button>
+        </div>
+
+        <!-- Certificados -->
+        <div class="module-card" (click)="irACertificados()">
+          <div class="module-icon certs">📜</div>
+          <h3>Certificaciones</h3>
+          <p>Control de licencias y certificados del personal</p>
+          <div class="module-stats">
+            <span class="stat-badge">34 activas</span>
+            <span class="stat-badge warning">3 por vencer</span>
+          </div>
+          <button class="module-btn">Revisar →</button>
+        </div>
+
+        <!-- Reportes -->
+        <div class="module-card" (click)="irAReportes()">
+          <div class="module-icon reports">📊</div>
+          <h3>Reportes</h3>
+          <p>Análisis y estadísticas operativas</p>
+          <div class="module-stats">
+            <span class="stat-badge">12 generados</span>
+            <span class="stat-badge">este mes</span>
+          </div>
+          <button class="module-btn">Ver reportes →</button>
+        </div>
+
+        <!-- Acceso Admin (si tiene permisos) -->
+        <div class="module-card admin-card" (click)="irAAdmin()" *ngIf="esAdmin">
+          <div class="module-icon admin">⚡</div>
+          <h3>Panel Admin</h3>
+          <p>Acceso al panel de administración</p>
+          <div class="module-stats">
+            <span class="stat-badge">privilegios</span>
+            <span class="stat-badge">completos</span>
+          </div>
+          <button class="module-btn">Ir al admin →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de actividad reciente -->
+    <div class="recent-activity">
+      <h2>Actividad Reciente</h2>
+      <div class="activity-list">
+
+        <div class="activity-item">
+          <div class="activity-icon completed">✅</div>
+          <div class="activity-content">
+            <p><strong>Mantenimiento completado</strong> - Aeronave LV-ABC</p>
+            <small>Preventivo - Hace 2 horas</small>
+          </div>
+          <span class="activity-time">14:30</span>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon pending">⏳</div>
+          <div class="activity-content">
+            <p><strong>Nuevo mantenimiento programado</strong> - Aeronave LV-XYZ</p>
+            <small>Correctivo - Asignado a Carlos R.</small>
+          </div>
+          <span class="activity-time">11:45</span>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon cert">📜</div>
+          <div class="activity-content">
+            <p><strong>Certificación actualizada</strong> - Juan Pérez</p>
+            <small>Licencia de piloto - Vence en 6 meses</small>
+          </div>
+          <span class="activity-time">09:20</span>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon flight">✈️</div>
+          <div class="activity-content">
+            <p><strong>Vuelo completado</strong> - Ruta BOG-MDE</p>
+            <small>A tiempo - 45 pasajeros</small>
+          </div>
+          <span class="activity-time">08:15</span>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-icon alert">⚠️</div>
+          <div class="activity-content">
+            <p><strong>Alerta de mantenimiento</strong> - Inspección requerida</p>
+            <small>Aeronave LV-DEF - 50 hrs restantes</small>
+          </div>
+          <span class="activity-time">Ayer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
