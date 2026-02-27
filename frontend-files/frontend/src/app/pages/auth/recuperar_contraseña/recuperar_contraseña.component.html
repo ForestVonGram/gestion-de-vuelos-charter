@@ -1,0 +1,196 @@
+<div class="login-container">
+  <a routerLink="/auth/login" class="back-btn" title="Volver al login">
+    <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <div class="login-wrapper">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="AstraNimbus Logo" class="logo" height="800" width="800"/>
+      <h1 class="app-title">AstraNimbus</h1>
+      <p class="app-subtitle">Verificar código</p>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="step-indicator">
+      <div class="step completed">
+        <span class="step-number">1</span>
+        <span class="step-label">Solicitud</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step active">
+        <span class="step-number">2</span>
+        <span class="step-label">Verificación</span>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <span class="step-number">3</span>
+        <span class="step-label">Nueva contraseña</span>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Verification Form -->
+    <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Código Field -->
+      <div class="form-group">
+        <label for="codigo" class="form-label">Código de verificación</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="3" y1="15" x2="21" y2="15"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          <input
+            type="text"
+            id="codigo"
+            formControlName="codigo"
+            class="form-input code-input"
+            placeholder="000000"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="\d*"
+            [ngClass]="{ 'is-invalid': submitted && f['codigo'].errors }"
+            (input)="onCodeInput($event)"
+          />
+        </div>
+        <div *ngIf="submitted && f['codigo'].errors" class="error-text">
+          <span *ngIf="f['codigo'].errors['required']">El código es obligatorio</span>
+          <span *ngIf="f['codigo'].errors['pattern']">El código debe tener 6 dígitos</span>
+        </div>
+      </div>
+
+      <!-- Countdown Timer -->
+      <div class="countdown-timer" *ngIf="!showNewPassword">
+        <span>El código expira en: </span>
+        <strong>{{ formatTime(countdown) }}</strong>
+      </div>
+
+      <!-- Nueva Contraseña Section (aparece después de verificar código) -->
+      <div *ngIf="showNewPassword" class="new-password-section">
+        <div class="form-group">
+          <label for="nuevaPassword" class="form-label">Nueva contraseña</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="nuevaPassword"
+              formControlName="nuevaPassword"
+              class="form-input"
+              placeholder="••••••••"
+              [ngClass]="{ 'is-invalid': submitted && f['nuevaPassword'].errors }"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              tabindex="-1"
+            >
+              <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <div *ngIf="submitted && f['nuevaPassword'].errors" class="error-text">
+            <span *ngIf="f['nuevaPassword'].errors['required']">La contraseña es obligatoria</span>
+            <span *ngIf="f['nuevaPassword'].errors['minlength']">Mínimo 8 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarPassword" class="form-label">Confirmar contraseña</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirmarPassword"
+              formControlName="confirmarPassword"
+              class="form-input"
+              placeholder="••••••••"
+              [ngClass]="{ 'is-invalid': submitted && f['confirmarPassword'].errors }"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="toggleConfirmPasswordVisibility()"
+              tabindex="-1"
+            >
+              <svg *ngIf="!showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg *ngIf="showConfirmPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+          <div *ngIf="submitted && f['confirmarPassword'].errors" class="error-text">
+            <span *ngIf="f['confirmarPassword'].errors['required']">Confirma tu contraseña</span>
+            <span *ngIf="f['confirmarPassword'].errors['passwordMismatch']">Las contraseñas no coinciden</span>
+          </div>
+        </div>
+
+        <!-- Password Strength Meter -->
+        <div class="password-strength" *ngIf="f['nuevaPassword'].value">
+          <div class="strength-bar">
+            <div class="strength-segment" [class.active]="passwordStrength >= 1"></div>
+            <div class="strength-segment" [class.active]="passwordStrength >= 2"></div>
+            <div class="strength-segment" [class.active]="passwordStrength >= 3"></div>
+            <div class="strength-segment" [class.active]="passwordStrength >= 4"></div>
+          </div>
+          <span class="strength-text" [ngClass]="getStrengthClass()">
+            {{ getStrengthText() }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading"
+        [ngClass]="{ 'loading': loading }"
+      >
+        <span *ngIf="!loading && !showNewPassword">Verificar código</span>
+        <span *ngIf="!loading && showNewPassword">Restablecer contraseña</span>
+        <span *ngIf="loading" class="spinner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </button>
+    </form>
+
+    <!-- Resend Code Link -->
+    <div class="register-link" *ngIf="!showNewPassword">
+      <p>¿No recibiste el código?
+        <a href="#" (click)="resendCode($event)" class="link">Reenviar código</a>
+      </p>
+    </div>
+  </div>
+</div>
