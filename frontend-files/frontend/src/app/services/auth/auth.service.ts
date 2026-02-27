@@ -24,9 +24,7 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  // 2. Usamos la URL del environment para que apunte a Spring Boot (localhost:8080)
   private apiUrl = `${environment.apiUrl}/auth`;
-
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 

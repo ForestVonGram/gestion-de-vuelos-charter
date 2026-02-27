@@ -62,7 +62,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public TripulanteDTO obtenerTripulantePorId(Long id) {
-        Tripulante tripulante = tripulanteRepository.findById(id)
+        Tripulante tripulante = tripulanteRepository.findByUsuarioId(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
                 ));

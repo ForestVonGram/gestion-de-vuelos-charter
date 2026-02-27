@@ -1,7 +1,7 @@
 <app-header-tripulante></app-header-tripulante>
 
 
-
+<form formGroupName="profileForm" class="perfil-container">
 <div class="perfil-page">
 
   <div class="perfil-header-top">
@@ -12,39 +12,63 @@
 
     <div class="perfil-left">
       <div class="perfil-avatar">
-        {{ user?.nombre?.charAt(0) }}{{ user.apellido?.charAt(0) }}
+        {{ profile?.usuarioNombre?.charAt(0) }}  {{ profile?.usuarioApellido?.charAt(0) }}
       </div>
-
-      <h2 class="perfil-nombre">
-        {{ user.nombre }} {{ user.apellido }}
-      </h2>
-
-      <p class="perfil-rol">{{ user.rol }}</p>
     </div>
 
     <div class="perfil-right">
 
       <div class="perfil-item">
         <label>Email</label>
-        <span>{{ user.email }}</span>
+        <span>{{ profile?.usuarioEmail }}</span>
       </div>
 
       <div class="perfil-item">
-        <label>Teléfono</label>
-        <span>{{ user.telefono }}</span>
+        <label>Piloto</label>
+        <span>{{ profile?.esPiloto? 'Si': 'No' }}</span>
       </div>
 
       <div class="perfil-item">
         <label>Estado</label>
         <span 
           class="estado-badge">
-          {{ user.activo ? 'Activo' : 'Inactivo' }}
+          {{ profile?.estado ? 'Activo' : 'Inactivo' }}
         </span>
       </div>
 
       <div class="perfil-item">
-        <label>Fecha de Registro</label>
-        <span>{{ user.fechaRegistro  }}</span>
+        <label>Fecha de expedición licencia</label>
+        <span>{{ profile?.fechaExpedicionLicencia  }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Fecha de vencimiento licencia</label>
+        <span>{{ profile?.fechaVencimientoLicencia  }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Horas de vuelo este mes</label>
+        <span>{{ profile?.horasVueloMes }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Horas de vuelo totales</label>
+        <span>{{ profile?.horasVueloTotales  }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Tipo de licencia</label>
+        <span>{{ profile?.tipoLicencia  }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Número de licencia</label>
+        <span>{{ profile?.numeroLicencia  }}</span>
+      </div>
+
+      <div class="perfil-item">
+        <label>Observaciones</label>
+        <span>{{ profile?.observaciones }}</span>
       </div>
 
     </div>
@@ -53,4 +77,5 @@
       <button class="btn-danger">Eliminar Cuenta</button>
         </div>
     </div>
-</div>
+  </div>
+</form>

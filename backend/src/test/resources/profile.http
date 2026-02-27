@@ -1,0 +1,7 @@
+http://localhost:8081/api/tripulantes/3
+
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJlbGtpbi5iZXJtdWRlemdAdXF2aXJ0dWxhLmVkdS5jbyIsImlhdCI6MTc3MjE1MTk4MiwiZXhwIjoxNzcyMjM4MzgyfQ.za1Dvr8o0zaRRRDbdIAe0k7LQxHrTIIyfnGPdswMqw4
+
+{
+}

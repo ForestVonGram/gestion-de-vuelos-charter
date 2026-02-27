@@ -13,6 +13,8 @@ import java.util.Optional;
 @Repository
 public interface TripulanteRepository extends JpaRepository<Tripulante, Long> {
 
+
+
     Optional<Tripulante> findByNumeroLicencia(String numeroLicencia);
 
     boolean existsByNumeroLicencia(String numeroLicencia);

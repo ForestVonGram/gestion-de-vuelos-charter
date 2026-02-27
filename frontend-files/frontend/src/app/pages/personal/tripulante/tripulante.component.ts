@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
+import { ProfileService } from '../../../services/auth/profile-service';
 
 @Component({
   selector: 'app-tripulante',
