@@ -3,7 +3,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8081/api',
+  apiUrl: 'http://localhost:8080/api',
   recaptcha: {
     siteKey: '6LfIkmwsAAAAABHM4iYcWsi8Jdgz3c34ohTB0k7Q',
   }

@@ -1,0 +1,94 @@
+/* Reutilizamos todos los estilos del login que ya tienes */
+@import '../login/login.component.css';
+
+/* Estilos adicionales específicos */
+.success-message {
+  background: linear-gradient(135deg, rgba(39, 174, 96, 0.1) 0%, rgba(39, 174, 96, 0.05) 100%);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  animation: slideIn 0.5s ease-out;
+}
+
+.success-icon {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.success-title {
+  color: var(--color-success);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.success-text {
+  color: var(--color-text-dark);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.info-message {
+  background-color: rgba(52, 152, 219, 0.1);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  color: var(--color-info);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.info-icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  color: var(--color-info);
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+.resend-link {
+  text-align: center;
+  padding: var(--spacing-md);
+  border-top: 1px solid var(--color-light);
+}
+
+.resend-link p {
+  font-size: 13px;
+  color: var(--color-text-dark);
+  margin: 0;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

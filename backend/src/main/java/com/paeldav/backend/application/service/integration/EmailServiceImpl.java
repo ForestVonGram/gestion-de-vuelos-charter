@@ -1,5 +1,7 @@
 package com.paeldav.backend.application.service.integration;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -118,5 +120,8 @@ public class EmailService {
             Saludos,
             El equipo de Astra Nimbus Aviation
             """, nombre, codigo);
+    }
+
+    public void enviarEmailRecuperacionConCodigo(@Email(message = "El email debe ser válido") @NotBlank(message = "El email es obligatorio") String email, String codigo, String nombreCompleto) {
     }
 }

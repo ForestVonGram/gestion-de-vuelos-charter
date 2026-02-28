@@ -1,0 +1,108 @@
+<div class="login-container">
+  <a routerLink="/auth/login" class="back-btn" title="Volver al login">
+    <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </a>
+
+  <div class="login-wrapper">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="assets/logo/logo_astranimbus_svg.svg" alt="AstraNimbus Logo" class="logo" height="800" width="800"/>
+      <h1 class="app-title">AstraNimbus</h1>
+      <p class="app-subtitle">Recuperar contraseña</p>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="success-message">
+      <svg class="success-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <div class="success-content">
+        <span class="success-title">¡Email enviado!</span>
+        <span class="success-text">Si el email está registrado, recibirás un enlace con instrucciones para restablecer tu contraseña.</span>
+      </div>
+    </div>
+
+    <!-- Info Message (cuando no hay éxito) -->
+    <div *ngIf="!success" class="info-message">
+      <svg class="info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>Te enviaremos un código de 6 dígitos para restablecer tu contraseña</span>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Form Section -->
+    <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()" class="login-form" *ngIf="!success">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">Email</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-input"
+            placeholder="ejemplo@gmail.com"
+            [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+          />
+        </div>
+        <div *ngIf="submitted && f['email'].errors" class="error-text">
+          <span *ngIf="f['email'].errors['required']">El email es obligatorio</span>
+          <span *ngIf="f['email'].errors['email']">El email debe ser válido</span>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading"
+        [ngClass]="{ 'loading': loading }"
+      >
+        <span *ngIf="!loading">Enviar código de recuperación</span>
+        <span *ngIf="loading" class="spinner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </button>
+    </form>
+
+    <!-- Success Actions -->
+    <div *ngIf="success" class="success-actions">
+      <button class="submit-button" routerLink="/auth/login">
+        Volver al inicio de sesión
+      </button>
+
+      <div class="resend-link">
+        <p>¿No recibiste el código?
+          <a href="#" (click)="resendCode($event)" class="link">Reenviar email</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Login Link -->
+    <div class="register-link" *ngIf="!success">
+      <p>¿Recordaste tu contraseña? <a routerLink="/auth/login" class="link">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>

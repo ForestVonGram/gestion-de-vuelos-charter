@@ -2,17 +2,20 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { LandingComponent } from './pages/landing/landing.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
+import { RecuperarSolicitudComponent } from './pages/auth/solicitud_recuperacion/solicitud_recuperacion.component';
+import { RecuperarContraseniaComponent } from './pages/auth/recuperar_contraseña/recuperar_contraseña.component';
+
 import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
-import { MyProfile } from './shared/my-profile/my-profile';
-import {authGuard} from './guards/auth.guard';
-import {adminGuard} from './guards/admin.guard';
-import {PreciosComponent} from './pages/precios/precios.component';
+import { authGuard } from './guards/auth.guard';
+import { adminGuard } from './guards/admin.guard';
+import { PreciosComponent } from './pages/precios/precios.component';
 import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
 
 import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
 import { MantenimientoFormComponent } from './pages/operador/mantenimiento_form/mantenimiento_form.component';
 import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_ofrecido/mantenimiento_ofrecido.component';
+import { DashboardOperadorJComponent } from './pages/operador_jefe/dashboard/dashboard_operadorj.component';
 
 import { TripulanteComponent } from './pages/personal/tripulante/tripulante.component';
 import { TripulacionComponent } from './pages/personal/tripulacion/tripulacion.component';
@@ -20,7 +23,7 @@ import { VuelosComponent } from './pages/personal/vuelos/vuelos.component';
 import { CertificadosComponent } from './pages/personal/certificados/certificados.component';
 import { ReportesComponent } from './pages/personal/reportes/reportes.component';
 
-import {AdminDashboardComponent} from './pages/administrador/admin-dashboard/admin-dashboard.component';
+import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
 import { EstadisticasAdminComponent } from './pages/administrador/estadisticas-admin/estadisticas-admin.component';
 import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admin/flota-aerea-admin.component';
@@ -42,6 +45,14 @@ export const routes: Routes = [
       {
         path: 'register',
         component: RegisterComponent
+      },
+      {
+        path: 'recuperar',
+        component: RecuperarSolicitudComponent
+      },
+      {
+        path: 'recuperar/verificar',
+        component: RecuperarContraseniaComponent
       }
     ]
   },
@@ -86,7 +97,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [], // Esta línea bloquea a los que no son ADMIN
+    canActivate: [adminGuard],
     children: [
       {
         path: '',
@@ -94,7 +105,7 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'dashboard', // La ruta completa será: /admin/dashboard
+        path: 'dashboard',
         component: AdminDashboardComponent
       },
       {
@@ -105,7 +116,6 @@ export const routes: Routes = [
         path: 'estadisticas',
         component: EstadisticasAdminComponent
       },
-
       {
         path: 'flota',
         component: FlotaAereaAdminComponent
@@ -124,6 +134,15 @@ export const routes: Routes = [
     path: 'operador',
     children: [
       {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        component: DashboardOperadorJComponent
+      },
+      {
         path: 'mantenimiento',
         component: MantenimientoComponent
       },
@@ -140,10 +159,5 @@ export const routes: Routes = [
         component: MantenimientoDetalleComponent
       }
     ]
-  },
-  {
-    path: 'profile',
-    component: MyProfile
   }
-  
 ];
