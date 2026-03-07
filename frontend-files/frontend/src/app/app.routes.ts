@@ -11,6 +11,7 @@ import { adminGuard } from './guards/admin.guard';
 
 import { PreciosComponent } from './pages/precios/precios.component';
 import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
+import { PoliticaPrivacidadComponent} from './pages/auth/politica_privacidad/politica_privacidad.component';
 import { SobreNosotrosComponent} from './pages/informacion_general/sobre_nosotros/sobre_nosotros.component';
 import { NuestraFlotaComponent} from './pages/informacion_general/nuestra_flota/nuestra_flota.component';
 
@@ -67,6 +68,10 @@ export const routes: Routes = [
   {
     path: 'terminos-condiciones',
     component: TerminosCondicionesComponent
+  },
+  {
+    path: 'politica-privacidad',
+    component: PoliticaPrivacidadComponent
   },
   {
     path: 'precios',
