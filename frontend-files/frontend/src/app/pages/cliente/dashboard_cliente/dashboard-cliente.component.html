@@ -1,33 +1,51 @@
 <div class="dashboard-container">
-
   <nav class="navbar">
     <div class="navbar-left">
-      <div class="logo-container">
-        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
-      </div>
-      <div class="navbar-text">
-        <h1 class="navbar-title">Astra Nimbus</h1>
-        <p class="navbar-subtitle">Aviation</p>
-      </div>
+      <a routerLink="/" class="navbar-left-link">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">Astra Nimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
+      </a>
     </div>
 
     <div class="nav-links">
       <a routerLink="/servicios">Servicios</a>
       <a routerLink="/sobre-nosotros">Sobre nosotros</a>
 
-      <div class="user-profile-container">
+      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <span class="theme-toggle-icon">
+          <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
 
+      <div class="user-profile-container">
         <div class="user-avatar" (click)="toggleDropdown()" [class.active]="isDropdownOpen">
           <img
             src="assets/icons/user_account.svg"
             alt="PerfilComponent"
             class="avatar-img"
             onerror="this.src='https://i.pravatar.cc/150?img=68'"
-            >
+          >
         </div>
 
         <div class="dropdown-menu" *ngIf="isDropdownOpen">
-
           <div class="menu-header">
             <span class="menu-user-name">{{ userName }}</span>
             <span class="menu-user-email">{{ userEmail }}</span>
@@ -56,9 +74,7 @@
   </nav>
 
   <section class="hero-section">
-
     <div class="search-widget">
-
       <div class="input-group">
         <label>¿Dónde estás?</label>
         <select class="custom-select">
@@ -93,7 +109,6 @@
       <button class="search-btn" (click)="onSearchFlight()">
         Buscar Vuelo
       </button>
-
     </div>
   </section>
 
@@ -109,5 +124,4 @@
       </div>
     </div>
   </section>
-
 </div>

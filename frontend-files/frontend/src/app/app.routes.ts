@@ -65,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: ClientDashboardComponent,
-    canActivate: [authGuard]
+
   },
   {
     path: 'terminos-condiciones',

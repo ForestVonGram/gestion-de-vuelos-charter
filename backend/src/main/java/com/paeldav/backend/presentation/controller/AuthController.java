@@ -51,7 +51,7 @@ public class AuthController {
 
     @PostMapping("/verify-2fa")
     public ResponseEntity<AuthResponse> verify2FA(
-            @Valid @RequestBody VerificacionCodigoRequest request,
+            @Valid @RequestBody VerificarCodigoRequest request,
             HttpServletRequest httpRequest) {
         String dispositivo = extraerDispositivo(httpRequest);
         String direccionIp = extraerDireccionIp(httpRequest);

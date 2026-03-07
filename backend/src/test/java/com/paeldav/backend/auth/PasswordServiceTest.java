@@ -2,7 +2,7 @@ package com.paeldav.backend.auth;
 
 import com.paeldav.backend.application.service.base.SesionService;
 import com.paeldav.backend.application.service.impl.PasswordServiceImpl;
-import com.paeldav.backend.application.service.integration.EmailService;
+import com.paeldav.backend.application.service.integration.EmailServiceImpl;
 import com.paeldav.backend.domain.entity.TokenRecuperacion;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.domain.enums.RolUsuario;
@@ -42,7 +42,7 @@ class PasswordServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private EmailService emailService;
+    private EmailServiceImpl emailServiceImpl;
 
     @Mock
     private SesionService sesionService;
@@ -91,7 +91,7 @@ class PasswordServiceTest {
             // Assert
             verify(tokenRecuperacionRepository).invalidarTokensAnteriores(usuarioTest.getId());
             verify(tokenRecuperacionRepository).save(any(TokenRecuperacion.class));
-            verify(emailService).enviarEmailRecuperacion(eq("juan@test.com"), anyString(), eq("Juan Pérez"));
+            verify(emailServiceImpl).enviarEmailRecuperacion(eq("juan@test.com"), anyString(), eq("Juan Pérez"));
         }
 
         @Test
@@ -105,7 +105,7 @@ class PasswordServiceTest {
 
             // Assert
             verify(tokenRecuperacionRepository, never()).save(any(TokenRecuperacion.class));
-            verify(emailService, never()).enviarEmailRecuperacion(anyString(), anyString(), anyString());
+            verify(emailServiceImpl, never()).enviarEmailRecuperacion(anyString(), anyString(), anyString());
         }
 
         @Test
@@ -120,7 +120,7 @@ class PasswordServiceTest {
 
             // Assert
             verify(tokenRecuperacionRepository, never()).save(any(TokenRecuperacion.class));
-            verify(emailService, never()).enviarEmailRecuperacion(anyString(), anyString(), anyString());
+            verify(emailServiceImpl, never()).enviarEmailRecuperacion(anyString(), anyString(), anyString());
         }
     }
 
@@ -147,7 +147,7 @@ class PasswordServiceTest {
             verify(tokenRecuperacionRepository).save(any(TokenRecuperacion.class));
             assertTrue(tokenTest.getUsado());
             verify(sesionService).revocarTodasLasSesiones(usuarioTest.getId());
-            verify(emailService).enviarEmailConfirmacionCambio(anyString(), anyString());
+            verify(emailServiceImpl).enviarEmailConfirmacionCambio(anyString(), anyString());
         }
 
         @Test
@@ -199,7 +199,7 @@ class PasswordServiceTest {
             ArgumentCaptor<Usuario> usuarioCaptor = ArgumentCaptor.forClass(Usuario.class);
             verify(usuarioRepository).save(usuarioCaptor.capture());
             assertEquals("newEncodedPassword", usuarioCaptor.getValue().getPassword());
-            verify(emailService).enviarEmailConfirmacionCambio(anyString(), anyString());
+            verify(emailServiceImpl).enviarEmailConfirmacionCambio(anyString(), anyString());
         }
 
         @Test

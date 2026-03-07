@@ -1,19 +1,23 @@
 package com.paeldav.backend.application.service.integration;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import com.paeldav.backend.application.service.base.EmailService;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import javax.naming.Context;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class EmailService {
+public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
@@ -23,6 +27,7 @@ public class EmailService {
     @Value("${app.frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
+    @Override
     @Async
     public void enviarEmailRecuperacion(String destinatario, String token, String nombreUsuario) {
         try {
@@ -41,13 +46,14 @@ public class EmailService {
         }
     }
 
+    @Override
     @Async
     public void enviarEmailConfirmacionCambio(String destinatario, String nombreUsuario) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
             message.setTo(destinatario);
-            message.setSubject("Contraseña actualizada - Astra Nimbus Aviation");
+            message.setSubject("Contraseña actualizada - AstraNimbus Aviation");
             message.setText(buildMensajeConfirmacion(nombreUsuario));
 
             mailSender.send(message);
@@ -57,7 +63,8 @@ public class EmailService {
         }
     }
 
-    private String buildMensajeRecuperacion(String nombre, String resetUrl) {
+    @Override
+    public String buildMensajeRecuperacion(String nombre, String resetUrl) {
         return String.format("""
             Hola %s,
             
@@ -66,7 +73,7 @@ public class EmailService {
             Haz clic en el siguiente enlace para crear una nueva contraseña:
             %s
             
-            Este enlace expirará en 1 hora.
+            Este enlace expirará en 5 minutos.
             
             Si no solicitaste este cambio, puedes ignorar este mensaje.
             
@@ -75,7 +82,8 @@ public class EmailService {
             """, nombre, resetUrl);
     }
 
-    private String buildMensajeConfirmacion(String nombre) {
+    @Override
+    public String buildMensajeConfirmacion(String nombre) {
         return String.format("""
             Hola %s,
             
@@ -88,6 +96,7 @@ public class EmailService {
             """, nombre);
     }
 
+    @Override
     @Async
     public void enviarCodigoVerificacion2FA(String destinatario, String codigo, String nombreUsuario) {
         try {
@@ -104,7 +113,8 @@ public class EmailService {
         }
     }
 
-    private String buildMensajeCodigoVerificacion(String nombre, String codigo) {
+    @Override
+    public String buildMensajeCodigoVerificacion(String nombre, String codigo) {
         return String.format("""
             Hola %s,
             
@@ -112,7 +122,7 @@ public class EmailService {
             
             %s
             
-            Este código expirará en 10 minutos.
+            Este código expirará en 5 minutos.
             
             IMPORTANTE: Nunca compartas este código con nadie. 
             El equipo de Astra Nimbus Aviation nunca te pedirá este código por email.
@@ -122,6 +132,33 @@ public class EmailService {
             """, nombre, codigo);
     }
 
-    public void enviarEmailRecuperacionConCodigo(@Email(message = "El email debe ser válido") @NotBlank(message = "El email es obligatorio") String email, String codigo, String nombreCompleto) {
+    @Override
+    public void enviarEmailRecuperacionConCodigo(String to, String codigo, String nombreCompleto) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(to);
+            message.setSubject("Código de recuperación - AstraNimbus");
+
+            String contenido = String.format(
+                    "Hola %s,\n\n" +
+                            "Has solicitado restablecer tu contraseña en AstraNimbus.\n\n" +
+                            "Tu código de verificación es: %s\n\n" +
+                            "Este código expirará en 5 minutos.\n\n" +
+                            "Si no solicitaste este cambio, ignora este mensaje.\n\n" +
+                            "Saludos,\n" +
+                            "El equipo de AstraNimbus",
+                    nombreCompleto, codigo
+            );
+
+            message.setText(contenido);
+            mailSender.send(message);
+
+            log.info("Email de recuperación con código enviado a: {}", to);
+
+        } catch (Exception e) {
+            log.error("Error al enviar email de recuperación con código a: {}", to, e);
+            throw new RuntimeException("Error al enviar el email de recuperación", e);
+        }
     }
 }

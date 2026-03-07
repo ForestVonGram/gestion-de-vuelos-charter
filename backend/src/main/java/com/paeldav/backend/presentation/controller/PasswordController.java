@@ -1,8 +1,6 @@
 package com.paeldav.backend.presentation.controller;
 
-import com.paeldav.backend.application.dto.auth.ChangePasswordRequest;
-import com.paeldav.backend.application.dto.auth.ForgotPasswordRequest;
-import com.paeldav.backend.application.dto.auth.ResetPasswordRequest;
+import com.paeldav.backend.application.dto.auth.*;
 import com.paeldav.backend.application.service.base.PasswordService;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
@@ -24,7 +22,7 @@ public class PasswordController {
     private final UsuarioRepository usuarioRepository;
 
     /**
-     * Solicita recuperación de contraseña (envía email con token)
+     * Solicita recuperación de contraseña (envía email con código)
      * Endpoint público
      */
     @PostMapping("/forgot")
@@ -32,8 +30,18 @@ public class PasswordController {
         passwordService.solicitarRecuperacion(request.getEmail());
         // Siempre retornamos éxito por seguridad (no revelar si el email existe)
         return ResponseEntity.ok(Map.of(
-                "mensaje", "Si el email está registrado, recibirás un enlace para restablecer tu contraseña"
+                "mensaje", "Si el email está registrado, recibirás un código para restablecer tu contraseña"
         ));
+    }
+
+    /**
+     * Verifica el código de 6 dígitos y retorna un token temporal
+     * Endpoint público
+     */
+    @PostMapping("/verify-code")
+    public ResponseEntity<Map<String, String>> verifyCode(@Valid @RequestBody VerificarCodigoRequest request) {
+        String token = passwordService.verificarCodigoYGenerarToken(request.getEmail(), request.getCodigo());
+        return ResponseEntity.ok(Map.of("token", token));
     }
 
     /**

@@ -2,7 +2,7 @@ package com.paeldav.backend.application.service.impl;
 
 import com.paeldav.backend.application.service.base.PasswordService;
 import com.paeldav.backend.application.service.base.SesionService;
-import com.paeldav.backend.application.service.integration.EmailService;
+import com.paeldav.backend.application.service.integration.EmailServiceImpl;
 import com.paeldav.backend.domain.entity.TokenRecuperacion;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.infraestructure.repository.TokenRecuperacionRepository;
@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -25,7 +26,7 @@ public class PasswordServiceImpl implements PasswordService {
     private final UsuarioRepository usuarioRepository;
     private final TokenRecuperacionRepository tokenRecuperacionRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailService emailService;
+    private final EmailServiceImpl emailServiceImpl;
     private final SesionService sesionService;
 
     private static final int TOKEN_EXPIRATION_HOURS = 1;
@@ -44,21 +45,44 @@ public class PasswordServiceImpl implements PasswordService {
         // Invalidar tokens anteriores
         tokenRecuperacionRepository.invalidarTokensAnteriores(usuario.getId());
 
-        // Crear nuevo token
+        // Generar UUID para el token y código de 6 dígitos
         String token = UUID.randomUUID().toString();
+        String codigo = generarCodigo6Digitos();
+
+        // Crear nuevo token con código incluido
         TokenRecuperacion tokenRecuperacion = TokenRecuperacion.builder()
                 .usuario(usuario)
                 .token(token)
+                .codigo(codigo)
                 .fechaExpiracion(LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS))
+                .usado(false)
                 .build();
 
         tokenRecuperacionRepository.save(tokenRecuperacion);
 
-        // Enviar email
+        // Enviar email con el código de 6 dígitos
         String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
-        emailService.enviarEmailRecuperacion(usuario.getEmail(), token, nombreCompleto);
+        emailServiceImpl.enviarEmailRecuperacionConCodigo(usuario.getEmail(), codigo, nombreCompleto);
 
-        log.info("Token de recuperación generado para usuario: {}", usuario.getId());
+        log.info("Token y código de recuperación generado para usuario: {}", usuario.getId());
+    }
+
+    private String generarCodigo6Digitos() {
+        Random random = new Random();
+        int codigo = 100000 + random.nextInt(900000); // Genera número entre 100000 y 999999
+        return String.valueOf(codigo);
+    }
+
+    @Override
+    @Transactional
+    public String verificarCodigoYGenerarToken(String email, String codigo) {
+        // Buscar token por código y email
+        TokenRecuperacion tokenRecuperacion = tokenRecuperacionRepository
+                .findValidTokenByCodigoAndEmail(codigo, email, LocalDateTime.now())
+                .orElseThrow(() -> new IllegalArgumentException("Código inválido o expirado"));
+
+        // Retornar el token UUID asociado para el siguiente paso
+        return tokenRecuperacion.getToken();
     }
 
     @Override
@@ -83,7 +107,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         // Enviar email de confirmación
         String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
-        emailService.enviarEmailConfirmacionCambio(usuario.getEmail(), nombreCompleto);
+        emailServiceImpl.enviarEmailConfirmacionCambio(usuario.getEmail(), nombreCompleto);
 
         log.info("Contraseña reseteada para usuario: {}", usuario.getId());
     }
@@ -105,7 +129,7 @@ public class PasswordServiceImpl implements PasswordService {
 
         // Enviar email de confirmación
         String nombreCompleto = usuario.getNombre() + " " + usuario.getApellido();
-        emailService.enviarEmailConfirmacionCambio(usuario.getEmail(), nombreCompleto);
+        emailServiceImpl.enviarEmailConfirmacionCambio(usuario.getEmail(), nombreCompleto);
 
         log.info("Contraseña cambiada para usuario: {}", usuario.getId());
     }
