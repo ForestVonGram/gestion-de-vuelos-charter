@@ -8,8 +8,10 @@ import { RecuperarContraseniaComponent } from './pages/auth/recuperar_contraseñ
 import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+
 import { PreciosComponent } from './pages/precios/precios.component';
 import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
+import { SobreNosotrosComponent} from './pages/informacion_general/sobre_nosotros/sobre_nosotros.component';
 
 import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
@@ -159,5 +161,10 @@ export const routes: Routes = [
         component: MantenimientoDetalleComponent
       }
     ]
+  },
+
+  {
+    path: 'sobre-nosotros',
+    component: SobreNosotrosComponent
   }
 ];
