@@ -69,6 +69,40 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
 
+    // ============= Excepciones de Argumentos Inválidos (para recuperación de contraseña) =============
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        log.warn("Argumento inválido: {}", ex.getMessage());
+
+        String message = ex.getMessage();
+        String code = "BAD_REQUEST";
+
+        // Personalizar mensajes para códigos y tokens inválidos
+        if (message != null) {
+            if (message.contains("Código inválido") || message.contains("código inválido")) {
+                message = "Código incorrecto. Intenta de nuevo.";
+                code = "INVALID_CODE";
+            } else if (message.contains("Token inválido") || message.contains("token inválido")) {
+                message = "El enlace ha expirado o es inválido. Solicita uno nuevo.";
+                code = "INVALID_TOKEN";
+            } else if (message.contains("expirado")) {
+                message = "El código ha expirado. Solicita uno nuevo.";
+                code = "CODE_EXPIRED";
+            }
+        }
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code(code)
+                .message(message)
+                .status(HttpStatus.BAD_REQUEST.value())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
     // ============= Excepciones de Recursos No Encontrados =============
 
     @ExceptionHandler(UsuarioNoEncontradoException.class)

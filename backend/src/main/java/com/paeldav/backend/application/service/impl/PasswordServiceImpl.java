@@ -76,7 +76,6 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     @Transactional
     public String verificarCodigoYGenerarToken(String email, String codigo) {
-        // Buscar token por código y email (usando JOIN FETCH para cargar el usuario)
         TokenRecuperacion tokenRecuperacion = tokenRecuperacionRepository
                 .findValidTokenByCodigoAndEmailWithUser(codigo, email, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalArgumentException("Código inválido o expirado"));
