@@ -14,6 +14,7 @@ import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/
 import { PoliticaPrivacidadComponent} from './pages/auth/politica_privacidad/politica_privacidad.component';
 import { SobreNosotrosComponent} from './pages/informacion_general/sobre_nosotros/sobre_nosotros.component';
 import { NuestraFlotaComponent} from './pages/informacion_general/nuestra_flota/nuestra_flota.component';
+import { TrabajaConNosotrosComponent} from './pages/informacion_general/trabaja_con_nosotros/trabaja_con_nosotros.component';
 
 import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
@@ -75,6 +76,10 @@ export const routes: Routes = [
   {
     path: 'politica-privacidad',
     component: PoliticaPrivacidadComponent
+  },
+  {
+    path: 'trabaja-con-nosotros',
+    component: TrabajaConNosotrosComponent
   },
   {
     path: 'precios',

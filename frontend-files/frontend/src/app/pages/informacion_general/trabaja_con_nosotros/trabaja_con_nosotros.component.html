@@ -1,0 +1,398 @@
+<!-- Header Navigation -->
+<header class="navbar" [ngClass]="{ 'scrolled': isNavbarScrolled }">
+  <div class="navbar-content">
+    <a routerLink="/" class="navbar-left-link">
+      <div class="navbar-left">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">AstraNimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
+      </div>
+    </a>
+    <div class="navbar-right">
+      <a href="/auth/login" class="btn btn-header">Iniciar sesión</a>
+      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <span class="theme-toggle-icon">
+          <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Careers Hero Section -->
+<div class="careers-hero">
+  <div class="careers-hero-background">
+    <img src="assets/images/careers_hero.webp" alt="Trabaja con Nosotros" class="careers-hero-bg-image" />
+    <div class="careers-hero-overlay"></div>
+  </div>
+  <div class="careers-hero-content">
+    <h1 class="careers-hero-title">
+      <span class="careers-hero-subtitle">Únete a nuestro equipo</span>
+      <span class="careers-hero-main">Trabaja con Nosotros</span>
+    </h1>
+    <p class="careers-hero-description">
+      En AstraNimbus buscamos talento apasionado por la aviación. Si compartes nuestros valores de excelencia,
+      seguridad y compromiso, queremos conocerte.
+    </p>
+  </div>
+</div>
+
+<!-- Why Join Us Section -->
+<section class="why-join">
+  <div class="why-join-container">
+    <h2 class="section-title">¿Por qué trabajar en AstraNimbus?</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">✈️</div>
+        <h3>Flota Moderna</h3>
+        <p>Trabaja con aeronaves de última generación y tecnología de punta.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🌎</div>
+        <h3>Alcance Internacional</h3>
+        <p>Operamos en múltiples destinos, ofreciendo experiencias globales.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">📈</div>
+        <h3>Crecimiento Profesional</h3>
+        <p>Oportunidades de desarrollo y capacitación continua.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">🤝</div>
+        <h3>Excelente Ambiente Laboral</h3>
+        <p>Cultura organizacional basada en el respeto y la colaboración.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Application Form Section -->
+<section class="application-section">
+  <div class="application-container">
+    <h2 class="section-title">Formulario de Solicitud</h2>
+    <p class="form-intro">Completa el siguiente formulario y adjunta tu hoja de vida. Nos pondremos en contacto contigo pronto.</p>
+
+    <div class="success-message" *ngIf="submitSuccess">
+      <div class="success-icon">✓</div>
+      <h3>¡Solicitud enviada con éxito!</h3>
+      <p>Hemos recibido tu información. Te contactaremos pronto.</p>
+    </div>
+
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit()" class="application-form" *ngIf="!submitSuccess">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input
+            type="text"
+            id="nombre"
+            formControlName="nombre"
+            [class.is-invalid]="f['nombre'].touched && f['nombre'].invalid"
+            placeholder="Tu nombre">
+          <span class="error-msg" *ngIf="f['nombre'].touched && f['nombre'].errors?.['required']">
+            El nombre es obligatorio
+          </span>
+          <span class="error-msg" *ngIf="f['nombre'].touched && f['nombre'].errors?.['minlength']">
+            Mínimo 2 caracteres
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="apellidos">Apellidos *</label>
+          <input
+            type="text"
+            id="apellidos"
+            formControlName="apellidos"
+            [class.is-invalid]="f['apellidos'].touched && f['apellidos'].invalid"
+            placeholder="Tus apellidos">
+          <span class="error-msg" *ngIf="f['apellidos'].touched && f['apellidos'].errors?.['required']">
+            Los apellidos son obligatorios
+          </span>
+          <span class="error-msg" *ngIf="f['apellidos'].touched && f['apellidos'].errors?.['minlength']">
+            Mínimo 2 caracteres
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Correo Electrónico *</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            [class.is-invalid]="f['email'].touched && f['email'].invalid"
+            placeholder="tucorreo@ejemplo.com">
+          <span class="error-msg" *ngIf="f['email'].touched && f['email'].errors?.['required']">
+            El email es obligatorio
+          </span>
+          <span class="error-msg" *ngIf="f['email'].touched && f['email'].errors?.['email']">
+            Formato de email inválido
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono *</label>
+          <input
+            type="tel"
+            id="telefono"
+            formControlName="telefono"
+            [class.is-invalid]="f['telefono'].touched && f['telefono'].invalid"
+            placeholder="7 a 15 dígitos">
+          <span class="error-msg" *ngIf="f['telefono'].touched && f['telefono'].errors?.['required']">
+            El teléfono es obligatorio
+          </span>
+          <span class="error-msg" *ngIf="f['telefono'].touched && f['telefono'].errors?.['pattern']">
+            Debe contener entre 7 y 15 dígitos
+          </span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="ciudad">Ciudad *</label>
+          <input
+            type="text"
+            id="ciudad"
+            formControlName="ciudad"
+            [class.is-invalid]="f['ciudad'].touched && f['ciudad'].invalid"
+            placeholder="Tu ciudad de residencia">
+          <span class="error-msg" *ngIf="f['ciudad'].touched && f['ciudad'].errors?.['required']">
+            La ciudad es obligatoria
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label for="posicion">Posición de Interés *</label>
+          <select
+            id="posicion"
+            formControlName="posicion"
+            [class.is-invalid]="f['posicion'].touched && f['posicion'].invalid">
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option *ngFor="let position of positions" [value]="position">{{ position }}</option>
+          </select>
+          <span class="error-msg" *ngIf="f['posicion'].touched && f['posicion'].errors?.['required']">
+            Selecciona una posición
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="experiencia">Años de Experiencia *</label>
+        <select
+          id="experiencia"
+          formControlName="experiencia"
+          [class.is-invalid]="f['experiencia'].touched && f['experiencia'].invalid">
+          <option value="" disabled selected>Selecciona una opción</option>
+          <option value="0-1">Menos de 1 año</option>
+          <option value="1-3">1 a 3 años</option>
+          <option value="3-5">3 a 5 años</option>
+          <option value="5-10">5 a 10 años</option>
+          <option value="10+">Más de 10 años</option>
+        </select>
+        <span class="error-msg" *ngIf="f['experiencia'].touched && f['experiencia'].errors?.['required']">
+          Selecciona tu experiencia
+        </span>
+      </div>
+
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="visaTrabajo" formControlName="visaTrabajo">
+          <label for="visaTrabajo">¿Cuenta con visa de trabajo vigente?</label>
+        </div>
+
+        <div class="checkbox-item">
+          <input type="checkbox" id="licenciaVigente" formControlName="licenciaVigente">
+          <label for="licenciaVigente">¿Posee licencia aeronáutica vigente?</label>
+        </div>
+
+        <div class="checkbox-item">
+          <input type="checkbox" id="disponibilidadInmediata" formControlName="disponibilidadInmediata">
+          <label for="disponibilidadInmediata">¿Disponibilidad inmediata?</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="comentarios">Comentarios adicionales</label>
+        <textarea
+          id="comentarios"
+          formControlName="comentarios"
+          rows="4"
+          placeholder="Cuéntanos por qué te gustaría trabajar con nosotros, tus habilidades destacadas, etc.">
+        </textarea>
+      </div>
+
+      <div class="form-group file-upload-group">
+        <label for="cv">Adjuntar Hoja de Vida (CV) *</label>
+        <div class="file-upload">
+          <input
+            type="file"
+            id="cv"
+            accept=".pdf,.doc,.docx"
+            (change)="onFileSelected($event)"
+            class="file-input">
+          <label for="cv" class="file-label">
+            <span class="file-icon">📎</span>
+            <span>{{ fileName || 'Seleccionar archivo (PDF, DOC, DOCX)' }}</span>
+          </label>
+        </div>
+        <small class="file-hint">Tamaño máximo: 5MB. Formatos permitidos: PDF, DOC, DOCX</small>
+        <span class="error-msg" *ngIf="!selectedFile && applicationForm.touched">
+          Debes adjuntar tu hoja de vida
+        </span>
+      </div>
+
+      <div class="form-footer">
+        <p class="required-note">* Campos obligatorios</p>
+        <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">Enviar Solicitud</span>
+          <span *ngIf="isSubmitting" class="loader"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- Current Openings Section -->
+<section class="openings-section">
+  <div class="openings-container">
+    <h2 class="section-title">Vacantes Actuales</h2>
+    <div class="openings-grid">
+      <div class="opening-card">
+        <div class="opening-header">
+          <h3>Piloto Privado</h3>
+          <span class="opening-badge">Tiempo Completo</span>
+        </div>
+        <p class="opening-location"><span>📍</span> Bogotá, Colombia</p>
+        <p class="opening-description">Buscamos piloto con licencia comercial vigente y mínimo 3500 horas de vuelo.</p>
+      </div>
+
+      <div class="opening-card">
+        <div class="opening-header">
+          <h3>Copiloto</h3>
+          <span class="opening-badge">Tiempo Completo</span>
+        </div>
+        <p class="opening-location"><span>📍</span> Medellín, Colombia</p>
+        <p class="opening-description">Experiencia en mantenimiento de aeronaves ejecutivas. Certificación vigente.</p>
+      </div>
+
+      <div class="opening-card">
+        <div class="opening-header">
+          <h3>Servicio al Cliente</h3>
+          <span class="opening-badge">Medio tiempo</span>
+        </div>
+        <p class="opening-location"><span>📍</span> Remoto</p>
+        <p class="opening-description">Atención a clientes VIP, manejo de reservas y coordinación de vuelos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="cta-container">
+    <h2 class="cta-title">¿No encuentras la vacante que buscas?</h2>
+    <p class="cta-description">Envíanos tu hoja de vida igualmente. Siempre estamos buscando talento excepcional.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h3 class="footer-brand">Astra Nimbus Aviation</h3>
+        <p class="footer-corp">Part of <strong>PAELDAV Corp.</strong></p>
+        <p class="footer-description">
+          Excelencia en aviación privada, comprometidos con brindar experiencias únicas y seguras en cada vuelo.
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Enlaces rápidos</h4>
+        <ul class="footer-links">
+          <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+          <li><a href="/flota">Nuestra flota</a></li>
+          <li><a href="/trabaja-con-nosotros">Trabaja con nosotros</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Contacto</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <span class="contact-label">Principal:</span>
+            <a href="tel:+573017275512">+57 301 7275512</a>
+          </li>
+          <li>
+            <span class="contact-label">Reservas:</span>
+            <a href="tel:+573016973283">+57 301 6973283</a>
+          </li>
+          <li>
+            <span class="contact-label">Emergencias:</span>
+            <a href="tel:+573218982391">+57 321 8982391</a>
+          </li>
+          <li>
+            <span class="contact-label">Email:</span>
+            <a href="mailto:infoastranimbus@gmail.com">infoastranimbus&#64;gmail.com</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Horarios</h4>
+        <ul class="footer-schedule">
+          <li><span>Lunes - Viernes:</span> 24/7</li>
+          <li><span>Sábados:</span> 24/7</li>
+          <li><span>Domingos:</span> 24/7</li>
+        </ul>
+        <div class="footer-social">
+          <a href="#" aria-label="LinkedIn" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Twitter" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="18" cy="6" r="1.5" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>&copy; 2026 Astra Nimbus Aviation. Todos los derechos reservados.</p>
+        <p class="paeldav-corp">PAELDAV Corp.</p>
+      </div>
+      <div class="footer-legal">
+        <a href="/politica-privacidad">Política de privacidad</a>
+        <a href="/terminos-condiciones">Términos y condiciones</a>
+      </div>
+    </div>
+  </div>
+</footer>
