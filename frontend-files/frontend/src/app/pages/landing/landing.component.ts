@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -12,10 +12,19 @@ import { RouterModule } from '@angular/router';
 export class LandingComponent implements OnInit, OnDestroy {
   isNavbarScrolled = false;
   parallaxOffset = 0;
+  isDarkMode = false;
+
+  constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
-    // Initialize scroll state
     this.checkScroll();
+
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      this.isDarkMode = true;
+      this.enableDarkMode();
+    }
   }
 
   ngOnDestroy(): void {
@@ -28,8 +37,38 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.updateParallax();
   }
 
+  toggleDarkMode(): void {
+    this.isDarkMode = !this.isDarkMode;
+    if (this.isDarkMode) {
+      this.enableDarkMode();
+      localStorage.setItem('theme', 'dark');
+    } else {
+      this.disableDarkMode();
+      localStorage.setItem('theme', 'light');
+    }
+  }
+
+  private enableDarkMode(): void {
+
+    this.renderer.addClass(document.body, 'dark-theme');
+
+    // También agregar clase al html para mayor especificidad (opcional, pero buena práctica)
+    this.renderer.addClass(document.documentElement, 'dark-theme-active');
+
+    // Disparar evento para que otros componentes puedan reaccionar
+    window.dispatchEvent(new Event('darkmode-change'));
+  }
+
+  private disableDarkMode(): void {
+    // Remover clases actualizadas
+    this.renderer.removeClass(document.body, 'dark-theme');
+    this.renderer.removeClass(document.documentElement, 'dark-theme-active');
+
+    // Disparar evento
+    window.dispatchEvent(new Event('darkmode-change'));
+  }
+
   private checkScroll(): void {
-    // Get the hero element height and trigger navbar background change when scrolling past it
     const heroElement = document.querySelector('.hero');
     if (heroElement) {
       const heroHeight = heroElement.clientHeight;
@@ -46,10 +85,9 @@ export class LandingComponent implements OnInit, OnDestroy {
       const elementTop = rect.top;
       const windowHeight = window.innerHeight;
 
-      // Calculate parallax offset when element is in view
       if (elementTop < windowHeight && elementTop > -rect.height) {
         const scrollProgress = (windowHeight - elementTop) / (windowHeight + rect.height);
-        this.parallaxOffset = scrollProgress * 350; // Max 150px offset
+        this.parallaxOffset = scrollProgress * 350;
         this.applyParallaxTransform();
       }
     }

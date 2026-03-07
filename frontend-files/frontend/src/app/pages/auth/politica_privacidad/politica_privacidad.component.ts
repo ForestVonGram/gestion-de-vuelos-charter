@@ -1,15 +1,15 @@
-import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-terminos-condiciones',
-  templateUrl: './terminos_condiciones.component.html',
-  styleUrls: ['./terminos_condiciones.component.css'],
+  selector: 'app-politica-privacidad',
+  templateUrl: './politica_privacidad.component.html',
+  styleUrls: ['./politica_privacidad.component.css'],
   standalone: true,
   imports: [CommonModule]
 })
-export class TerminosCondicionesComponent implements OnInit, OnDestroy {
+export class PoliticaPrivacidadComponent implements OnInit, OnDestroy {
   isDarkMode = false;
 
   constructor(
@@ -52,6 +52,7 @@ export class TerminosCondicionesComponent implements OnInit, OnDestroy {
   }
 
   regresar(): void {
-
+    // Navega de vuelta a la página anterior (generalmente registro)
+    this.router.navigate(['/auth/register']);
   }
 }

@@ -1,4 +1,6 @@
-/* Font Faces */
+/* =========================================
+   1. FONT FACES
+   ========================================= */
 @font-face {
   font-family: 'Archivo Black';
   src: url('../assets/fuentes/ArchivoBlack-Regular.ttf') format('truetype');
@@ -20,8 +22,11 @@
   font-style: italic;
 }
 
-/* Color Palette - "Under the moonlight" */
+/* =========================================
+   2. VARIABLES GLOBALES (LIGHT MODE POR DEFECTO)
+   ========================================= */
 :root {
+  /* Color Palette - "Under the moonlight" */
   --color-light: #CCCCFF;
   --color-light-mid: #A3A3CC;
   --color-mid: #5C5C99;
@@ -33,6 +38,8 @@
   --color-success: #27AE60;
   --color-warning: #F39C12;
   --color-info: #3498DB;
+
+  /* Espaciados y Bordes */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -43,6 +50,8 @@
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-full: 50%;
+
+  /* Sombras y Transiciones */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -50,12 +59,34 @@
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Variables Dark Mode (Base) */
+  --dark-bg-primary: #0B0B1A;
+  --dark-bg-secondary: #15152B;
+  --dark-bg-tertiary: #1E1E3F;
+  --dark-bg-hover: #2A2A55;
+  --dark-text-primary: #FFFFFF;
+  --dark-text-secondary: #A3A3CC;
+  --dark-accent: #3498DB;
+  --dark-accent-hover: #2980B9;
+  --dark-border: rgba(255, 255, 255, 0.1);
+  --dark-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --dark-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --dark-text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+/* =========================================
+   3. ESTILOS BASE Y RESET
+   ========================================= */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
 }
 
 body {
@@ -64,11 +95,6 @@ body {
   color: var(--color-text-dark);
   line-height: 1.6;
   min-height: 100vh;
-}
-
-html, body {
-  height: 100%;
-  width: 100%;
 }
 
 button {
@@ -92,30 +118,25 @@ a:hover {
   color: var(--color-light-mid);
 }
 
-/* Scrollbar Styling */
+/* Scrollbar Styling Default */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
 ::-webkit-scrollbar-track {
   background: var(--color-light);
 }
-
 ::-webkit-scrollbar-thumb {
   background: var(--color-mid);
   border-radius: var(--radius-md);
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-light-mid);
 }
 
 /* =========================================
-   LAYOUT ADMINISTRADOR (ESTILOS COMPARTIDOS)
+   4. LAYOUT ADMINISTRADOR (ESTILOS COMPARTIDOS)
    ========================================= */
-
-/* Contenedor principal que divide Sidebar y Contenido */
 .admin-container {
   display: flex;
   height: 100vh;
@@ -124,7 +145,6 @@ a:hover {
   overflow: hidden;
 }
 
-/* Área de contenido derecho (con scroll independiente) */
 .main-content {
   flex: 1;
   background: radial-gradient(circle at top right, #3a3a75 0%, var(--color-dark) 40%);
@@ -132,7 +152,6 @@ a:hover {
   overflow-y: auto;
 }
 
-/* --- Topbar (Cabecera superior) --- */
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -169,7 +188,6 @@ a:hover {
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-/* --- Títulos de Página y Botones Principales --- */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -203,10 +221,367 @@ a:hover {
   background-color: var(--color-light-mid);
 }
 
-/* Responsividad general del Layout */
 @media (max-width: 900px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .main-content { padding: 1.5rem; }
   .topbar { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}
+
+/* =========================================
+   5. MODO OSCURO (DARK THEME OVERRIDES)
+   ========================================= */
+
+/* Variables aplicadas cuando body tiene clase dark-theme */
+.dark-theme {
+  /* Background colors */
+  --color-white: #1a1a1a !important;
+  --color-light: #2d2d2d !important;
+  --color-light-mid: #404040 !important;
+  --color-mid: #4a90e2 !important;
+  --color-dark: #ffffff !important;
+  --color-text-dark: #b3b3b3 !important;
+
+  /* Specific element colors */
+  --color-primary: #4a90e2 !important;
+  --color-primary-hover: #5a9eec !important;
+  --color-secondary: #333333 !important;
+  --color-secondary-hover: #404040 !important;
+
+  /* Border colors */
+  --border-color: #404040 !important;
+  --border-color-light: #4d4d4d !important;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5) !important;
+
+  /* Background overlays */
+  --bg-overlay-light: rgba(255, 255, 255, 0.05) !important;
+  --bg-overlay-medium: rgba(255, 255, 255, 0.1) !important;
+  --bg-overlay-dark: rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Estilos específicos para elementos en modo oscuro */
+.dark-theme .navbar.scrolled {
+  background-color: #2d2d2d !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme .logo-header {
+  filter: brightness(1.2) drop-shadow(0 2px 4px rgba(0,0,0,0.3)) !important;
+}
+
+.dark-theme .navbar-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .navbar-subtitle {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .language {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .btn-header {
+  background-color: #404040 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-header:hover {
+  background-color: #4d4d4d !important;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .hero {
+  background-color: #1a1a1a !important;
+}
+
+.dark-theme .hero-bg-image {
+  opacity: 0.3 !important;
+}
+
+.dark-theme .hero-main-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .welcome-text {
+  color: #ffffff !important;
+}
+
+.dark-theme .brand-text {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .btn-register {
+  background-color: #4a90e2 !important;
+  color: #1a1a1a !important;
+}
+
+.dark-theme .btn-register:hover {
+  background-color: #5a9eec !important;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .statement {
+  background-color: #2d2d2d !important;
+}
+
+.dark-theme .statement-title {
+  color: #ffffff !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .cloud {
+  opacity: 0.5 !important;
+  filter: brightness(0.7) !important;
+}
+
+.dark-theme .aircraft {
+  filter: brightness(0.8) drop-shadow(0 8px 12px rgba(0,0,0,0.4)) !important;
+}
+
+.dark-theme .time-value {
+  background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%) !important;
+}
+
+.dark-theme .time-value-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .time-value-image {
+  filter: brightness(0.8) contrast(1.1) !important;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .offers {
+  background-color: #2d2d2d !important;
+}
+
+.dark-theme .offer-text {
+  color: #ffffff !important;
+}
+
+.dark-theme .offer-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .offer-image {
+  filter: brightness(0.8) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme .statistics {
+  background: linear-gradient(135deg, #2d2d2d 0%, #333333 100%) !important;
+}
+
+.dark-theme .stat-item {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid #404040 !important;
+}
+
+.dark-theme .stat-item:hover {
+  background-color: #404040 !important;
+  border-color: #4a90e2 !important;
+}
+
+.dark-theme .stat-number {
+  color: #ffffff !important;
+}
+
+.dark-theme .stat-label {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .stat-item:hover .stat-number,
+.dark-theme .stat-item:hover .stat-label {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .cta {
+  background-color: #2d2d2d !important;
+  border: 1px solid #404040 !important;
+}
+
+.dark-theme .cta-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .btn-primary {
+  background-color: #4a90e2 !important;
+  border-color: #4a90e2 !important;
+  color: #1a1a1a !important;
+}
+
+.dark-theme .btn-primary:hover {
+  background-color: #5a9eec !important;
+  border-color: #5a9eec !important;
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .footer {
+  background-color: #1a1a1a !important;
+  border-top: 1px solid #333333 !important;
+}
+
+.dark-theme .footer-brand {
+  color: #ffffff !important;
+}
+
+.dark-theme .footer-corp {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-corp strong {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .footer-description {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .footer-title::after {
+  background-color: #4a90e2 !important;
+}
+
+.dark-theme .footer-links a {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-links a:hover {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .footer-contact-list li {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .contact-label {
+  color: #ffffff !important;
+}
+
+.dark-theme .footer-contact-list a {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-contact-list a:hover {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .footer-schedule li {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-schedule span {
+  color: #ffffff !important;
+}
+
+.dark-theme .social-link {
+  background-color: #333333 !important;
+  color: #ffffff !important;
+  border: 1px solid #404040 !important;
+}
+
+.dark-theme .social-link:hover {
+  background-color: #4a90e2 !important;
+  color: #1a1a1a !important;
+  border-color: #4a90e2 !important;
+}
+
+.dark-theme .footer-bottom {
+  border-top-color: #333333 !important;
+}
+
+.dark-theme .footer-copyright {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .paeldav-corp {
+  color: #4a90e2 !important;
+}
+
+.dark-theme .footer-legal a {
+  color: #b3b3b3 !important;
+}
+
+.dark-theme .footer-legal a:hover {
+  color: #4a90e2 !important;
+}
+
+/* Transiciones suaves para el cambio de tema */
+.dark-theme,
+.dark-theme *,
+.dark-theme *::before,
+.dark-theme *::after {
+  transition: background-color 0.3s ease,
+  color 0.2s ease,
+  border-color 0.3s ease,
+  box-shadow 0.3s ease,
+  filter 0.3s ease,
+  opacity 0.3s ease !important;
+}
+
+/* Estilos para el botón de tema */
+.theme-toggle {
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: inherit !important;
+  transition: all 0.3s ease !important;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  transform: scale(1.1) !important;
+}
+
+.dark-theme .theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Ajustes para imágenes en modo oscuro */
+.dark-theme img:not(.logo-header):not(.no-dark-filter) {
+  filter: brightness(0.9) contrast(1.05) !important;
+}
+
+/* Scrollbar en modo oscuro */
+.dark-theme ::-webkit-scrollbar {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.dark-theme ::-webkit-scrollbar-track {
+  background: #1a1a1a !important;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+  background: #404040 !important;
+  border-radius: 6px !important;
+  border: 2px solid #1a1a1a !important;
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+  background: #4a90e2 !important;
+}
+
+/* Selection color en modo oscuro */
+.dark-theme ::selection {
+  background-color: #4a90e2 !important;
+  color: #1a1a1a !important;
+}
+
+/* Focus outline en modo oscuro */
+.dark-theme :focus {
+  outline-color: #4a90e2 !important;
 }

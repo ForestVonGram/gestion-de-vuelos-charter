@@ -1,0 +1,291 @@
+<!-- Header Navigation -->
+<!-- Header Navigation -->
+<header class="navbar" [ngClass]="{ 'scrolled': isNavbarScrolled }">
+  <div class="navbar-content">
+    <a routerLink="/" class="navbar-left-link">
+      <div class="navbar-left">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">AstraNimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
+      </div>
+    </a>
+    <div class="navbar-right">
+      <a href="/auth/login" class="btn btn-header">Iniciar sesión</a>
+      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <span class="theme-toggle-icon">
+          <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- About Hero Section -->
+<div class="about-hero">
+  <div class="about-hero-background">
+    <img src="../../../../assets/images/about_story.webp" alt="Astra Nimbus Team" class="about-hero-bg-image" />
+    <div class="about-hero-overlay"></div>
+  </div>
+  <div class="about-hero-content">
+    <h1 class="about-hero-title">
+      <span class="about-hero-subtitle">Conoce nuestra historia</span>
+      <span class="about-hero-main">Sobre AstraNimbus</span>
+    </h1>
+    <p class="about-hero-description">
+      Más que una aerolínea, somos tu aliado en el cielo, comprometidos con la excelencia y la seguridad.
+    </p>
+  </div>
+</div>
+
+<!-- Our Story Section -->
+<section class="story-section">
+  <div class="story-container">
+    <div class="story-content">
+      <h2 class="section-title">Nuestra Historia</h2>
+      <p class="story-text">
+        Astra Nimbus Aviation nació una visión clara: revolucionar la aviación privada en Latinoamérica.
+        Lo que comenzó como un sueño de tres ingenieros apasionados, hoy es una de las empresas de aviación ejecutiva
+        más prestigiosas de la región.
+      </p>
+      <p class="story-text">
+        Formamos parte del holding <strong>PAELDAV Corp.</strong>, una corporación multinacional dedicada a ofrecer
+        servicios de alta calidad en diferentes sectores. Esta alianza nos ha permitido expandir nuestros horizontes
+        y mantener los más altos estándares de seguridad y confort.
+      </p>
+      <div class="story-stats">
+        <div class="story-stat-item">
+          <span class="story-stat-number">5+</span>
+          <span class="story-stat-label">Años de experiencia</span>
+        </div>
+        <div class="story-stat-item">
+          <span class="story-stat-number">10k+</span>
+          <span class="story-stat-label">Vuelos realizados</span>
+        </div>
+        <div class="story-stat-item">
+          <span class="story-stat-number">96%</span>
+          <span class="story-stat-label">Satisfacción</span>
+        </div>
+      </div>
+    </div>
+    <div class="story-image-container">
+      <img src="../../../../assets/images/about_hero.webp" alt="Nuestra Historia" class="story-image" />
+    </div>
+  </div>
+</section>
+
+<!-- Mission Vision Values Section -->
+<section class="mission-vision">
+  <div class="mission-vision-grid">
+    <div class="mission-card">
+      <div class="card-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+      </div>
+      <h3>Misión</h3>
+      <p>Proporcionar experiencias de vuelo excepcionales que superen las expectativas de nuestros clientes, garantizando los más altos estándares de seguridad, confort y puntualidad en cada viaje.</p>
+    </div>
+
+    <div class="vision-card">
+      <div class="card-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="2"/>
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+      </div>
+      <h3>Visión</h3>
+      <p>Para el año 2029, ser la aerolínea privada líder en Latinoamérica, reconocida por nuestra innovación, excelencia operativa y compromiso con el desarrollo sostenible de la aviación.</p>
+    </div>
+
+    <div class="values-card">
+      <div class="card-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </div>
+      <h3>Valores</h3>
+      <ul class="values-list">
+        <li>Seguridad ante todo</li>
+        <li>Excelencia en el servicio</li>
+        <li>Integridad y transparencia</li>
+        <li>Innovación constante</li>
+        <li>Compromiso con el cliente</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Leadership Team Section -->
+<section class="leadership">
+  <div class="leadership-container">
+    <h2 class="section-title">Nuestro Liderazgo</h2>
+    <div class="team-grid">
+      <div class="team-member">
+        <div class="member-image">
+          <img src="assets/images/david_foto.webp" alt="David" />
+        </div>
+        <h3 class="member-name">David Gómez R</h3>
+        <p class="member-position">Co-Fundador</p>
+      </div>
+
+      <div class="team-member">
+        <div class="member-image">
+          <img src="assets/images/pablo_foto.webp" alt="Pablo" />
+        </div>
+        <h3 class="member-name">Juan Pablo López G</h3>
+        <p class="member-position">Co-Fundador</p>
+      </div>
+
+      <div class="team-member">
+        <div class="member-image">
+          <img src="assets/images/elkin_foto.webp" alt="Elkin" />
+        </div>
+        <h3 class="member-name">Elkin Bermudez G</h3>
+        <p class="member-position">Co-Fundador</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Certifications Section -->
+<section class="certifications">
+  <div class="certifications-container">
+    <h2 class="section-title">Certificaciones y Reconocimientos</h2>
+    <div class="certifications-grid">
+      <div class="certification-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>ISO/IEC 25010</span>
+      </div>
+      <div class="certification-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <span>ISO/IEC 27001</span>
+      </div>
+      <div class="certification-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="8" r="7"/>
+          <polyline points="8 21 12 17 16 21"/>
+        </svg>
+        <span>IATA Compliance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="cta-container">
+    <h2 class="cta-title">¿Listo para volar con nosotros?</h2>
+    <p class="cta-description">Únete a la experiencia Astra Nimbus y descubre un nuevo nivel de confort y seguridad.</p>
+    <a href="/auth/register" class="btn btn-cta">Registrarse ahora</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h3 class="footer-brand">Astra Nimbus Aviation</h3>
+        <p class="footer-corp">Part of <strong>PAELDAV Corp.</strong></p>
+        <p class="footer-description">
+          Excelencia en aviación privada, comprometidos con brindar experiencias únicas y seguras en cada vuelo.
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Enlaces rápidos</h4>
+        <ul class="footer-links">
+          <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+          <li><a href="/flota">Nuestra flota</a></li>
+          <li><a href="/destinos">Destinos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Contacto</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <span class="contact-label">Principal:</span>
+            <a href="tel:+573017275512">+57 301 7275512</a>
+          </li>
+          <li>
+            <span class="contact-label">Reservas:</span>
+            <a href="tel:+573016973283">+57 301 6973283</a>
+          </li>
+          <li>
+            <span class="contact-label">Emergencias:</span>
+            <a href="tel:+573218982391">+57 321 8982391</a>
+          </li>
+          <li>
+            <span class="contact-label">Email:</span>
+            <a href="mailto:infoastranimbus@gmail.com">infoastranimbus@gmail.com</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Horarios</h4>
+        <ul class="footer-schedule">
+          <li><span>Lunes - Viernes:</span> 24/7</li>
+          <li><span>Sábados:</span> 24/7</li>
+          <li><span>Domingos:</span> 24/7</li>
+        </ul>
+        <div class="footer-social">
+          <a href="#" aria-label="LinkedIn" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Twitter" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="18" cy="6" r="1.5" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>&copy; 2026 Astra Nimbus Aviation. Todos los derechos reservados.</p>
+        <p class="paeldav-corp">PAELDAV Corp.</p>
+      </div>
+      <div class="footer-legal">
+        <a href="/privacy">Política de privacidad</a>
+        <a href="/terms">Términos y condiciones</a>
+        <a href="/cookies">Política de cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>

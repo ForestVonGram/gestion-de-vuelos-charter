@@ -1,0 +1,348 @@
+<!-- Header Navigation -->
+<header class="navbar" [ngClass]="{ 'scrolled': isNavbarScrolled }">
+  <div class="navbar-content">
+    <a routerLink="/" class="navbar-left-link">
+      <div class="navbar-left">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">AstraNimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
+      </div>
+    </a>
+    <div class="navbar-right">
+      <a href="/auth/login" class="btn btn-header">Iniciar sesión</a>
+      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+        <span class="theme-toggle-icon">
+          <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Fleet Hero Section -->
+<div class="fleet-hero">
+  <div class="fleet-hero-background">
+    <img src="assets/images/fleet_hero.webp" alt="Nuestra Flota" class="fleet-hero-bg-image" />
+    <div class="fleet-hero-overlay"></div>
+  </div>
+  <div class="fleet-hero-content">
+    <h1 class="fleet-hero-title">
+      <span class="fleet-hero-subtitle">Excelencia en cada vuelo</span>
+      <span class="fleet-hero-main">Nuestra Flota</span>
+    </h1>
+    <p class="fleet-hero-description">
+      Aeronaves de última generación, pilotos expertos y el más alto estándar de seguridad para tu tranquilidad.
+    </p>
+  </div>
+</div>
+
+<!-- Fleet Introduction -->
+<section class="fleet-intro">
+  <div class="fleet-intro-container">
+    <h2 class="section-title">Flota de Aeronaves</h2>
+    <p class="fleet-intro-text">
+      En AstraNimbus contamos con una flota diversa y moderna, diseñada para satisfacer las necesidades
+      más exigentes. Cada aeronave es operada por capitanes altamente experimentados y certificados,
+      garantizando la máxima seguridad y confort en cada viaje.
+    </p>
+  </div>
+</section>
+
+<!-- Aircraft Grid Section -->
+<section class="aircraft-grid-section">
+  <div class="aircraft-container">
+    <!-- Aircraft 1 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/embraer_phenom300E.webp" alt="Embraer" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Embraer Phenom 300E</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 7-9 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 3,723 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 859 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_1.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">Carlos Mendoza</span>
+            <span class="captain-exp">15,000+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aircraft 2 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/bombardier-challenger-350.webp" alt="Bombardier Global 6000" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Bombardier Challenger 350</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 8-10 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 5,926 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 870 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_2.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">Laura Sánchez</span>
+            <span class="captain-exp">12,500+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aircraft 3 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/pilatus24.webp" alt="Cessna Citation XLS+" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Pilatus PC‑24</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 6-10 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 5,676 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 815 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_3.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">Andrés Páramo</span>
+            <span class="captain-exp">10,200+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aircraft 4 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/cessna-citation-latitude.webp" alt="Embraer Phenom 300" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Cessna Citation Latitude</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 8 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 5,278 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 826 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_4.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">María Fernanda Ruiz</span>
+            <span class="captain-exp">9,800+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aircraft 5 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/cessna-longitude.webp" alt="Piper M600" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Cessna Citation Longitude</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 8-12 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 6,482 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 895 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_5.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">Javier Rodríguez</span>
+            <span class="captain-exp">8,500+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aircraft 6 -->
+    <div class="aircraft-card">
+      <div class="aircraft-image-container">
+        <img src="assets/images/flota/gulfstream.webp" alt="Airbus H130" class="aircraft-image" />
+      </div>
+      <div class="aircraft-info">
+        <h3 class="aircraft-name">Gulfstream G650</h3>
+        <div class="aircraft-specs">
+          <span class="spec"><strong>Capacidad:</strong> 11-18 pasajeros</span>
+          <span class="spec"><strong>Alcance:</strong> 12,960 km</span>
+          <span class="spec"><strong>Velocidad:</strong> 904 km/h</span>
+        </div>
+        <div class="aircraft-captain">
+          <div class="captain-avatar">
+            <img src="assets/images/capitan_6.webp" alt="Capitán" />
+          </div>
+          <div class="captain-info">
+            <span class="captain-label">Capitán</span>
+            <span class="captain-name">Diego Camargo</span>
+            <span class="captain-exp">7,200+ horas de vuelo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Fleet Features Section -->
+<section class="fleet-features">
+  <div class="fleet-features-container">
+    <h2 class="section-title">Características de Nuestra Flota</h2>
+    <div class="features-grid">
+      <div class="feature-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        <h3>Mantenimiento Certificado</h3>
+        <p>Todas nuestras aeronaves cumplen con los más altos estándares de mantenimiento FAA y EASA.</p>
+      </div>
+      <div class="feature-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 6v6l4 2"/>
+        </svg>
+        <h3>Disponibilidad 24/7</h3>
+        <p>Nuestra flota está disponible las 24 horas, los 365 días del año para emergencias y vuelos programados.</p>
+      </div>
+      <div class="feature-item">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <h3>Pilotos Expertos</h3>
+        <p>Cada capitán cuenta con más de 7,000 horas de vuelo y certificaciones internacionales.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+  <div class="cta-container">
+    <h2 class="cta-title">¿Listo para volar con nosotros?</h2>
+    <p class="cta-description">Descubre la experiencia de volar en nuestras aeronaves de lujo.</p>
+    <a href="/auth/register" class="btn btn-cta">Registrarse ahora</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-grid">
+      <div class="footer-section">
+        <h3 class="footer-brand">Astra Nimbus Aviation</h3>
+        <p class="footer-corp">Part of <strong>PAELDAV Corp.</strong></p>
+        <p class="footer-description">
+          Excelencia en aviación privada, comprometidos con brindar experiencias únicas y seguras en cada vuelo.
+        </p>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Enlaces rápidos</h4>
+        <ul class="footer-links">
+          <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
+          <li><a href="/flota">Nuestra flota</a></li>
+          <li><a href="/destinos">Destinos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Contacto</h4>
+        <ul class="footer-contact-list">
+          <li>
+            <span class="contact-label">Principal:</span>
+            <a href="tel:+573017275512">+57 301 7275512</a>
+          </li>
+          <li>
+            <span class="contact-label">Reservas:</span>
+            <a href="tel:+573016973283">+57 301 6973283</a>
+          </li>
+          <li>
+            <span class="contact-label">Emergencias:</span>
+            <a href="tel:+573218982391">+57 321 8982391</a>
+          </li>
+          <li>
+            <span class="contact-label">Email:</span>
+            <a href="mailto:infoastranimbus@gmail.com">infoastranimbus@gmail.com</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4 class="footer-title">Horarios</h4>
+        <ul class="footer-schedule">
+          <li><span>Lunes - Viernes:</span> 24/7</li>
+          <li><span>Sábados:</span> 24/7</li>
+          <li><span>Domingos:</span> 24/7</li>
+        </ul>
+        <div class="footer-social">
+          <a href="#" aria-label="LinkedIn" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Twitter" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="Instagram" class="social-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="18" cy="6" r="1.5" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copyright">
+        <p>&copy; 2026 Astra Nimbus Aviation. Todos los derechos reservados.</p>
+        <p class="paeldav-corp">PAELDAV Corp.</p>
+      </div>
+      <div class="footer-legal">
+        <a href="/privacy">Política de privacidad</a>
+        <a href="/terms">Términos y condiciones</a>
+        <a href="/cookies">Política de cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>

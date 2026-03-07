@@ -2,15 +2,35 @@
   <!-- Navbar simple (solo logo para mantener consistencia) -->
   <nav class="navbar">
     <div class="navbar-left">
-      <div class="logo-container">
-        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
-      </div>
-      <div class="navbar-text">
-        <h1 class="navbar-title">Astra Nimbus</h1>
-        <p class="navbar-subtitle">Aviation</p>
-      </div>
+      <a routerLink="/" class="navbar-left-link">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">AstraNimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
+      </a>
     </div>
     <div class="nav-links">
+      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+      <span class="theme-toggle-icon">
+        <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      </button>
       <span class="brand-holding">PAELDAV Corp.</span>
     </div>
   </nav>
@@ -19,9 +39,6 @@
   <div class="terms-content">
     <!-- Header con botón de regresar -->
     <div class="terms-header">
-      <button class="back-button" (click)="regresar()" type="button">
-        <span class="back-icon">←</span> Volver al registro
-      </button>
       <h1>Términos y Condiciones</h1>
       <div class="header-spacer"></div>
     </div>
@@ -37,7 +54,6 @@
 
       <!-- Introducción -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>1. Aceptación de los Términos</h2>
           <p>Bienvenido a AstraNimbus Aviation, una empresa perteneciente al holding PAELDAV Corp. Al acceder y utilizar nuestros servicios de transporte aéreo, mantenimiento aeronáutico y servicios relacionados, usted acepta estar sujeto a estos Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, no podrá acceder a nuestros servicios.</p>
@@ -47,7 +63,6 @@
 
       <!-- Definiciones -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>2. Definiciones</h2>
           <ul class="terms-list">
@@ -62,7 +77,6 @@
 
       <!-- Servicios ofrecidos -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>3. Servicios Ofrecidos</h2>
           <p>AstraNimbus Aviation, bajo el respaldo de PAELDAV Corp., ofrece los siguientes servicios:</p>
@@ -88,7 +102,6 @@
 
       <!-- Registro y Cuenta -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>4. Registro y Cuenta de Usuario</h2>
           <p>Para acceder a nuestros servicios, usted deberá crear una cuenta proporcionando información veráz y actualizada. Usted es responsable de mantener la confidencialidad de sus credenciales de acceso y de todas las actividades que ocurran bajo su cuenta.</p>
@@ -98,7 +111,6 @@
 
       <!-- Política de Reservas -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>5. Política de Reservas</h2>
           <ul class="terms-list">
@@ -111,7 +123,6 @@
 
       <!-- Mantenimiento Aeronáutico -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>6. Servicios de Mantenimiento Aeronáutico</h2>
           <p>Los servicios de mantenimiento ofrecidos por AstraNimbus cumplen con todas las regulaciones aeronáuticas vigentes. Al solicitar un servicio de mantenimiento, usted acepta:</p>
@@ -126,7 +137,6 @@
 
       <!-- Propiedad Intelectual -->
       <section class="terms-section">
-        <div class="section-icon">©</div>
         <div class="section-content">
           <h2>7. Propiedad Intelectual</h2>
           <p>Todos los derechos de propiedad intelectual sobre la plataforma, logotipos, marcas y contenido son propiedad exclusiva de PAELDAV Corp. y/o sus licenciantes. Queda prohibida la reproducción, distribución o uso no autorizado de cualquier contenido sin el consentimiento expreso por escrito.</p>
@@ -136,7 +146,6 @@
 
       <!-- Limitación de Responsabilidad -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>8. Limitación de Responsabilidad</h2>
           <p>En la máxima medida permitida por la ley, AstraNimbus Aviation y PAELDAV Corp. no serán responsables por daños indirectos, incidentales o consecuentes derivados del uso o la imposibilidad de uso de nuestros servicios. Nuestra responsabilidad total no excederá el monto pagado por el servicio específico que dio lugar a la reclamación.</p>
@@ -146,7 +155,6 @@
 
       <!-- Privacidad de Datos -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>9. Privacidad y Protección de Datos</h2>
           <p>AstraNimbus Aviation, en cumplimiento de las leyes de protección de datos, se compromete a proteger su información personal. Sus datos serán tratados conforme a nuestra Política de Privacidad, la cual forma parte integral de estos términos.</p>
@@ -156,7 +164,6 @@
 
       <!-- Modificaciones -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>10. Modificaciones de los Términos</h2>
           <p>PAELDAV Corp. se reserva el derecho de modificar estos términos en cualquier momento. Las modificaciones entrarán en vigor inmediatamente después de su publicación en la plataforma. El uso continuado de nuestros servicios después de dichas modificaciones constituye su aceptación de los nuevos términos.</p>
@@ -166,7 +173,6 @@
 
       <!-- Ley Aplicable -->
       <section class="terms-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>11. Ley Aplicable y Jurisdicción</h2>
           <p>Estos términos se regirán e interpretarán de acuerdo con las leyes del país donde PAELDAV Corp. tiene su sede principal. Cualquier disputa derivada de estos términos será sometida a la jurisdicción exclusiva de los tribunales de dicha jurisdicción.</p>
@@ -175,12 +181,11 @@
 
       <!-- Contacto -->
       <section class="terms-section contact-section">
-        <div class="section-icon"></div>
         <div class="section-content">
           <h2>12. Contacto</h2>
           <p>Si tiene alguna pregunta sobre estos Términos y Condiciones, puede contactarnos a través de:</p>
           <div class="contact-info">
-            <div><i class="fas fa-envelope"></i> legal@astranimbuslegal.com</div>
+            <div><i class="fas fa-envelope"></i> infoastranimbus@gmail.com</div>
             <div><i class="fas fa-phone"></i> +57 3016973283  - -  +57 3017275512  - -   +57 3218982391</div>
             <div><i class="fas fa-building"></i> PAELDAV Corp. - División Legal</div>
           </div>

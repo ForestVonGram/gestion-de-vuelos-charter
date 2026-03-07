@@ -1,23 +1,23 @@
-import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-terminos-condiciones',
-  templateUrl: './terminos_condiciones.component.html',
-  styleUrls: ['./terminos_condiciones.component.css'],
+  selector: 'app-nuestra-flota',
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterModule],
+  templateUrl: './nuestra_flota.component.html',
+  styleUrls: ['./nuestra_flota.component.css']
 })
-export class TerminosCondicionesComponent implements OnInit, OnDestroy {
+export class NuestraFlotaComponent implements OnInit, OnDestroy {
+  isNavbarScrolled = false;
   isDarkMode = false;
 
-  constructor(
-    private router: Router,
-    private renderer: Renderer2
-  ) {}
+  constructor(private renderer: Renderer2) {}
 
   ngOnInit(): void {
+    this.checkScroll();
+
     // Check for saved theme preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -28,6 +28,11 @@ export class TerminosCondicionesComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     // Cleanup
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.checkScroll();
   }
 
   toggleDarkMode(): void {
@@ -44,14 +49,22 @@ export class TerminosCondicionesComponent implements OnInit, OnDestroy {
   private enableDarkMode(): void {
     this.renderer.addClass(document.body, 'dark-theme');
     this.renderer.addClass(document.documentElement, 'dark-theme-active');
+    window.dispatchEvent(new Event('darkmode-change'));
   }
 
   private disableDarkMode(): void {
     this.renderer.removeClass(document.body, 'dark-theme');
     this.renderer.removeClass(document.documentElement, 'dark-theme-active');
+    window.dispatchEvent(new Event('darkmode-change'));
   }
 
-  regresar(): void {
-
+  private checkScroll(): void {
+    const heroElement = document.querySelector('.fleet-hero');
+    if (heroElement) {
+      const heroHeight = heroElement.clientHeight;
+      this.isNavbarScrolled = window.scrollY > heroHeight - 100;
+    } else {
+      this.isNavbarScrolled = window.scrollY > 100;
+    }
   }
 }
