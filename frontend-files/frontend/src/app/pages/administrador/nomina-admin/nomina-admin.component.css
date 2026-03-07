@@ -78,6 +78,17 @@
   display: inline-block;
 }
 
+.section-header {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions {
+  margin-left: auto; /* Empuja los botones a la derecha */
+  display: flex;
+  gap: 10px; /* separación entre botones */
+}
+
 .status-draft { background: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
 .status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
 .status-success { background: rgba(39, 174, 96, 0.2); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.4); }

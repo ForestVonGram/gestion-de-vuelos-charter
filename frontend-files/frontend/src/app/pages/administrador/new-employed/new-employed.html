@@ -1,0 +1,117 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de Personal</h1>
+        <p>Registro y administración del personal operativo</p>
+      </div>
+
+      <div class="avatar-circle">
+        {{ currentUser?.nombreCompleto?.charAt(0)}}
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Nuevo Personal</h2>
+    </div>
+
+    <section class="content-panel">
+
+      <form [formGroup]="personalForm" (ngSubmit)="guardarPersonal()" class="form-grid">
+
+        <!-- Usuario -->
+        <div class="form-group">
+          <label>Usuario ID *</label>
+          <input type="number" formControlName="usuarioId">
+          
+          @if(submitted && personalForm.controls['usuarioId'].invalid){
+          <span class="error">
+            El usuario es obligatorio
+          </span>
+            }
+        </div>
+
+        <!-- Número empleado -->
+        <div class="form-group">
+          <label>Número de Empleado *</label>
+          <input type="text" formControlName="numeroEmpleado">
+            @if(submitted && personalForm.controls['numeroEmpleado'].invalid){
+             <span class="error">
+                El número de empleado es obligatorio
+            </span>
+            }
+        </div>
+
+        <!-- Cargo -->
+        <div class="form-group">
+          <label>Cargo *</label>
+
+          <select formControlName="cargo">
+            <option value="">Seleccione un cargo</option>
+
+            @for (cargo of cargos; track cargos) {
+            <option >
+              {{ cargo }}
+            </option>
+            }
+          </select>
+
+            @if(submitted && personalForm.controls['cargo'].invalid){
+             <span class="error" >
+                El cargo es obligatorio
+            </span>
+            }
+        </div>
+
+        <!-- Área -->
+        <div class="form-group">
+          <label>Área de Especialización</label>
+          <input type="text" formControlName="areaEspecializacion">
+        </div>
+
+        <!-- Certificaciones -->
+        <div class="form-group">
+          <label>Certificaciones</label>
+          <input type="text" formControlName="certificaciones">
+        </div>
+
+        <!-- Fecha contratación -->
+        <div class="form-group">
+          <label>Fecha de Contratación</label>
+          <input type="date" formControlName="fechaContratacion">
+        </div>
+
+        <!-- Turno -->
+        <div class="form-group">
+          <label>Turno</label>
+          <input type="text" formControlName="turno">
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-group full-width">
+          <label>Observaciones</label>
+          <textarea rows="4" formControlName="observaciones"></textarea>
+        </div>
+
+        <!-- Botón -->
+        <div class="form-actions">
+          <button class="btn-primary" type="submit">
+
+            <i class="fas fa-save"></i>
+
+            Guardar Personal
+
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+
+</div>

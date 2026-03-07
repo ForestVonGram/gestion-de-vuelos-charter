@@ -35,6 +35,7 @@ import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admi
 import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-admin.component';
 import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
 import { CreatePlane } from './pages/administrador/create-plane/create-plane';
+import { NewEmployed } from './pages/administrador/new-employed/new-employed';
 
 export const routes: Routes = [
   {
@@ -141,7 +142,11 @@ export const routes: Routes = [
       },
       {
         path: 'nomina',
-        component: NominaAdminComponent
+        component: NominaAdminComponent,
+      },
+      {
+       path: 'nuevo-empleado',
+       component: NewEmployed,
       },
       {
         path: 'reportes',

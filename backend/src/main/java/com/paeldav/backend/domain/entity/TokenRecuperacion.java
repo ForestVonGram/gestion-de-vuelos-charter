@@ -29,7 +29,7 @@ public class TokenRecuperacion {
     private String token;
 
     @Column(name = "codigo", nullable = false, length = 6)
-    private String codigo;  // Código de 6 dígitos para el usuario
+    private String codigo;
 
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
