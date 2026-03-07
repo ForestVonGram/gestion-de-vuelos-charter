@@ -29,7 +29,7 @@ public class PasswordServiceImpl implements PasswordService {
     private final EmailServiceImpl emailServiceImpl;
     private final SesionService sesionService;
 
-    private static final int TOKEN_EXPIRATION_HOURS = 1;
+    private static final int TOKEN_EXPIRATION_MINUTES = 5;
 
     @Override
     @Transactional
@@ -54,7 +54,7 @@ public class PasswordServiceImpl implements PasswordService {
                 .usuario(usuario)
                 .token(token)
                 .codigo(codigo)
-                .fechaExpiracion(LocalDateTime.now().plusHours(TOKEN_EXPIRATION_HOURS))
+                .fechaExpiracion(LocalDateTime.now().plusMinutes(TOKEN_EXPIRATION_MINUTES)) // CORREGIDO: plusMinutes en lugar de plusHours
                 .usado(false)
                 .build();
 
@@ -76,9 +76,8 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     @Transactional
     public String verificarCodigoYGenerarToken(String email, String codigo) {
-        // Buscar token por código y email
         TokenRecuperacion tokenRecuperacion = tokenRecuperacionRepository
-                .findValidTokenByCodigoAndEmail(codigo, email, LocalDateTime.now())
+                .findValidTokenByCodigoAndEmailWithUser(codigo, email, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalArgumentException("Código inválido o expirado"));
 
         // Retornar el token UUID asociado para el siguiente paso
@@ -88,11 +87,12 @@ public class PasswordServiceImpl implements PasswordService {
     @Override
     @Transactional
     public void resetearPassword(String token, String nuevaPassword) {
+        // Buscar token válido con el usuario cargado (JOIN FETCH)
         TokenRecuperacion tokenRecuperacion = tokenRecuperacionRepository
-                .findValidToken(token, LocalDateTime.now())
+                .findValidTokenWithUser(token, LocalDateTime.now())
                 .orElseThrow(() -> new IllegalArgumentException("Token inválido o expirado"));
 
-        Usuario usuario = tokenRecuperacion.getUsuario();
+        Usuario usuario = tokenRecuperacion.getUsuario(); // Ya viene cargado, no hay segunda consulta
 
         // Actualizar contraseña
         usuario.setPassword(passwordEncoder.encode(nuevaPassword));

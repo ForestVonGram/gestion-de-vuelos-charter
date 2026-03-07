@@ -6,94 +6,199 @@ import com.paeldav.backend.application.service.base.DosFactoresService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
 
     private final AuthService authService;
     private final DosFactoresService dosFactoresService;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(
+    public ResponseEntity<?> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
-        String dispositivo = extraerDispositivo(httpRequest);
-        String direccionIp = extraerDireccionIp(httpRequest);
-        String userAgent = httpRequest.getHeader("User-Agent");
 
-        return ResponseEntity.ok(authService.login(request, dispositivo, direccionIp, userAgent));
+        log.debug("Recibida petición de login para email: {}", request.getEmail());
+
+        try {
+            String dispositivo = extraerDispositivo(httpRequest);
+            String direccionIp = extraerDireccionIp(httpRequest);
+            String userAgent = httpRequest.getHeader("User-Agent");
+
+            AuthResponse response = authService.login(request, dispositivo, direccionIp, userAgent);
+            log.info("Login exitoso para: {}", request.getEmail());
+            return ResponseEntity.ok(response);
+
+        } catch (BadCredentialsException e) {
+            log.warn("Credenciales inválidas para: {}", request.getEmail());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Email o contraseña inválidos");
+            errorResponse.put("error", "Bad Credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
+        } catch (Exception e) {
+            log.error("Error inesperado en login para {}: {}", request.getEmail(), e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error en el servidor. Por favor intente más tarde.");
+            errorResponse.put("error", "Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(
+    public ResponseEntity<?> register(
             @Valid @RequestBody RegisterRequest request,
             HttpServletRequest httpRequest) {
-        String dispositivo = extraerDispositivo(httpRequest);
-        String direccionIp = extraerDireccionIp(httpRequest);
-        String userAgent = httpRequest.getHeader("User-Agent");
 
-        return ResponseEntity.ok(authService.register(request, dispositivo, direccionIp, userAgent));
+        log.debug("Recibida petición de registro para email: {}", request.getEmail());
+
+        try {
+            String dispositivo = extraerDispositivo(httpRequest);
+            String direccionIp = extraerDireccionIp(httpRequest);
+            String userAgent = httpRequest.getHeader("User-Agent");
+
+            AuthResponse response = authService.register(request, dispositivo, direccionIp, userAgent);
+            log.info("Registro exitoso para: {}", request.getEmail());
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Error en registro: {}", e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            errorResponse.put("error", "Bad Request");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        } catch (BadCredentialsException e) {
+            log.warn("Error en validación reCAPTCHA para registro: {}", request.getEmail());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Validación de seguridad fallida");
+            errorResponse.put("error", "Bad Request");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        } catch (Exception e) {
+            log.error("Error inesperado en registro para {}: {}", request.getEmail(), e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error en el servidor. Por favor intente más tarde.");
+            errorResponse.put("error", "Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest httpRequest) {
-        String authHeader = httpRequest.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            authService.logout(token);
+        try {
+            String authHeader = httpRequest.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                authService.logout(token);
+                log.debug("Sesión cerrada exitosamente");
+            }
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error al cerrar sesión: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/verify-2fa")
-    public ResponseEntity<AuthResponse> verify2FA(
+    public ResponseEntity<?> verify2FA(
             @Valid @RequestBody VerificarCodigoRequest request,
             HttpServletRequest httpRequest) {
-        String dispositivo = extraerDispositivo(httpRequest);
-        String direccionIp = extraerDireccionIp(httpRequest);
-        String userAgent = httpRequest.getHeader("User-Agent");
+
+        log.debug("Recibida petición de verificación 2FA");
 
         try {
+            String dispositivo = extraerDispositivo(httpRequest);
+            String direccionIp = extraerDireccionIp(httpRequest);
+            String userAgent = httpRequest.getHeader("User-Agent");
+
             AuthResponse response = authService.verificarDosFactores(request, dispositivo, direccionIp, userAgent);
+            log.info("2FA verificado exitosamente");
             return ResponseEntity.ok(response);
+
+        } catch (BadCredentialsException e) {
+            log.warn("Código 2FA inválido");
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Código de verificación inválido o expirado");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
         } catch (Exception e) {
-            return ResponseEntity.status(400).build();
+            log.error("Error en verificación 2FA: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error en la verificación");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
     @PostMapping("/enable-2fa")
-    public ResponseEntity<Void> habilitarDosFactores(
+    public ResponseEntity<?> habilitarDosFactores(
             @Valid @RequestBody ConfiguracionDosFactoresDTO config,
             HttpServletRequest httpRequest) {
+
+        log.debug("Recibida petición para habilitar 2FA");
+
         try {
             authService.habilitarDosFactores(config);
+            log.info("2FA habilitado exitosamente");
             return ResponseEntity.ok().build();
+
+        } catch (IllegalArgumentException e) {
+            log.warn("Error al habilitar 2FA: {}", e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
         } catch (Exception e) {
-            return ResponseEntity.status(400).build();
+            log.error("Error al habilitar 2FA: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error al habilitar 2FA");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
     @PostMapping("/disable-2fa")
-    public ResponseEntity<Void> deshabilitarDosFactores() {
+    public ResponseEntity<?> deshabilitarDosFactores() {
+
+        log.debug("Recibida petición para deshabilitar 2FA");
+
         try {
             authService.deshabilitarDosFactores();
+            log.info("2FA deshabilitado exitosamente");
             return ResponseEntity.ok().build();
+
         } catch (Exception e) {
-            return ResponseEntity.status(400).build();
+            log.error("Error al deshabilitar 2FA: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error al deshabilitar 2FA");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
     @GetMapping("/2fa-status")
-    public ResponseEntity<EstadoDosFactoresDTO> obtenerEstadoDosFactores() {
+    public ResponseEntity<?> obtenerEstadoDosFactores() {
+
+        log.debug("Recibida petición para obtener estado 2FA");
+
         try {
             EstadoDosFactoresDTO estado = authService.obtenerEstadoDosFactores();
             return ResponseEntity.ok(estado);
+
         } catch (Exception e) {
-            return ResponseEntity.status(400).build();
+            log.error("Error al obtener estado 2FA: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error al obtener estado 2FA");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

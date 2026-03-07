@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { environment } from '../../../environments/environment'; // Importamos environment
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
-// 1. IMPORTAMOS LOS MODELOS (En lugar de escribirlos aquí)
+// Importamos los modelos
 import {
   LoginRequest,
   RegisterRequest,
@@ -11,8 +12,6 @@ import {
   RolUsuario
 } from '../../models/users/auth.models';
 
-// Podemos definir un User simplificado para el frontend si la AuthResponse es muy compleja,
-// o usar la misma interfaz si te sirve.
 export interface User {
   userId: number;
   email: string;
@@ -41,40 +40,57 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  // 3. Usamos los tipos importados
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request)
-      .pipe(
-        tap(response => this.handleAuthResponse(response))
-      );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap(response => this.handleAuthResponse(response)),
+      catchError(this.handleError)
+    );
   }
 
   register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request)
-      .pipe(
-        tap(response => {
-          // Opcional: Si el registro loguea automáticamente, guarda sesión.
-          // Si no, quizás no quieras llamar a handleAuthResponse aquí.
-          // Depende de si tu backend devuelve token al registrarse.
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
+      tap(response => {
+        if (response.token) {
           this.handleAuthResponse(response);
-        })
-      );
+        }
+      }),
+      catchError(this.handleError)
+    );
   }
 
   private handleAuthResponse(response: AuthResponse): void {
-    const user: User = {
-      userId: response.userId,
-      email: response.email,
-      nombreCompleto: response.nombreCompleto,
-      rol: response.rol
-    };
-
     if (response.token) {
+      const user: User = {
+        userId: response.userId,
+        email: response.email,
+        nombreCompleto: response.nombreCompleto,
+        rol: response.rol
+      };
+
       localStorage.setItem('token', response.token);
-      localStorage.setItem('tokenType', response.tokenType);
+      localStorage.setItem('tokenType', response.tokenType || 'Bearer');
       localStorage.setItem('currentUser', JSON.stringify(user));
       this.currentUserSubject.next(user);
     }
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Error desconocido';
+
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      if (error.status === 401) {
+        errorMessage = 'Credenciales inválidas';
+      } else if (error.status === 0) {
+        errorMessage = 'Error de conexión con el servidor';
+      } else {
+        errorMessage = error.error?.message || `Error ${error.status}: ${error.message}`;
+      }
+    }
+
+    console.error('AuthService error:', errorMessage);
+    return throwError(() => error);
   }
 
   logout(): void {
@@ -86,7 +102,6 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
-    // Aquí podrías agregar lógica para verificar si el token expiró (jwt-decode)
     return !!token;
   }
 

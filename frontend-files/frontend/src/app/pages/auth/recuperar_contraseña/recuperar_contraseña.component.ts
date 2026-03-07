@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,7 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
   email: string = '';
   showNewPassword = false;
   token: string = '';
+  codeVerified = false;
 
   // Password visibility
   showPassword = false;
@@ -32,7 +33,8 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private passwordService: PasswordService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef // Añadimos ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -129,21 +131,23 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
   verifyCode(): void {
     this.submitted = true;
     this.error = null;
+    this.codeVerified = false;
 
     if (this.f['codigo'].invalid) {
       return;
     }
 
     this.loading = true;
+    this.cdr.detectChanges(); // Forzar detección de cambios
 
-    // ✅ Usar el servicio real, NO el setTimeout
     this.passwordService.verificarCodigo(this.email, this.f['codigo'].value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           this.loading = false;
-          this.token = response.token; // Guardar el token recibido del backend
+          this.token = response.token;
           this.showNewPassword = true;
+          this.codeVerified = true;
 
           // Habilitar validaciones de contraseña
           this.f['nuevaPassword'].setValidators([Validators.required, Validators.minLength(8)]);
@@ -152,18 +156,28 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
           this.f['confirmarPassword'].updateValueAndValidity();
 
           this.error = null;
+          this.cdr.detectChanges(); // Forzar detección de cambios
         },
         error: (error) => {
           this.loading = false;
-          if (error.status === 400) {
-            this.error = 'Código inválido o expirado';
-          } else if (error.status === 0) {
-            this.error = 'Error de conexión con el servidor';
-          } else {
-            this.error = error.error?.message || 'Error al verificar el código';
-          }
+          this.codeVerified = false;
+          this.error = this.getVerifyCodeErrorMessage(error);
+          this.cdr.detectChanges(); // Forzar detección de cambios
+          console.error('Error al verificar código:', error);
         }
       });
+  }
+
+  private getVerifyCodeErrorMessage(error: any): string {
+    if (error.status === 400) {
+      return 'Ese no es el código. Intenta de nuevo.';
+    } else if (error.status === 0) {
+      return 'Error de conexión con el servidor';
+    } else if (error.status === 429) {
+      return 'Demasiados intentos. Espera unos minutos.';
+    } else {
+      return error.error?.message || 'Error al verificar el código';
+    }
   }
 
   onSubmit(): void {
@@ -182,6 +196,7 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     }
 
     this.loading = true;
+    this.cdr.detectChanges(); // Forzar detección de cambios
 
     this.passwordService.resetearPassword(this.token, this.f['nuevaPassword'].value)
       .pipe(takeUntil(this.destroy$))
@@ -189,45 +204,54 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.loading = false;
           sessionStorage.removeItem('reset-email');
+          this.cdr.detectChanges(); // Forzar detección de cambios
           this.router.navigate(['/auth/login'], {
             queryParams: { reset: 'success' }
           });
         },
         error: (error) => {
           this.loading = false;
-          if (error.status === 0) {
-            this.error = 'Error de conexión con el servidor';
-          } else if (error.status === 400) {
-            this.error = 'El token ha expirado o es inválido. Solicita uno nuevo.';
-          } else {
-            this.error = error.error?.message || 'Error al restablecer la contraseña';
-          }
+          this.error = this.getResetPasswordErrorMessage(error);
+          this.cdr.detectChanges(); // Forzar detección de cambios
+          console.error('Error al restablecer contraseña:', error);
         }
       });
+  }
+
+  private getResetPasswordErrorMessage(error: any): string {
+    if (error.status === 0) {
+      return 'Error de conexión con el servidor';
+    } else if (error.status === 400) {
+      return 'El token ha expirado o es inválido. Solicita uno nuevo.';
+    } else {
+      return error.error?.message || 'Error al restablecer la contraseña';
+    }
   }
 
   resendCode(event: Event): void {
     event.preventDefault();
 
     this.loading = true;
+    this.error = null;
+    this.cdr.detectChanges(); // Forzar detección de cambios
 
     this.passwordService.solicitarRecuperacion(this.email)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.loading = false;
-          this.countdown = 300; // Resetear contador
+          this.countdown = 300;
           this.startCountdown();
           this.error = null;
-
-          // Mostrar mensaje de éxito temporal (podrías usar un toast)
+          this.cdr.detectChanges(); // Forzar detección de cambios
           console.log('Código reenviado');
         },
-        error: (error) => {
+        error: () => {
           this.loading = false;
           // Por seguridad, mostrar éxito aunque falle
           this.countdown = 300;
           this.startCountdown();
+          this.cdr.detectChanges(); // Forzar detección de cambios
         }
       });
   }
@@ -238,6 +262,7 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         if (this.countdown > 0) {
           this.countdown--;
+          this.cdr.detectChanges(); // Forzar detección de cambios para el contador
         }
       });
   }
@@ -250,9 +275,11 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+    this.cdr.detectChanges(); // Forzar detección de cambios
   }
 
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
+    this.cdr.detectChanges(); // Forzar detección de cambios
   }
 }
