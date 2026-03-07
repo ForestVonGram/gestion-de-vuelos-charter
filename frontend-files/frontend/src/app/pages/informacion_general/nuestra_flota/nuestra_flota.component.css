@@ -25,6 +25,37 @@
   width: 100%;
 }
 
+.navbar-left-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.navbar-left-link .navbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.navbar-left-link:hover .logo-header {
+  transform: scale(1.05);
+}
+
+.navbar-left-link:hover .navbar-title,
+.navbar-left-link:hover .navbar-subtitle {
+  color: inherit;
+}
+
+.navbar-left-link .logo-container,
+.navbar-left-link .navbar-text {
+  display: flex;
+}
+
+.navbar-left-link .navbar-text {
+  flex-direction: column;
+}
+
 .navbar-left {
   display: flex;
   align-items: center;
@@ -42,6 +73,7 @@
   height: 100%;
   object-fit: contain;
   filter: var(--logo-filter, none);
+  transition: transform var(--transition-base);
 }
 
 .navbar-text {
@@ -148,8 +180,8 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* About Hero Section */
-.about-hero {
+/* Fleet Hero Section */
+.fleet-hero {
   position: relative;
   min-height: 80vh;
   display: flex;
@@ -159,7 +191,7 @@
   background-color: var(--color-dark);
 }
 
-.about-hero-background {
+.fleet-hero-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -168,14 +200,14 @@
   z-index: 0;
 }
 
-.about-hero-bg-image {
+.fleet-hero-bg-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0.4;
 }
 
-.about-hero-overlay {
+.fleet-hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -184,7 +216,7 @@
   background: linear-gradient(135deg, rgba(41, 41, 102, 0.9) 0%, rgba(92, 92, 153, 0.7) 100%);
 }
 
-.about-hero-content {
+.fleet-hero-content {
   position: relative;
   z-index: 2;
   text-align: center;
@@ -192,14 +224,14 @@
   padding: var(--spacing-2xl);
 }
 
-.about-hero-title {
+.fleet-hero-title {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
 }
 
-.about-hero-subtitle {
+.fleet-hero-subtitle {
   font-family: 'Libre Franklin', sans-serif;
   font-size: 1.2rem;
   color: var(--color-light);
@@ -207,14 +239,14 @@
   letter-spacing: 3px;
 }
 
-.about-hero-main {
+.fleet-hero-main {
   font-family: 'Archivo Black', sans-serif;
   font-size: 4rem;
   color: var(--color-white);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.about-hero-description {
+.fleet-hero-description {
   font-family: 'Libre Franklin', sans-serif;
   font-size: 1.2rem;
   color: var(--color-white);
@@ -246,306 +278,208 @@
   border-radius: var(--radius-full);
 }
 
-/* Story Section */
-.story-section {
+/* Fleet Introduction */
+.fleet-intro {
   padding: var(--spacing-2xl) var(--spacing-xl);
   background-color: var(--color-white);
 }
 
-.story-container {
+.fleet-intro-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.fleet-intro-text {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: var(--color-text-dark);
+}
+
+/* Aircraft Grid Section */
+.aircraft-grid-section {
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: linear-gradient(135deg, var(--color-light) 0%, var(--color-light-mid) 100%);
+}
+
+.aircraft-container {
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-2xl);
-  align-items: center;
 }
 
-.story-content {
-  padding-right: var(--spacing-xl);
+.aircraft-card {
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+  position: relative;
 }
 
-.story-text {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: var(--color-text-dark);
+.aircraft-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-xl);
+}
+
+.aircraft-image-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.aircraft-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.aircraft-card:hover .aircraft-image {
+  transform: scale(1.1);
+}
+
+.aircraft-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background-color: var(--color-mid);
+  color: var(--color-white);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.aircraft-info {
+  padding: var(--spacing-xl);
+}
+
+.aircraft-name {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.5rem;
+  color: var(--color-dark);
+  margin-bottom: var(--spacing-md);
+}
+
+.aircraft-specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
   margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-light);
 }
 
-.story-text strong {
+.spec {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.9rem;
+  color: var(--color-text-dark);
+}
+
+.spec strong {
   color: var(--color-mid);
   font-weight: 600;
 }
 
-.story-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-xl);
-}
-
-.story-stat-item {
-  text-align: center;
-  padding: var(--spacing-lg);
-  background-color: var(--color-light);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-}
-
-.story-stat-item:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-}
-
-.story-stat-number {
-  display: block;
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 2rem;
-  color: var(--color-mid);
-  margin-bottom: var(--spacing-xs);
-}
-
-.story-stat-label {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 0.9rem;
-  color: var(--color-text-dark);
-}
-
-.story-image-container {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-xl);
-}
-
-.story-image {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform var(--transition-slow);
-}
-
-.story-image:hover {
-  transform: scale(1.05);
-}
-
-/* Mission Vision Values Section */
-.mission-vision {
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  background: linear-gradient(135deg, var(--color-light) 0%, var(--color-light-mid) 100%);
-}
-
-.mission-vision-grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xl);
-}
-
-.mission-card,
-.vision-card,
-.values-card {
-  background-color: var(--color-white);
-  padding: var(--spacing-2xl);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  transition: all var(--transition-base);
-  position: relative;
-  overflow: hidden;
-}
-
-.mission-card:hover,
-.vision-card:hover,
-.values-card:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-xl);
-}
-
-.card-icon {
-  color: var(--color-mid);
-  margin-bottom: var(--spacing-lg);
+.aircraft-captain {
   display: flex;
-  justify-content: center;
-}
-
-.mission-card h3,
-.vision-card h3,
-.values-card h3 {
-  font-family: 'Jost', sans-serif;
-  font-size: 1.8rem;
-  color: var(--color-dark);
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-  display: inline-block;
-}
-
-.mission-card h3::after,
-.vision-card h3::after,
-.values-card h3::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 2px;
-  background-color: var(--color-mid);
-}
-
-.mission-card p,
-.vision-card p {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--color-text-dark);
-}
-
-.values-list {
-  list-style: none;
-  padding: 0;
-  text-align: left;
-}
-
-.values-list li {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 1rem;
-  color: var(--color-text-dark);
-  padding: var(--spacing-sm) 0;
-  border-bottom: 1px solid var(--color-light);
-  position: relative;
-  padding-left: var(--spacing-xl);
-}
-
-.values-list li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: var(--color-mid);
-  font-weight: bold;
-}
-
-.values-list li:last-child {
-  border-bottom: none;
-}
-
-/* Leadership Section */
-.leadership {
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  background-color: var(--color-white);
-}
-
-.leadership-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.team-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xl);
-}
-
-.team-member {
-  text-align: center;
-  padding: var(--spacing-xl);
-  background-color: var(--color-light);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-base);
-}
-
-.team-member:hover {
-  transform: translateY(-10px);
-  box-shadow: var(--shadow-lg);
-}
-
-.member-image {
-  width: 200px;
-  height: 200px;
-  margin: 0 auto var(--spacing-lg);
-  border-radius: 50%;
-  overflow: hidden;
-  border: 3px solid var(--color-mid);
-}
-
-.member-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-base);
-}
-
-.team-member:hover .member-image img {
-  transform: scale(1.1);
-}
-
-.member-name {
-  font-family: 'Jost', sans-serif;
-  font-size: 1.3rem;
-  color: var(--color-dark);
-  margin-bottom: var(--spacing-xs);
-}
-
-.member-position {
-  font-family: 'Archivo Black', sans-serif;
-  font-size: 0.9rem;
-  color: var(--color-mid);
-  margin-bottom: var(--spacing-md);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.member-bio {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 0.9rem;
-  color: var(--color-text-dark);
-  line-height: 1.6;
-}
-
-/* Certifications Section */
-.certifications {
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  background: linear-gradient(135deg, var(--color-light) 0%, var(--color-light-mid) 100%);
-}
-
-.certifications-container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.certifications-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-xl);
-}
-
-.certification-item {
-  background-color: var(--color-white);
-  padding: var(--spacing-xl);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  transition: all var(--transition-base);
-  display: flex;
-  flex-direction: column;
   align-items: center;
   gap: var(--spacing-md);
 }
 
-.certification-item:hover {
+.captain-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-mid);
+}
+
+.captain-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.captain-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.captain-label {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.8rem;
+  color: var(--color-light-mid);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.captain-name {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.captain-exp {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.8rem;
+  color: var(--color-mid);
+}
+
+/* Fleet Features Section */
+.fleet-features {
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background-color: var(--color-white);
+}
+
+.fleet-features-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-2xl);
+}
+
+.feature-item {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background-color: var(--color-light);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-base);
+}
+
+.feature-item:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
 }
 
-.certification-item svg {
+.feature-item svg {
   color: var(--color-mid);
+  margin-bottom: var(--spacing-lg);
 }
 
-.certification-item span {
-  font-family: 'Libre Franklin', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
+.feature-item h3 {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.3rem;
   color: var(--color-dark);
+  margin-bottom: var(--spacing-md);
+}
+
+.feature-item p {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.95rem;
+  color: var(--color-text-dark);
+  line-height: 1.6;
 }
 
 /* CTA Section */
@@ -793,7 +727,7 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .about-hero-main {
+  .fleet-hero-main {
     font-size: 3rem;
   }
 
@@ -801,24 +735,11 @@
     font-size: 2rem;
   }
 
-  .story-container {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-xl);
-  }
-
-  .story-content {
-    padding-right: 0;
-  }
-
-  .mission-vision-grid {
+  .aircraft-container {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .team-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .certifications-grid {
+  .features-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -829,7 +750,7 @@
 }
 
 @media (max-width: 768px) {
-  .navbar-left {
+  .navbar-left-link .navbar-left {
     flex-wrap: wrap;
   }
 
@@ -860,19 +781,19 @@
     font-size: 0.85rem;
   }
 
-  .about-hero {
+  .fleet-hero {
     min-height: 60vh;
   }
 
-  .about-hero-main {
+  .fleet-hero-main {
     font-size: 2rem;
   }
 
-  .about-hero-subtitle {
+  .fleet-hero-subtitle {
     font-size: 1rem;
   }
 
-  .about-hero-description {
+  .fleet-hero-description {
     font-size: 1rem;
     padding: 0 var(--spacing-md);
   }
@@ -881,24 +802,15 @@
     font-size: 1.8rem;
   }
 
-  .story-stats {
+  .fleet-intro-text {
+    font-size: 1rem;
+  }
+
+  .aircraft-container {
     grid-template-columns: 1fr;
   }
 
-  .mission-vision-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .team-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .member-image {
-    width: 150px;
-    height: 150px;
-  }
-
-  .certifications-grid {
+  .features-grid {
     grid-template-columns: 1fr;
   }
 
@@ -931,45 +843,5 @@
 
   .footer-legal {
     justify-content: center;
-  }
-
-  /* Navbar left link */
-  .navbar-left-link {
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-
-  .navbar-left-link .navbar-left {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-  }
-
-  .navbar-left-link:hover .logo-header {
-    transform: scale(1.05);
-  }
-
-  .navbar-left-link:hover .navbar-title,
-  .navbar-left-link:hover .navbar-subtitle {
-    color: inherit; /* Mantener el color original */
-  }
-
-  /* Asegurar que el logo y texto mantengan su posición */
-  .navbar-left-link .logo-container,
-  .navbar-left-link .navbar-text {
-    display: flex;
-  }
-
-  .navbar-left-link .navbar-text {
-    flex-direction: column;
-  }
-
-  /* Mantener los estilos originales del navbar-left */
-  .navbar-left {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
   }
 }

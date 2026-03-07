@@ -1,16 +1,20 @@
 <!-- Header Navigation -->
+<!-- Header Navigation -->
 <header class="navbar" [ngClass]="{ 'scrolled': isNavbarScrolled }">
   <div class="navbar-content">
-    <div class="navbar-left">
-      <div class="logo-container">
-        <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+    <a routerLink="/" class="navbar-left-link">
+      <div class="navbar-left">
+        <div class="logo-container">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="Astra Nimbus Logo" class="logo-header" />
+        </div>
+        <div class="navbar-text">
+          <h1 class="navbar-title">AstraNimbus</h1>
+          <p class="navbar-subtitle">Aviation</p>
+        </div>
       </div>
-      <div class="navbar-text">
-        <h1 class="navbar-title">Astra Nimbus</h1>
-        <p class="navbar-subtitle">Aviation</p>
-      </div>
-    </div>
+    </a>
     <div class="navbar-right">
+      <a href="/auth/login" class="btn btn-header">Iniciar sesión</a>
       <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
         <span class="theme-toggle-icon">
           <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,8 +33,6 @@
           </svg>
         </span>
       </button>
-      <p class="language">English</p>
-      <a href="/auth/login" class="btn btn-header">Iniciar sesión</a>
     </div>
   </div>
 </header>
@@ -44,7 +46,7 @@
   <div class="about-hero-content">
     <h1 class="about-hero-title">
       <span class="about-hero-subtitle">Conoce nuestra historia</span>
-      <span class="about-hero-main">Sobre Astra Nimbus</span>
+      <span class="about-hero-main">Sobre AstraNimbus</span>
     </h1>
     <p class="about-hero-description">
       Más que una aerolínea, somos tu aliado en el cielo, comprometidos con la excelencia y la seguridad.
@@ -218,9 +220,8 @@
         <h4 class="footer-title">Enlaces rápidos</h4>
         <ul class="footer-links">
           <li><a href="/sobre-nosotros">Sobre nosotros</a></li>
-          <li><a href="/fleet">Nuestra flota</a></li>
-          <li><a href="/services">Servicios</a></li>
-          <li><a href="/destinations">Destinos</a></li>
+          <li><a href="/flota">Nuestra flota</a></li>
+          <li><a href="/destinos">Destinos</a></li>
         </ul>
       </div>
 
@@ -241,7 +242,7 @@
           </li>
           <li>
             <span class="contact-label">Email:</span>
-            <a href="mailto:info@astranimbus.aero">info@astranimbus.aero</a>
+            <a href="mailto:infoastranimbus@gmail.com">infoastranimbus@gmail.com</a>
           </li>
         </ul>
       </div>

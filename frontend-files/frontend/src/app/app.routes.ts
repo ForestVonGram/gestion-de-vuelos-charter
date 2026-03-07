@@ -12,6 +12,7 @@ import { adminGuard } from './guards/admin.guard';
 import { PreciosComponent } from './pages/precios/precios.component';
 import { TerminosCondicionesComponent } from './pages/auth/terminos_condiciones/terminos_condiciones.component';
 import { SobreNosotrosComponent} from './pages/informacion_general/sobre_nosotros/sobre_nosotros.component';
+import { NuestraFlotaComponent} from './pages/informacion_general/nuestra_flota/nuestra_flota.component';
 
 import { MantenimientoComponent } from './pages/operador/mantenimiento/mantenimiento.component';
 import { MantenimientoDetalleComponent } from './pages/operador/mantenimiento_detalle/mantenimiento_detalle.component';
@@ -99,7 +100,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [adminGuard],
+
     children: [
       {
         path: '',
@@ -166,5 +167,9 @@ export const routes: Routes = [
   {
     path: 'sobre-nosotros',
     component: SobreNosotrosComponent
+  },
+  {
+    path: 'flota',
+    component: NuestraFlotaComponent
   }
 ];
