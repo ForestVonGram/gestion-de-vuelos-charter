@@ -15,8 +15,16 @@ public interface TokenRecuperacionRepository extends JpaRepository<TokenRecupera
 
     Optional<TokenRecuperacion> findByToken(String token);
 
+    Optional<TokenRecuperacion> findByCodigo(String codigo);
+
     @Query("SELECT t FROM TokenRecuperacion t WHERE t.token = :token AND t.usado = false AND t.fechaExpiracion > :now")
     Optional<TokenRecuperacion> findValidToken(@Param("token") String token, @Param("now") LocalDateTime now);
+
+    @Query("SELECT t FROM TokenRecuperacion t WHERE t.codigo = :codigo AND t.usuario.email = :email AND t.usado = false AND t.fechaExpiracion > :now")
+    Optional<TokenRecuperacion> findValidTokenByCodigoAndEmail(
+            @Param("codigo") String codigo,
+            @Param("email") String email,
+            @Param("now") LocalDateTime now);
 
     @Modifying
     @Query("UPDATE TokenRecuperacion t SET t.usado = true WHERE t.usuario.id = :usuarioId AND t.usado = false")

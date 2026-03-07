@@ -295,12 +295,12 @@ class AuthServiceTest {
     @DisplayName("Verificación 2FA Tests")
     class Verificacion2FATests {
 
-        private VerificacionCodigoRequest verificacionRequest;
+        private VerificarCodigoRequest verificacionRequest;
         private VerificacionDosFactores verificacionTest;
 
         @BeforeEach
         void setUp2FA() {
-            verificacionRequest = new VerificacionCodigoRequest();
+            verificacionRequest = new VerificarCodigoRequest();
             verificacionRequest.setCodigo("123456");
 
             verificacionTest = VerificacionDosFactores.builder()

@@ -5,7 +5,7 @@ import com.paeldav.backend.application.dto.auth.ConfiguracionDosFactoresDTO;
 import com.paeldav.backend.application.dto.auth.EstadoDosFactoresDTO;
 import com.paeldav.backend.application.dto.auth.LoginRequest;
 import com.paeldav.backend.application.dto.auth.RegisterRequest;
-import com.paeldav.backend.application.dto.auth.VerificacionCodigoRequest;
+import com.paeldav.backend.application.dto.auth.VerificarCodigoRequest;
 import com.paeldav.backend.application.service.base.AuthService;
 import com.paeldav.backend.application.service.base.DosFactoresService;
 import com.paeldav.backend.application.service.base.RecaptchaService;
@@ -173,7 +173,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public AuthResponse verificarDosFactores(VerificacionCodigoRequest request, String dispositivo, String direccionIp, String userAgent) {
+    public AuthResponse verificarDosFactores(VerificarCodigoRequest request, String dispositivo, String direccionIp, String userAgent) {
         try {
             // Verificar el código
             var verificacion = dosFactoresService.verificarCodigo(request.getCodigo());

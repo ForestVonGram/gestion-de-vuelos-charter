@@ -2,7 +2,7 @@ package com.paeldav.backend.application.service.impl;
 
 import com.paeldav.backend.application.dto.auth.Verificacion2FAResponse;
 import com.paeldav.backend.application.service.base.DosFactoresService;
-import com.paeldav.backend.application.service.integration.EmailService;
+import com.paeldav.backend.application.service.integration.EmailServiceImpl;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.domain.entity.VerificacionDosFactores;
 import com.paeldav.backend.domain.enums.MetodoDosFactores;
@@ -25,7 +25,7 @@ public class DosFactoresServiceImpl implements DosFactoresService {
 
     private final VerificacionDosFactoresRepository verificacionRepository;
     private final UsuarioRepository usuarioRepository;
-    private final EmailService emailService;
+    private final EmailServiceImpl emailServiceImpl;
 
     @Value("${2fa.code-expiration-minutes:10}")
     private int codigoExpiracionMinutos;
@@ -57,7 +57,7 @@ public class DosFactoresServiceImpl implements DosFactoresService {
         verificacion = verificacionRepository.save(verificacion);
 
         if (MetodoDosFactores.EMAIL.equals(metodo)) {
-            emailService.enviarCodigoVerificacion2FA(destino, codigo, usuario.getNombre());
+            emailServiceImpl.enviarCodigoVerificacion2FA(destino, codigo, usuario.getNombre());
         }
 
         log.info("Codigo 2FA generado para usuario: {}", usuario.getId());
