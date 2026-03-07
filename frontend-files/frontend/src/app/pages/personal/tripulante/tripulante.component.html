@@ -1,9 +1,194 @@
 <app-header-tripulante></app-header-tripulante>
 
-<body>
-  <div class="container">
-    <h1>Bienvenido, tripulante</h1>
-    <p>Esta es tu página de inicio. Aquí puedes acceder a tus vuelos, reportes y certificados.</p>
+<div class="dashboard-container">
+  <!-- Sección de Bienvenida Personalizada -->
+  <div class="welcome-section">
+    <div class="welcome-content">
+      <h1>¡Bienvenido, {{ tripulanteNombre }}!</h1>
+      <p class="welcome-subtitle">Aquí tienes un resumen de tu actividad y documentos importantes</p>
+    </div>
+    <div class="fecha-actual">
+      <i class="fas fa-calendar-alt"></i>
+      {{ fechaActual | date:'fullDate' }}
+    </div>
   </div>
-</body>
 
+  <!-- Tarjetas de Resumen Rápido -->
+  <div class="quick-stats">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-plane"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ totalVuelosMes }}</span>
+        <span class="stat-label">Vuelos este mes</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ horasVueloMes }}h</span>
+        <span class="stat-label">Horas de vuelo</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-certificate"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ certificadosVigentes }}</span>
+        <span class="stat-label">Certificados vigentes</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <i class="fas fa-file-alt"></i>
+      </div>
+      <div class="stat-info">
+        <span class="stat-value">{{ reportesPendientes }}</span>
+        <span class="stat-label">Reportes pendientes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido Principal con Tabs -->
+  <div class="main-content">
+    <div class="tabs-container">
+      <button class="tab-button" [class.active]="tabActivo === 'vuelos'" (click)="cambiarTab('vuelos')">
+        <i class="fas fa-plane-departure"></i> Mis Vuelos
+      </button>
+      <button class="tab-button" [class.active]="tabActivo === 'reportes'" (click)="cambiarTab('reportes')">
+        <i class="fas fa-chart-bar"></i> Reportes
+      </button>
+      <button class="tab-button" [class.active]="tabActivo === 'certificaciones'" (click)="cambiarTab('certificaciones')">
+        <i class="fas fa-id-card"></i> Certificaciones
+      </button>
+    </div>
+
+    <!-- Sección de Vuelos -->
+    <div class="tab-content" *ngIf="tabActivo === 'vuelos'">
+      <div class="section-header">
+        <h2>Próximos Vuelos</h2>
+        <button class="btn-ver-todos" (click)="verTodosVuelos()">Ver todos <i class="fas fa-arrow-right"></i></button>
+      </div>
+
+      <div class="flights-list" *ngIf="proximosVuelos.length > 0; else noFlights">
+        <div class="flight-card" *ngFor="let vuelo of proximosVuelos">
+          <div class="flight-route">
+            <span class="city">{{ vuelo.origen }}</span>
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <span class="city">{{ vuelo.destino }}</span>
+          </div>
+          <div class="flight-details">
+            <div class="detail-item">
+              <i class="fas fa-calendar"></i>
+              <span>{{ vuelo.fecha | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-clock"></i>
+              <span>{{ vuelo.horaSalida }} - {{ vuelo.horaLlegada }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-chair"></i>
+              <span>Asiento {{ vuelo.asiento }}</span>
+            </div>
+          </div>
+          <div class="flight-status" [class]="'status-' + vuelo.estado.toLowerCase()">
+            {{ vuelo.estado }}
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noFlights>
+        <div class="empty-state">
+          <i class="fas fa-plane-slash"></i>
+          <p>No tienes vuelos programados próximamente</p>
+        </div>
+      </ng-template>
+
+      <div class="historico-vuelos">
+        <h3>Historial de Vuelos</h3>
+        <table class="flights-table">
+          <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Ruta</th>
+            <th>Duración</th>
+            <th>Rol</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let vuelo of historialVuelos | slice:0:5">
+            <td>{{ vuelo.fecha | date:'dd/MM/yyyy' }}</td>
+            <td>{{ vuelo.origen }} → {{ vuelo.destino }}</td>
+            <td>{{ vuelo.duracion }}</td>
+            <td>{{ vuelo.rol }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Sección de Reportes -->
+    <div class="tab-content" *ngIf="tabActivo === 'reportes'">
+      <div class="reportes-grid">
+        <div class="reporte-card" *ngFor="let reporte of reportes">
+          <div class="reporte-header">
+            <i class="fas" [class]="reporte.icono"></i>
+            <h3>{{ reporte.titulo }}</h3>
+          </div>
+          <p>{{ reporte.descripcion }}</p>
+          <div class="reporte-footer">
+            <span class="fecha">{{ reporte.fecha | date:'dd/MM/yyyy' }}</span>
+            <button class="btn-descargar" (click)="descargarReporte(reporte)">
+              <i class="fas fa-download"></i> PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="reportes-acciones">
+        <button class="btn-generar-reporte" (click)="generarReporte()">
+          <i class="fas fa-plus-circle"></i> Generar Nuevo Reporte
+        </button>
+      </div>
+    </div>
+
+    <!-- Sección de Certificaciones -->
+    <div class="tab-content" *ngIf="tabActivo === 'certificaciones'">
+      <div class="certificaciones-grid">
+        <div class="certificacion-card" *ngFor="let certificado of certificaciones">
+          <div class="certificacion-icon">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <div class="certificacion-info">
+            <h3>{{ certificado.nombre }}</h3>
+            <p class="certificacion-emisor">{{ certificado.emisor }}</p>
+            <div class="certificacion-fechas">
+              <span [class.expirado]="certificado.expirado">
+                <i class="fas fa-calendar-check"></i>
+                Vigente hasta: {{ certificado.fechaExpiracion | date:'dd/MM/yyyy' }}
+              </span>
+            </div>
+            <div class="certificacion-actions">
+              <button class="btn-ver" (click)="verCertificado(certificado)">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              <button class="btn-descargar" (click)="descargarCertificado(certificado)">
+                <i class="fas fa-download"></i> Descargar
+              </button>
+            </div>
+          </div>
+          <div class="certificacion-status" [class.vigente]="!certificado.expirado" [class.expirado]="certificado.expirado">
+            {{ certificado.expirado ? 'Expirado' : 'Vigente' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

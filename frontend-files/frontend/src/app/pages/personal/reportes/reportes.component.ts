@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
+import { HeaderTripulante} from '../../../shared/header-tripulante/header-tripulante.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 

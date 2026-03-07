@@ -23,10 +23,10 @@ import { MantenimientoOfrecidoComponent } from './pages/operador/mantenimiento_o
 import { DashboardOperadorJComponent } from './pages/operador_jefe/dashboard/dashboard_operadorj.component';
 
 import { TripulanteComponent } from './pages/personal/tripulante/tripulante.component';
-import { TripulacionComponent } from './pages/personal/tripulacion/tripulacion.component';
+import { TripulacionComponent} from './pages/personal/tripulacion/tripulacion.component';
 import { VuelosComponent } from './pages/personal/vuelos/vuelos.component';
 import { CertificadosComponent } from './pages/personal/certificados/certificados.component';
-import { ReportesComponent } from './pages/personal/reportes/reportes.component';
+import { ReportesComponent} from './pages/personal/reportes/reportes.component';
 import { MyProfile } from './shared/my-profile/my-profile';
 
 import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/admin-dashboard.component';
