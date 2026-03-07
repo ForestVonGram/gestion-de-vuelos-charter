@@ -36,6 +36,7 @@ import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-
 import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
 import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 import { NewEmployed } from './pages/administrador/new-employed/new-employed';
+import { Personal } from './pages/administrador/personal/personal';
 
 export const routes: Routes = [
   {
@@ -151,6 +152,10 @@ export const routes: Routes = [
       {
         path: 'reportes',
         component: ReportesAdminComponent
+      },
+      {
+        path: 'personal',
+        component: Personal
       }
     ]
   },

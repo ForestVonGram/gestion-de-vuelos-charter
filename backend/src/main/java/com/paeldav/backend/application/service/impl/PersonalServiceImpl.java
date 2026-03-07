@@ -7,6 +7,7 @@ import com.paeldav.backend.application.mapper.PersonalMapper;
 import com.paeldav.backend.application.service.base.PersonalService;
 import com.paeldav.backend.domain.entity.Personal;
 import com.paeldav.backend.domain.entity.Usuario;
+import com.paeldav.backend.domain.enums.CargoPersonal;
 import com.paeldav.backend.domain.enums.EstadoPersonal;
 import com.paeldav.backend.exception.PersonalNoEncontradoException;
 import com.paeldav.backend.exception.UsuarioNoEncontradoException;
@@ -127,5 +128,13 @@ public class PersonalServiceImpl implements PersonalService {
                 ));
         personal.setEstado(EstadoPersonal.ACTIVO);
         personalRepository.save(personal);
+    }
+
+    @Override
+    public List<PersonalDTO> filtrarPersonal(String nombre, CargoPersonal cargoPersonal, EstadoPersonal estadoPersonal) {
+        String nombreFiltro = (nombre != null && !nombre.isBlank()) ? nombre : null;
+        List<Personal> personal = personalRepository.findByFilter(nombreFiltro,cargoPersonal,estadoPersonal);
+        return personalMapper.toDTOList(personal);
+
     }
 }

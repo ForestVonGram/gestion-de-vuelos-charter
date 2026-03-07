@@ -1,0 +1,89 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="main-content">
+
+    <div class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de Personal</h1>
+        <p>Administra y consulta el equipo operativo</p>
+      </div>
+      <div class="avatar-circle">{{ currentUser?.nombreCompleto?.charAt(0) }}</div>
+    </div>
+
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por nombre…"
+          (input)="filtroNombre = $any($event.target).value; filtrar()"
+        />
+      </div>
+      <div class="filter-selects">
+        <select class="filter-select" (change)="filtroCargo = $any($event.target).value; filtrar()">
+          <option value="">Todos los cargos</option>
+          @for (c of cargos; track c) {
+            <option [value]="c">{{ formatear(c) }}</option>
+          }
+        </select>
+        <select class="filter-select" (change)="filtroEstado = $any($event.target).value; filtrar()">
+          <option value="">Todos los estados</option>
+          @for (e of estados; track e) {
+            <option [value]="e">{{ formatear(e) }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrapper">
+      <table class="personal-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Cargo</th>
+            <th>Estado</th>
+            <th>Contratación</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (emp of personalFiltrado; track emp.id) {
+            <tr>
+              <td>
+                <div class="name-cell">
+                  <div class="avatar-sm">{{ getInitials(emp.usuarioNombre) }}</div>
+                  <span class="name-primary">{{ emp.usuarioNombre }}</span>
+                </div>
+              </td>
+              <td><span class="email-text">{{ emp.usuarioEmail }}</span></td>
+              <td><span class="cargo-tag">{{ emp.cargo  }}</span></td>
+              <td>
+                <span class="estado-badge" >
+                  {{ emp.estado  }}
+                </span>
+              </td>
+              <td><span class="date-text">{{ formatDate(emp.fechaContratacion) }}</span></td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">
+                <div class="empty-inner">
+                  <span class="empty-icon">🔎</span>
+                  <p>No se encontraron registros.</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+
+  </div>
+</div>
