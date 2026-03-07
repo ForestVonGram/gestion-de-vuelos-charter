@@ -6,6 +6,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +27,47 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    // ============= Excepciones de Autenticación y Seguridad =============
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+        log.warn("Credenciales inválidas: {}", ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("INVALID_CREDENTIALS")
+                .message("Email o contraseña inválidos")
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorResponse> handleDisabledException(DisabledException ex, WebRequest request) {
+        log.warn("Usuario deshabilitado: {}", ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("USER_DISABLED")
+                .message("Usuario inactivo. Contacte al administrador.")
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ErrorResponse> handleLockedException(LockedException ex, WebRequest request) {
+        log.warn("Usuario bloqueado: {}", ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .code("USER_LOCKED")
+                .message("Usuario bloqueado. Contacte al administrador.")
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .timestamp(LocalDateTime.now())
+                .path(request.getDescription(false).replace("uri=", ""))
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 
     // ============= Excepciones de Recursos No Encontrados =============
 
@@ -360,10 +404,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getBindingResult().getAllErrors().forEach(error -> {
             if (error instanceof FieldError) {
                 FieldError fieldError = (FieldError) error;
-                FieldErrorDetail errorDetail = FieldErrorDetail.builder() // Asegúrate de tener este DTO/Builder
+                FieldErrorDetail errorDetail = FieldErrorDetail.builder()
                         .field(fieldError.getField())
                         .message(fieldError.getDefaultMessage())
-                        .rejectedValue(fieldError.getRejectedValue()) // Cuidado: esto devuelve Object, asegúrate que tu DTO lo acepte o conviértelo a String
+                        .rejectedValue(fieldError.getRejectedValue() != null ? fieldError.getRejectedValue().toString() : null)
                         .build();
                 fieldErrors.add(errorDetail);
             }

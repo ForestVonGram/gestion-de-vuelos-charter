@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
-import { CommonModule, NgOptimizedImage } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
@@ -27,8 +27,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private recaptchaV3Service: ReCaptchaV3Service
+    private recaptchaV3Service: ReCaptchaV3Service,
+    private cdr: ChangeDetectorRef // Añadimos ChangeDetectorRef
   ) {
+    // Verificar si ya está autenticado
     if (this.authService.isAuthenticated()) {
       const currentUser = this.authService.currentUserValue;
       if (currentUser?.rol === RolUsuario.ADMINISTRADOR) {
@@ -69,6 +71,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.loading = true;
+    this.cdr.detectChanges(); // Forzar detección de cambios
 
     // Ejecutar reCAPTCHA v3
     this.recaptchaV3Service.execute('login')
@@ -85,6 +88,9 @@ export class LoginComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
+                this.loading = false;
+                this.cdr.detectChanges(); // Forzar detección de cambios
+
                 if (response.requires2FA) {
                   this.router.navigate(['/auth/verify-2fa'], {
                     queryParams: { sessionToken: response.sessionToken }
@@ -99,30 +105,35 @@ export class LoginComponent implements OnInit, OnDestroy {
               },
               error: (error) => {
                 this.loading = false;
-                if (error.status === 401) {
-                  this.error = 'Email o contraseña inválidos';
-                } else if (error.status === 0) {
-                  this.error = 'Error de conexión con el servidor';
-                } else if (error.error?.message?.includes('reCAPTCHA')) {
-                  this.error = 'Validación reCAPTCHA fallida. Por favor intente nuevamente';
-                } else {
-                  this.error = error.error?.message || 'Error en el login';
-                }
-              },
-              complete: () => {
-                this.loading = false;
+                this.error = this.getErrorMessage(error);
+                this.cdr.detectChanges(); // Forzar detección de cambios
+                console.error('Error en login:', error);
               }
             });
         },
         error: (error) => {
           this.loading = false;
           this.error = 'Error en validación de seguridad. Por favor intente nuevamente';
+          this.cdr.detectChanges(); // Forzar detección de cambios
           console.error('reCAPTCHA v3 error:', error);
         }
       });
   }
 
+  private getErrorMessage(error: any): string {
+    if (error.status === 401) {
+      return 'Email o contraseña inválidos';
+    } else if (error.status === 0) {
+      return 'Error de conexión con el servidor';
+    } else if (error.error?.message?.includes('reCAPTCHA')) {
+      return 'Validación reCAPTCHA fallida. Por favor intente nuevamente';
+    } else {
+      return error.error?.message || 'Error en el login';
+    }
+  }
+
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
+    this.cdr.detectChanges(); // Forzar detección de cambios
   }
 }
