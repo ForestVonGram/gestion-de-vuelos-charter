@@ -13,24 +13,6 @@
       </a>
     </div>
     <div class="nav-links">
-      <button class="theme-toggle" (click)="toggleDarkMode()" [attr.aria-label]="isDarkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
-        <span class="theme-toggle-icon">
-          <svg *ngIf="!isDarkMode" class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2"/>
-            <path d="M12 2V4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M12 20V22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M4 12L2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M22 12L20 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M19.7778 4.22217L18.3636 5.63639" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M5.6364 18.3639L4.22218 19.7781" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M19.7778 19.7778L18.3636 18.3636" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            <path d="M5.6364 5.63605L4.22218 4.22183" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          <svg *ngIf="isDarkMode" class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </span>
-      </button>
       <span class="brand-holding">PAELDAV Corp.</span>
     </div>
   </nav>
@@ -54,7 +36,6 @@
 
       <!-- Introducción -->
       <section class="terms-section">
-        <div class="section-icon">🔒</div>
         <div class="section-content">
           <h2>1. Introducción</h2>
           <p>En AstraNimbus nos comprometemos a proteger la privacidad y seguridad de la información personal de nuestros usuarios. La presente Política de Privacidad describe cómo recopilamos, utilizamos, almacenamos y protegemos los datos personales proporcionados por los usuarios al utilizar nuestra plataforma digital de gestión de vuelos chárter.</p>
@@ -65,7 +46,6 @@
 
       <!-- Información que recopilamos -->
       <section class="terms-section">
-        <div class="section-icon">📋</div>
         <div class="section-content">
           <h2>2. Información que recopilamos</h2>
           <p>Para la correcta prestación de los servicios ofrecidos por AstraNimbus, la plataforma puede recopilar diferentes tipos de información personal.</p>
@@ -101,7 +81,6 @@
 
       <!-- Finalidad del tratamiento -->
       <section class="terms-section">
-        <div class="section-icon">🎯</div>
         <div class="section-content">
           <h2>3. Finalidad del tratamiento de los datos</h2>
           <p>La información personal recopilada por AstraNimbus es utilizada exclusivamente para las siguientes finalidades:</p>
@@ -119,7 +98,6 @@
 
       <!-- Uso de servicios de terceros -->
       <section class="terms-section">
-        <div class="section-icon">🔄</div>
         <div class="section-content">
           <h2>4. Uso de servicios de terceros</h2>
           <p>Para garantizar la seguridad y correcto funcionamiento de la plataforma, AstraNimbus utiliza algunos servicios externos.</p>
@@ -135,7 +113,6 @@
 
       <!-- Seguridad de la información -->
       <section class="terms-section">
-        <div class="section-icon">🛡️</div>
         <div class="section-content">
           <h2>5. Seguridad de la información</h2>
           <p>AstraNimbus implementa medidas técnicas y organizativas orientadas a proteger la información personal de los usuarios contra acceso no autorizado, pérdida, alteración o divulgación indebida.</p>
@@ -153,7 +130,6 @@
 
       <!-- Derechos de los titulares -->
       <section class="terms-section">
-        <div class="section-icon">⚖️</div>
         <div class="section-content">
           <h2>6. Derechos de los titulares de los datos</h2>
           <p>De acuerdo con la legislación vigente, los usuarios tienen derecho a:</p>
@@ -170,7 +146,6 @@
 
       <!-- Eliminación y modificación -->
       <section class="terms-section">
-        <div class="section-icon">🗑️</div>
         <div class="section-content">
           <h2>7. Eliminación y modificación de datos personales</h2>
           <p>Los usuarios podrán solicitar en cualquier momento la modificación, actualización o eliminación de sus datos personales almacenados en la plataforma.</p>
@@ -181,7 +156,6 @@
 
       <!-- Conservación de la información -->
       <section class="terms-section">
-        <div class="section-icon">⏱️</div>
         <div class="section-content">
           <h2>8. Conservación de la información</h2>
           <p>Los datos personales serán almacenados únicamente durante el tiempo necesario para cumplir con las finalidades descritas en esta política o mientras exista una relación activa entre el usuario y AstraNimbus.</p>
@@ -191,7 +165,6 @@
 
       <!-- Uso de cookies -->
       <section class="terms-section">
-        <div class="section-icon">🍪</div>
         <div class="section-content">
           <h2>9. Uso de cookies y tecnologías similares</h2>
           <p>La plataforma AstraNimbus puede utilizar cookies u otras tecnologías similares con el objetivo de mejorar la experiencia del usuario, optimizar el funcionamiento del sistema y garantizar la seguridad de la plataforma.</p>
@@ -202,7 +175,6 @@
 
       <!-- Cambios en la política -->
       <section class="terms-section">
-        <div class="section-icon">📝</div>
         <div class="section-content">
           <h2>10. Cambios en la política de privacidad</h2>
           <p>AstraNimbus se reserva el derecho de modificar o actualizar esta Política de Privacidad en cualquier momento con el fin de adaptarse a cambios legales, regulatorios o tecnológicos.</p>
@@ -212,12 +184,11 @@
 
       <!-- Información de contacto -->
       <section class="terms-section contact-section">
-        <div class="section-icon">📞</div>
         <div class="section-content">
           <h2>11. Información de contacto</h2>
           <p>Si los usuarios tienen preguntas, consultas o solicitudes relacionadas con esta Política de Privacidad o con el tratamiento de sus datos personales, podrán ponerse en contacto con AstraNimbus a través de los canales oficiales de atención al usuario disponibles en la plataforma.</p>
           <div class="contact-info">
-            <div><i class="fas fa-envelope"></i> privacidad@astranimbus.aero</div>
+            <div><i class="fas fa-envelope"></i> infoastranimbus@gmail.com</div>
             <div><i class="fas fa-phone"></i> +57 3016973283  - -  +57 3017275512  - -   +57 3218982391</div>
             <div><i class="fas fa-building"></i> PAELDAV Corp. - División de Protección de Datos</div>
           </div>
