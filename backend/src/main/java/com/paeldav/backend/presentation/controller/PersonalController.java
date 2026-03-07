@@ -64,13 +64,13 @@ public class PersonalController {
 
     @GetMapping("/filtros")
     public ResponseEntity<List<PersonalDTO>> filtrarPersonal(@RequestParam(required = false) String nombre,
-                                                             @RequestParam (required = false) EstadoPersonal estadoPersonal,
+                                                             @RequestParam (required = false) EstadoPersonal estado,
                                                              @RequestParam(required = false) CargoPersonal cargo) {
-        List<PersonalDTO> pesonal = personalService.filtrarPersonal(nombre, cargo,estadoPersonal);
+        List<PersonalDTO> pesonal = personalService.filtrarPersonal(nombre, cargo,estado);
         System.out.println(">>> Llegó a /filtros");
         System.out.println(">>> nombre: " + nombre);
         System.out.println(">>> cargo: " + cargo);
-        System.out.println(">>> estado: " + estadoPersonal);
+        System.out.println(">>> estado: " + estado);
         return ResponseEntity.ok(pesonal);
     }
 
