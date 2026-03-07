@@ -1,0 +1,143 @@
+.form-card{
+background: rgba(255,255,255,0.08);
+padding: 2rem;
+border-radius: var(--radius-lg);
+box-shadow: var(--shadow-lg);
+backdrop-filter: blur(8px);
+}
+
+.form-grid{
+display: grid;
+grid-template-columns: repeat(2,1fr);
+gap: 1.5rem;
+}
+
+.form-group{
+display: flex;
+flex-direction: column;
+}
+
+.form-group.full{
+grid-column: 1 / -1;
+}
+
+.form-group label{
+font-family: 'Libre Franklin';
+color: var(--color-light);
+font-size: 0.9rem;
+margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+
+padding: 10px 12px;
+border-radius: var(--radius-md);
+border: 1px solid rgba(255,255,255,0.2);
+background: rgba(255,255,255,0.1);
+color: white;
+transition: var(--transition-fast);
+
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+
+border-color: var(--color-light);
+box-shadow: 0 0 0 2px rgba(204,204,255,0.3);
+
+}
+
+.form-actions{
+
+margin-top: 2rem;
+display:flex;
+justify-content:flex-end;
+
+}
+.form-group select{
+
+background: rgba(255,255,255,0.1);
+color: white;
+
+}
+
+.form-group select option{
+
+background: white;
+color: black;
+
+}
+
+.dark-theme .form-group select option{
+
+background: #2d2d2d;
+color: white;
+
+}
+
+.error{
+
+color: var(--color-error);
+font-size: 0.8rem;
+margin-top: 5px;
+
+}
+
+/* Tablet */
+@media (max-width: 1024px){
+
+.form-grid{
+grid-template-columns: 1fr;
+}
+
+.form-card{
+padding: 1.5rem;
+}
+
+}
+
+/* Móvil */
+@media (max-width: 768px){
+
+.main-content{
+padding: 1.5rem;
+}
+
+.form-card{
+padding: 1.2rem;
+border-radius: var(--radius-md);
+}
+
+.form-actions{
+justify-content: center;
+}
+
+.btn-primary{
+width: 100%;
+justify-content: center;
+}
+
+}
+
+/* Móvil pequeño */
+@media (max-width: 480px){
+
+.page-title{
+font-size: 1.5rem;
+}
+
+.form-group label{
+font-size: 0.8rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+font-size: 0.85rem;
+padding: 8px 10px;
+}
+
+}

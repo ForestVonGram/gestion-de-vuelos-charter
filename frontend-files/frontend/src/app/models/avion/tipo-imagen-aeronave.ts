@@ -1,0 +1,10 @@
+export enum TipoImagenAeronave {
+  EXTERIOR = 'EXTERIOR',
+  INTERIOR = 'INTERIOR',
+  CABINA = 'CABINA',
+  COCKPIT = 'COCKPIT',
+  BANO = 'BANO',
+  COCINA = 'COCINA',
+  EQUIPAMIENTO = 'EQUIPAMIENTO',
+  OTRO = 'OTRO'
+}

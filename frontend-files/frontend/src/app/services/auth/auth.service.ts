@@ -9,7 +9,7 @@ import {
   RegisterRequest,
   AuthResponse,
   RolUsuario
-} from '../../models/auth.models';
+} from '../../models/users/auth.models';
 
 // Podemos definir un User simplificado para el frontend si la AuthResponse es muy compleja,
 // o usar la misma interfaz si te sirve.

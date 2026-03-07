@@ -26,6 +26,7 @@ import { TripulacionComponent } from './pages/personal/tripulacion/tripulacion.c
 import { VuelosComponent } from './pages/personal/vuelos/vuelos.component';
 import { CertificadosComponent } from './pages/personal/certificados/certificados.component';
 import { ReportesComponent } from './pages/personal/reportes/reportes.component';
+import { MyProfile } from './shared/my-profile/my-profile';
 
 import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
@@ -33,6 +34,7 @@ import { EstadisticasAdminComponent } from './pages/administrador/estadisticas-a
 import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admin/flota-aerea-admin.component';
 import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-admin.component';
 import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
+import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 
 export const routes: Routes = [
   {
@@ -104,6 +106,11 @@ export const routes: Routes = [
     canActivate: []
   },
   {
+    path: 'profile',
+    component: MyProfile,
+    canActivate: []
+  },
+  {
     path: 'admin',
     canActivate: [authGuard],
     children: [
@@ -127,6 +134,10 @@ export const routes: Routes = [
       {
         path: 'flota',
         component: FlotaAereaAdminComponent
+      },
+      {
+        path: 'create-plane',
+        component: CreatePlane
       },
       {
         path: 'nomina',

@@ -6,7 +6,7 @@ import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
-import { RolUsuario } from '../../../models/auth.models';
+import { RolUsuario } from '../../../models/users/auth.models';
 
 @Component({
   selector: 'app-login',
