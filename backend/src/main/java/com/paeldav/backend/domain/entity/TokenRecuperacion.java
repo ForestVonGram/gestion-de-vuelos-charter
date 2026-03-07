@@ -9,7 +9,14 @@ import java.time.LocalDateTime;
  * Entidad para almacenar tokens de recuperación de contraseña.
  */
 @Entity
-@Table(name = "tokens_recuperacion")
+@Table(name = "tokens_recuperacion",
+        indexes = {
+                @Index(name = "idx_token_codigo", columnList = "codigo"),
+                @Index(name = "idx_token_fecha_expiracion", columnList = "fechaExpiracion"),
+                @Index(name = "idx_token_usuario_id", columnList = "usuario_id"),
+                @Index(name = "idx_token_usado", columnList = "usado"),
+                @Index(name = "idx_token_busqueda", columnList = "codigo, fechaExpiracion, usado")
+        })
 @Getter
 @Setter
 @NoArgsConstructor

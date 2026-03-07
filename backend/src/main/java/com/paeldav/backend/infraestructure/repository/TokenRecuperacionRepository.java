@@ -17,6 +17,27 @@ public interface TokenRecuperacionRepository extends JpaRepository<TokenRecupera
 
     Optional<TokenRecuperacion> findByCodigo(String codigo);
 
+    @Query("SELECT t FROM TokenRecuperacion t " +
+            "JOIN FETCH t.usuario u " +
+            "WHERE t.token = :token " +
+            "AND t.usado = false " +
+            "AND t.fechaExpiracion > :now")
+    Optional<TokenRecuperacion> findValidTokenWithUser(
+            @Param("token") String token,
+            @Param("now") LocalDateTime now);
+
+    @Query("SELECT t FROM TokenRecuperacion t " +
+            "JOIN FETCH t.usuario u " +
+            "WHERE t.codigo = :codigo " +
+            "AND u.email = :email " +
+            "AND t.usado = false " +
+            "AND t.fechaExpiracion > :now")
+    Optional<TokenRecuperacion> findValidTokenByCodigoAndEmailWithUser(
+            @Param("codigo") String codigo,
+            @Param("email") String email,
+            @Param("now") LocalDateTime now);
+
+    // Mantenemos los métodos originales por si acaso
     @Query("SELECT t FROM TokenRecuperacion t WHERE t.token = :token AND t.usado = false AND t.fechaExpiracion > :now")
     Optional<TokenRecuperacion> findValidToken(@Param("token") String token, @Param("now") LocalDateTime now);
 
@@ -33,4 +54,9 @@ public interface TokenRecuperacionRepository extends JpaRepository<TokenRecupera
     @Modifying
     @Query("DELETE FROM TokenRecuperacion t WHERE t.fechaExpiracion < :now")
     void eliminarTokensExpirados(@Param("now") LocalDateTime now);
+
+    // Consulta adicional útil para limpieza programada
+    @Query("SELECT COUNT(t) FROM TokenRecuperacion t " +
+            "WHERE t.usuario.id = :usuarioId AND t.usado = false")
+    long countTokensActivosByUsuarioId(@Param("usuarioId") Long usuarioId);
 }

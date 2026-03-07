@@ -20,6 +20,7 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
   email: string = '';
   showNewPassword = false;
   token: string = '';
+  codeVerified = false;
 
   // Password visibility
   showPassword = false;
@@ -129,6 +130,7 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
   verifyCode(): void {
     this.submitted = true;
     this.error = null;
+    this.codeVerified = false;
 
     if (this.f['codigo'].invalid) {
       return;
@@ -136,7 +138,6 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
 
     this.loading = true;
 
-    // ✅ Usar el servicio real, NO el setTimeout
     this.passwordService.verificarCodigo(this.email, this.f['codigo'].value)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -144,6 +145,10 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.token = response.token; // Guardar el token recibido del backend
           this.showNewPassword = true;
+          this.loading = false;
+          this.token = response.token;
+          this.showNewPassword = true;
+          this.codeVerified = true;
 
           // Habilitar validaciones de contraseña
           this.f['nuevaPassword'].setValidators([Validators.required, Validators.minLength(8)]);
@@ -155,10 +160,16 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.loading = false;
+          this.loading = false;
+          this.codeVerified = false;
           if (error.status === 400) {
-            this.error = 'Código inválido o expirado';
+            this.error = 'Ese no es el código. Intenta de nuevo.';
           } else if (error.status === 0) {
             this.error = 'Error de conexión con el servidor';
+          } else if (error.status === 500) {
+            this.error = 'Ese no es el código. Intenta de nuevo.';
+          } else if (error.status === 429) {
+            this.error = 'Demasiados intentos. Espera unos minutos.';
           } else {
             this.error = error.error?.message || 'Error al verificar el código';
           }

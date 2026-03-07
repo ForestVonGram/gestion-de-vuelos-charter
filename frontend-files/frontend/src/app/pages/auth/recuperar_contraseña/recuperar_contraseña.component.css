@@ -136,6 +136,63 @@
   color: var(--color-success);
 }
 
+.disabled-input {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-light);
+}
+
+/* Mejora para inputs deshabilitados/readonly */
+.disabled-input,
+.readonly-input {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--color-light);
+  user-select: none; /* Evita que se pueda seleccionar el texto */
+  pointer-events: none; /* ¡Importante! Bloquea completamente cualquier interacción */
+}
+
+/* Estilo específico para readonly */
+.readonly-input {
+  background-color: #f0f0f0; /* Un poco más oscuro para diferenciar */
+  border-color: var(--color-light-mid);
+}
+
+/* Opcional: Cambiar el estilo del cursor al pasar sobre el contenedor */
+.input-wrapper:has(input.readonly-input) {
+  cursor: not-allowed;
+}
+
+/* Añade esto a tu archivo CSS */
+.input-wrapper {
+  position: relative;
+}
+
+.input-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: transparent; /* Transparente para no tapar visualmente */
+  cursor: not-allowed;
+  z-index: 10;
+}
+
+.input-disabled {
+  opacity: 0.7;
+}
+
+.disabled-input {
+  opacity: 0.7;
+  background-color: var(--color-light);
+}
+
+/* Para asegurar que el overlay bloquea todo */
+.input-overlay {
+  pointer-events: all;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
