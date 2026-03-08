@@ -84,6 +84,7 @@ class PasswordServiceTest {
             // Arrange
             when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioTest));
             when(tokenRecuperacionRepository.save(any(TokenRecuperacion.class))).thenReturn(tokenTest);
+            doNothing().when(emailServiceImpl).enviarEmailRecuperacionConCodigo(anyString(), anyString(), anyString());
 
             // Act
             passwordService.solicitarRecuperacion("juan@test.com");
@@ -91,7 +92,7 @@ class PasswordServiceTest {
             // Assert
             verify(tokenRecuperacionRepository).invalidarTokensAnteriores(usuarioTest.getId());
             verify(tokenRecuperacionRepository).save(any(TokenRecuperacion.class));
-            verify(emailServiceImpl).enviarEmailRecuperacion(eq("juan@test.com"), anyString(), eq("Juan Pérez"));
+            verify(emailServiceImpl).enviarEmailRecuperacionConCodigo(eq("juan@test.com"), anyString(), eq("Juan Pérez"));
         }
 
         @Test
@@ -132,9 +133,11 @@ class PasswordServiceTest {
         @DisplayName("Resetear password con token válido actualiza contraseña")
         void resetearPassword_ConTokenValido_ActualizaPassword() {
             // Arrange
-            when(tokenRecuperacionRepository.findValidToken(anyString(), any(LocalDateTime.class)))
+            when(tokenRecuperacionRepository.findValidTokenWithUser(anyString(), any(LocalDateTime.class)))
                     .thenReturn(Optional.of(tokenTest));
             when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
+            doNothing().when(emailServiceImpl).enviarEmailConfirmacionCambio(anyString(), anyString());
+            doNothing().when(sesionService).revocarTodasLasSesiones(anyLong());
 
             // Act
             passwordService.resetearPassword("valid-token-123", "nuevaPassword123");
@@ -154,7 +157,7 @@ class PasswordServiceTest {
         @DisplayName("Resetear password con token inválido lanza excepción")
         void resetearPassword_ConTokenInvalido_LanzaExcepcion() {
             // Arrange
-            when(tokenRecuperacionRepository.findValidToken(anyString(), any(LocalDateTime.class)))
+            lenient().when(tokenRecuperacionRepository.findValidToken(anyString(), any(LocalDateTime.class)))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -170,7 +173,7 @@ class PasswordServiceTest {
         @DisplayName("Resetear password con token expirado lanza excepción")
         void resetearPassword_ConTokenExpirado_LanzaExcepcion() {
             // Arrange - El token está expirado porque findValidToken no lo encuentra
-            when(tokenRecuperacionRepository.findValidToken(anyString(), any(LocalDateTime.class)))
+            lenient().when(tokenRecuperacionRepository.findValidToken(anyString(), any(LocalDateTime.class)))
                     .thenReturn(Optional.empty());
 
             // Act & Assert
@@ -191,6 +194,7 @@ class PasswordServiceTest {
             when(usuarioRepository.findById(anyLong())).thenReturn(Optional.of(usuarioTest));
             when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
             when(passwordEncoder.encode(anyString())).thenReturn("newEncodedPassword");
+            doNothing().when(emailServiceImpl).enviarEmailConfirmacionCambio(anyString(), anyString());
 
             // Act
             passwordService.cambiarPassword(1L, "passwordActual", "nuevaPassword123");
