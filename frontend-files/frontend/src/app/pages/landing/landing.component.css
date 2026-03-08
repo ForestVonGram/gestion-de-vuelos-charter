@@ -365,40 +365,6 @@ button:focus-visible,
   background-color: var(--dark-bg-hover);
 }
 
-/* ===== MOBILE OVERLAY ===== */
-.mobile-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 998;  /* ← Cambiado de 999 a 998 */
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: auto; /* Asegurar que capture clics solo cuando visible */
-}
-
-.mobile-overlay.visible {
-  opacity: 1;
-}
-
-/* Cuando el overlay está visible, el contenido principal no debe recibir clics */
-body.menu-open main,
-body.menu-open section:not(.navbar *) {
-  pointer-events: none; /* Bloquea interacción con el contenido */
-}
-
-/* Pero los botones del menú y el navbar deben seguir funcionando */
-body.menu-open .navbar,
-body.menu-open .mobile-menu,
-body.menu-open .mobile-menu * {
-  pointer-events: auto;
-}
-
-/* Prevent body scroll when menu open */
-body.menu-open {
-  overflow: hidden;
-}
-
 /* ===== LANGUAGE ===== */
 .language {
   color: var(--color-mid);
@@ -1255,10 +1221,6 @@ body.menu-open {
 
   /* Show mobile menu as block so transitions work */
   .mobile-menu {
-    display: block;
-  }
-
-  .mobile-overlay {
     display: block;
   }
 
