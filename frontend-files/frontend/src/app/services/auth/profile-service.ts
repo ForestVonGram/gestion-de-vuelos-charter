@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment'; // Importamos environment
-import { ProfileDto } from '../../models/users/profile-dto';
+import { ProfileDto } from '../../models/users/profile-dto';// Importamos ProfileDto para definir el tipo de datos del perfil
 import { User } from './auth.service'; // Importamos User desde AuthService para mantener consistencia en el tipo de usuario
 import { TokenService } from '../token_service/token-service'; // Importamos TokenService para manejar el token de autenticación
 import { HttpHeaders } from '@angular/common/http'; // Importamos HttpHeaders para agregar el token en las solicitudes HTTP
@@ -35,7 +35,6 @@ export class ProfileService {
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
     });
-
     return this.http.get<ProfileDto>(`${this.API_URL}/${id}`, { headers });
   }
 

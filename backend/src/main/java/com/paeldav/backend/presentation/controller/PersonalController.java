@@ -4,6 +4,8 @@ import com.paeldav.backend.application.dto.personal.PersonalCreateDTO;
 import com.paeldav.backend.application.dto.personal.PersonalDTO;
 import com.paeldav.backend.application.dto.personal.PersonalUpdateDTO;
 import com.paeldav.backend.application.service.base.PersonalService;
+import com.paeldav.backend.domain.enums.CargoPersonal;
+import com.paeldav.backend.domain.enums.EstadoPersonal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,18 @@ public class PersonalController {
     public ResponseEntity<List<PersonalDTO>> obtenerTodoPersonal() {
         List<PersonalDTO> personal = personalService.obtenerTodoPersonal();
         return ResponseEntity.ok(personal);
+    }
+
+    @GetMapping("/filtros")
+    public ResponseEntity<List<PersonalDTO>> filtrarPersonal(@RequestParam(required = false) String nombre,
+                                                             @RequestParam (required = false) EstadoPersonal estado,
+                                                             @RequestParam(required = false) CargoPersonal cargo) {
+        List<PersonalDTO> pesonal = personalService.filtrarPersonal(nombre, cargo,estado);
+        System.out.println(">>> Llegó a /filtros");
+        System.out.println(">>> nombre: " + nombre);
+        System.out.println(">>> cargo: " + cargo);
+        System.out.println(">>> estado: " + estado);
+        return ResponseEntity.ok(pesonal);
     }
 
     /**

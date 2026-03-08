@@ -91,7 +91,11 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         // Permitir el origen de FrontEnd
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(List.of(
+                "https://www.astranimbus.com",
+                "https://astranimbus.com",
+                "http://localhost:4200"
+                ));
 
         // Permitir métodos HTTP comunes
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

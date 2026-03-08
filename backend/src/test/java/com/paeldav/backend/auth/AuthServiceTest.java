@@ -90,8 +90,8 @@ class AuthServiceTest {
         registerRequest.setPassword("password123");
         registerRequest.setRecaptchaToken("valid-recaptcha");
         
-        // Mock recaptcha por defecto como válido
-        when(recaptchaService.validarToken(anyString())).thenReturn(true);
+        // Mock recaptcha con lenient para permitir override en tests específicos
+        lenient().when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
     }
 
     @Nested
@@ -228,6 +228,7 @@ class AuthServiceTest {
         void login_RecaptchaFalla_LanzaExcepcion() {
             // Arrange
             loginRequest.setRecaptchaToken("invalid-recaptcha");
+            when(recaptchaService.estaHabilitado()).thenReturn(true);
             when(recaptchaService.validarToken("invalid-recaptcha")).thenReturn(false);
 
             // Act & Assert
@@ -246,12 +247,13 @@ class AuthServiceTest {
             usuarioTest.setMetodoDosFactores(MetodoDosFactores.EMAIL);
             loginRequest.setRecaptchaToken("valid-recaptcha");
 
-            when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
+            lenient().when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
             when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                     .thenReturn(new UsernamePasswordAuthenticationToken(usuarioTest.getEmail(), null));
             when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioTest));
             when(dosFactoresService.esActivo(usuarioTest)).thenReturn(true);
-            when(jwtService.generateToken(any(), any(), anyLong())).thenReturn("session-token-temporal");
+            lenient().when(jwtService.generateToken(any(), any(), anyLong())).thenReturn("session-token-temporal");
+            when(dosFactoresService.generarCodigoVerificacion(eq(usuarioTest), eq(MetodoDosFactores.EMAIL), anyString())).thenReturn(new VerificacionDosFactores());
 
             // Act
             AuthResponse response = authService.login(loginRequest, "Desktop", "127.0.0.1", "Mozilla");
@@ -271,7 +273,7 @@ class AuthServiceTest {
             usuarioTest.setDosFactoresHabilitado(false);
             loginRequest.setRecaptchaToken("valid-recaptcha");
 
-            when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
+            lenient().when(recaptchaService.validarToken("valid-recaptcha")).thenReturn(true);
             when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                     .thenReturn(new UsernamePasswordAuthenticationToken(usuarioTest.getEmail(), null));
             when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioTest));

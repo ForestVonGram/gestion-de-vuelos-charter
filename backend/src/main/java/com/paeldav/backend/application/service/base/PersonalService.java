@@ -3,6 +3,8 @@ package com.paeldav.backend.application.service.base;
 import com.paeldav.backend.application.dto.personal.PersonalCreateDTO;
 import com.paeldav.backend.application.dto.personal.PersonalDTO;
 import com.paeldav.backend.application.dto.personal.PersonalUpdateDTO;
+import com.paeldav.backend.domain.enums.CargoPersonal;
+import com.paeldav.backend.domain.enums.EstadoPersonal;
 
 import java.util.List;
 
@@ -49,6 +51,7 @@ public interface PersonalService {
      * @param personalUpdateDTO datos a actualizar
      * @return el personal actualizado
      */
+
     PersonalDTO editarPersonal(Long id, PersonalUpdateDTO personalUpdateDTO);
 
     /**
@@ -71,4 +74,6 @@ public interface PersonalService {
      * @param id el ID del personal a activar
      */
     void activarPersonal(Long id);
+
+    List<PersonalDTO> filtrarPersonal(String nombre, CargoPersonal cargoPersonal, EstadoPersonal estadoPersonal);
 }

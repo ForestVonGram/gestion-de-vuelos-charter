@@ -48,7 +48,6 @@ export class CreatePlane {
 
     console.log(avion);
 
-    // this.avionService.crear(avion).subscribe(...)
   }
 
     blockNegative(event: KeyboardEvent) {

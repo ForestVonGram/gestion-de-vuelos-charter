@@ -1,21 +1,17 @@
 import { CargoPersonal } from "./cargo";
+import { EstadoPersonal } from "./estado-personal";
 
-export interface PersonalCreateDTO {
-
+export interface PersonalDTO {
+  id: number;
   usuarioId: number;
-
+  usuarioNombre: string;
+  usuarioEmail: string;
   numeroEmpleado: string;
-
   cargo: CargoPersonal;
-
-  areaEspecializacion?: string;
-
-  certificaciones?: string;
-
-  fechaContratacion?: string; // LocalDate en Java → string en formato YYYY-MM-DD
-
-  turno?: string;
-
-  observaciones?: string;
-
+  estado: EstadoPersonal;
+  areaEspecializacion: string;
+  certificaciones: string;
+  fechaContratacion: string; // ISO date string: 'YYYY-MM-DD'
+  turno: string;
+  observaciones: string;
 }

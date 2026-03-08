@@ -26,8 +26,8 @@
         <!-- Usuario -->
         <div class="form-group">
           <label>Usuario ID *</label>
-          <input type="number" formControlName="usuarioId">
-          
+          <input type="number" formControlName="usuarioId" min="0" step="1" (keydown)="blockNegative($event)"
+                (input)="sanitizeNumber('usuarioId')">
           @if(submitted && personalForm.controls['usuarioId'].invalid){
           <span class="error">
             El usuario es obligatorio
@@ -38,7 +38,9 @@
         <!-- Número empleado -->
         <div class="form-group">
           <label>Número de Empleado *</label>
-          <input type="text" formControlName="numeroEmpleado">
+          <input type="text" formControlName="numeroEmpleado" 
+                (keydown)="blockNegative($event)"
+                (input)="sanitizeNumber('numeroEmpleado')">
             @if(submitted && personalForm.controls['numeroEmpleado'].invalid){
              <span class="error">
                 El número de empleado es obligatorio
