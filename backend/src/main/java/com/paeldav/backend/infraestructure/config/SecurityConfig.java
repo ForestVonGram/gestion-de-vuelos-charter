@@ -94,6 +94,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://www.astranimbus.com",
                 "https://astranimbus.com",
+                "https://api.astranimbus.com",
+                "http://astranimbus.us-east-2.elasticbeanstalk.com",
                 "http://localhost:4200"
                 ));
 
