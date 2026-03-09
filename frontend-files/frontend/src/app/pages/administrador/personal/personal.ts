@@ -6,6 +6,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { PersonalService } from '../../../services/personal/personal-service';
 import { CargoPersonal } from '../../../models/personal/cargo';
 import { EstadoPersonal } from '../../../models/personal/estado-personal';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-personal',
@@ -72,6 +73,65 @@ export class Personal implements OnInit {
   formatDate(dateString: string): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+
+  onDelete(id: number): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.personalService.eliminarPersonal(id).subscribe({
+          next: (response) => {
+            console.log("Personal eliminado exitosamente:", response);
+            this.personalFiltrado = this.personalFiltrado.filter(p => p.id !== id);
+            this.cdr.detectChanges();
+            Swal.fire({
+              icon: 'success',
+              title: '¡Eliminado!',
+              text: 'El personal ha sido eliminado exitosamente.',
+              confirmButtonText: 'Aceptar'
+            });
+          },
+          error: (error) => {
+            console.error("Error al eliminar personal:", error);
+            Swal.fire({
+              icon: 'error',
+              title: '¡Error!',
+              text: 'Ocurrió un error al eliminar el personal. Por favor, inténtelo de nuevo.',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  onActivate(id: number) {
+    this.personalService.activarPersonal(id).subscribe({
+      next: (response) => {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Activado!',
+          text: 'El personal ha sido activado exitosamente.',
+          confirmButtonText: 'Aceptar'
+        });
+        this.filtrar();
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        Swal.fire({
+          icon: 'error',
+          title: '¡Error!', 
+          text: 'Ocurrió un error al activar el personal. Por favor, inténtelo de nuevo.',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
   }
 
 }

@@ -40,21 +40,36 @@ export class PersonalService {
     return this.http.get(`${this.apiUrl}`, { headers });
   }
 
-filtroPersonal(nombre: string, estado: string, cargo: string): Observable<any> {
-  const token = this.tokenService.getToken();
-  const headers = new HttpHeaders({
+  filtroPersonal(nombre: string, estado: string, cargo: string): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
-  });
+    });
 
-  let params = new HttpParams();
-  if (nombre) params = params.set('nombre', nombre);
-  if (estado) params = params.set('estado', estado);
-  if (cargo)  params = params.set('cargo', cargo);
+    let params = new HttpParams();
+    if (nombre) params = params.set('nombre', nombre);
+    if (estado) params = params.set('estado', estado);
+    if (cargo)  params = params.set('cargo', cargo);
 
-  console.log('URL final:', `${this.apiUrl}/filtros`);
-  console.log('Params:', params.toString());
 
-  return this.http.get(`${this.apiUrl}/filtros`, { headers, params });
-}
+    return this.http.get(`${this.apiUrl}/filtros`, { headers, params });
+  }
+
+  eliminarPersonal(id: number): Observable<any>   {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.put(`${this.apiUrl}/${id}/desactiva`, {}, { headers, responseType: 'text' });
+  }
+
+  activarPersonal(id: number): Observable<any>   {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.put(`${this.apiUrl}/${id}/activa`, {}, { headers, responseType: 'text' });
+  }
+
 }
