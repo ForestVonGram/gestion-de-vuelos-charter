@@ -31,15 +31,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService {
 
-    private final RegistroHorasVueloRepository registroRepository;
-    private final TripulanteRepository tripulanteRepository;
-    private final VueloRepository vueloRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final RegistroHorasVueloMapper registroMapper;
+    private final RegistroHorasVueloRepository registroRepository; // Repositorio de registros de horas
+    private final TripulanteRepository tripulanteRepository; // Repositorio de tripulantes
+    private final VueloRepository vueloRepository; // Repositorio de vuelos
+    private final UsuarioRepository usuarioRepository; // Repositorio de usuarios
+    private final RegistroHorasVueloMapper registroMapper; // Mapper de registros de horas
 
     @Override
     @Transactional
     public RegistroHorasVueloDTO crearRegistro(RegistroHorasVueloCreateDTO registroCreateDTO) {
+        // Crea un nuevo registro de horas de vuelo para un tripulante
         // Validar que el tripulante existe
         Tripulante tripulante = tripulanteRepository.findById(registroCreateDTO.getTripulanteId())
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
@@ -60,7 +61,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
         if (!tripulanteAsignado) {
             throw new AsignacionInvalidaException(
                     "El tripulante " + tripulante.getNumeroLicencia() +
-                    " no está asignado al vuelo " + vuelo.getId()
+                            " no está asignado al vuelo " + vuelo.getId()
             );
         }
 
@@ -78,6 +79,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public RegistroHorasVueloDTO obtenerRegistroPorId(Long id) {
+        // Busca un registro de horas por su ID
         RegistroHorasVuelo registro = registroRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Registro de horas de vuelo no encontrado con ID: " + id
@@ -89,6 +91,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public List<RegistroHorasVueloDTO> obtenerRegistrosPorTripulante(Long tripulanteId) {
+        // Obtiene todos los registros de horas para un tripulante específico
         // Validar que el tripulante existe
         if (!tripulanteRepository.existsById(tripulanteId)) {
             throw new TripulanteNoEncontradoException(
@@ -103,6 +106,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public List<RegistroHorasVueloDTO> obtenerRegistrosPorVuelo(Long vueloId) {
+        // Obtiene todos los registros de horas para un vuelo específico
         // Validar que el vuelo existe
         if (!vueloRepository.existsById(vueloId)) {
             throw new VueloNoEncontradoException(
@@ -117,6 +121,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public List<RegistroHorasVueloDTO> obtenerRegistrosPendientes() {
+        // Obtiene todos los registros de horas pendientes de aprobación
         List<RegistroHorasVuelo> registros = registroRepository.findByAprobado(false);
         return registroMapper.toDTOList(registros);
     }
@@ -124,6 +129,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public Double calcularHorasTotales(Long tripulanteId) {
+        // Calcula el total de horas voladas por un tripulante
         // Validar que el tripulante existe
         if (!tripulanteRepository.existsById(tripulanteId)) {
             throw new TripulanteNoEncontradoException(
@@ -138,6 +144,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public Double calcularHorasMensuales(Long tripulanteId, LocalDate fecha) {
+        // Calcula las horas voladas por un tripulante en un mes específico
         // Validar que el tripulante existe
         if (!tripulanteRepository.existsById(tripulanteId)) {
             throw new TripulanteNoEncontradoException(
@@ -162,6 +169,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional
     public RegistroHorasVueloDTO aprobarRegistro(Long registroId, Long usuarioAprobadorId) {
+        // Aprueba un registro de horas pendiente y actualiza las horas del tripulante
         RegistroHorasVuelo registro = registroRepository.findById(registroId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Registro de horas de vuelo no encontrado con ID: " + registroId
@@ -204,6 +212,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional
     public void eliminarRegistro(Long registroId) {
+        // Elimina un registro de horas no aprobado
         RegistroHorasVuelo registro = registroRepository.findById(registroId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "Registro de horas de vuelo no encontrado con ID: " + registroId
@@ -222,6 +231,7 @@ public class RegistroHorasVueloServiceImpl implements RegistroHorasVueloService 
     @Override
     @Transactional(readOnly = true)
     public Double obtenerHorasEnVuelo(Long tripulanteId, Long vueloId) {
+        // Obtiene las horas voladas por un tripulante en un vuelo específico
         // Validar que el tripulante existe
         if (!tripulanteRepository.existsById(tripulanteId)) {
             throw new TripulanteNoEncontradoException(

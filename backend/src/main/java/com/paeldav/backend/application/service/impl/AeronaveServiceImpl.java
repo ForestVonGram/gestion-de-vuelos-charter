@@ -44,14 +44,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class AeronaveServiceImpl implements AeronaveService {
 
-    private final AeronaveRepository aeronaveRepository;
-    private final VueloRepository vueloRepository;
-    private final MantenimientoRepository mantenimientoRepository;
-    private final RepostajeRepository repostajeRepository;
-    private final AeronaveMapper aeronaveMapper;
-    private final VueloMapper vueloMapper;
-    private final MantenimientoMapper mantenimientoMapper;
-    private final RepostajeMapper repostajeMapper;
+    private final AeronaveRepository aeronaveRepository; // Repositorio de aeronaves
+    private final VueloRepository vueloRepository; // Repositorio de vuelos
+    private final MantenimientoRepository mantenimientoRepository; // Repositorio de mantenimientos
+    private final RepostajeRepository repostajeRepository; // Repositorio de repostajes
+    private final AeronaveMapper aeronaveMapper; // Mapper de aeronaves
+    private final VueloMapper vueloMapper; // Mapper de vuelos
+    private final MantenimientoMapper mantenimientoMapper; // Mapper de mantenimientos
+    private final RepostajeMapper repostajeMapper; // Mapper de repostajes
 
     @Override
     public AeronaveDTO registrarAeronave(AeronaveCreateDTO aeronaveCreateDTO) {
@@ -410,14 +410,14 @@ public class AeronaveServiceImpl implements AeronaveService {
 
         return switch (estadoActual) {
             case DISPONIBLE -> nuevoEstado == EstadoAeronave.EN_VUELO ||
-                               nuevoEstado == EstadoAeronave.EN_MANTENIMIENTO ||
-                               nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
+                    nuevoEstado == EstadoAeronave.EN_MANTENIMIENTO ||
+                    nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
             case EN_VUELO -> nuevoEstado == EstadoAeronave.DISPONIBLE ||
-                             nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
+                    nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
             case EN_MANTENIMIENTO -> nuevoEstado == EstadoAeronave.DISPONIBLE ||
-                                     nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
+                    nuevoEstado == EstadoAeronave.FUERA_DE_SERVICIO;
             case FUERA_DE_SERVICIO -> nuevoEstado == EstadoAeronave.DISPONIBLE ||
-                                      nuevoEstado == EstadoAeronave.EN_MANTENIMIENTO;
+                    nuevoEstado == EstadoAeronave.EN_MANTENIMIENTO;
         };
     }
 

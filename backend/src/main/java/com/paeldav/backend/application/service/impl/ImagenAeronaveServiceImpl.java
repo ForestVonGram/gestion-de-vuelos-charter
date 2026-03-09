@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * Implementación del servicio de gestión de imágenes de aeronaves.
+ * Maneja carga, eliminación, consulta y ordenamiento de imágenes.
  */
 @Service
 @RequiredArgsConstructor
@@ -30,13 +31,24 @@ import java.util.stream.Collectors;
 @Transactional
 public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
 
+    // Repositorio para persistencia de imágenes
     private final ImagenAeronaveRepository imagenRepository;
+
+    // Repositorio para consultar aeronaves
     private final AeronaveRepository aeronaveRepository;
+
+    // Servicio para subir y eliminar archivos en Cloudinary
     private final CloudinaryService cloudinaryService;
+
+    // Mapper para convertir entidades a DTO
     private final ImagenAeronaveMapper imagenMapper;
 
+    // Carpeta base donde se almacenarán las imágenes en Cloudinary
     private static final String CARPETA_IMAGENES = "aeronaves";
 
+    /**
+     * Carga una imagen para una aeronave específica.
+     */
     @Override
     public ImagenAeronaveDTO cargarImagen(Long aeronaveId, MultipartFile file, ImagenAeronaveCreateDTO imagenDTO) {
         log.info("Cargando imagen para aeronave ID: {}", aeronaveId);
@@ -48,16 +60,17 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
                     return new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
                 });
 
-        // Validar que el archivo no está vacío
+        // Validar que el archivo no esté vacío
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("El archivo de imagen no puede estar vacío");
         }
 
         try {
-            // Crear carpeta específica para la aeronave usando su matrícula
+
+            // Crear carpeta en Cloudinary usando la matrícula de la aeronave
             String carpeta = CARPETA_IMAGENES + "/" + aeronave.getMatricula();
 
-            // Subir a Cloudinary (convierte a webp si el formato no es webp)
+            // Subir imagen a Cloudinary
             Map<String, Object> uploadResult = cloudinaryService.uploadImage(file, carpeta);
 
             // Crear entidad ImagenAeronave
@@ -71,8 +84,9 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
                     .tamanoBytes((Long) uploadResult.get("size"))
                     .build();
 
-            // Guardar en la base de datos
+            // Guardar imagen en la base de datos
             ImagenAeronave imagenGuardada = imagenRepository.save(imagen);
+
             log.info("Imagen cargada exitosamente para aeronave ID: {}, Imagen ID: {}", aeronaveId, imagenGuardada.getId());
 
             return imagenMapper.toDTO(imagenGuardada);
@@ -83,17 +97,26 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
         }
     }
 
+    /**
+     * Carga múltiples imágenes para una aeronave.
+     */
     @Override
     public List<ImagenAeronaveDTO> cargarMultiplesImagenes(Long aeronaveId, List<MultipartFile> files, ImagenAeronaveCreateDTO imagenDTO) {
+
         log.info("Cargando {} imágenes para aeronave ID: {}", files.size(), aeronaveId);
 
+        // Procesar cada archivo usando el método de carga individual
         return files.stream()
                 .map(file -> cargarImagen(aeronaveId, file, imagenDTO))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Elimina una imagen de una aeronave.
+     */
     @Override
     public void eliminarImagen(Long aeronaveId, Long imagenId) {
+
         log.info("Eliminando imagen ID: {} de aeronave ID: {}", imagenId, aeronaveId);
 
         // Validar que la aeronave existe
@@ -102,24 +125,26 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
             throw new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
         }
 
-        // Obtener la imagen
+        // Buscar la imagen en la base de datos
         ImagenAeronave imagen = imagenRepository.findById(imagenId)
                 .orElseThrow(() -> {
                     log.warn("Imagen no encontrada con ID: {}", imagenId);
                     return new IllegalArgumentException("Imagen no encontrada con ID: " + imagenId);
                 });
 
-        // Validar que la imagen pertenece a la aeronave especificada
+        // Validar que la imagen pertenece a la aeronave indicada
         if (!imagen.getAeronave().getId().equals(aeronaveId)) {
             throw new IllegalArgumentException("La imagen no pertenece a la aeronave especificada");
         }
 
         try {
-            // Eliminar de Cloudinary
+
+            // Eliminar archivo en Cloudinary
             cloudinaryService.deleteFile(imagen.getIdCloudinary());
 
-            // Eliminar de la base de datos
+            // Eliminar registro en la base de datos
             imagenRepository.delete(imagen);
+
             log.info("Imagen eliminada exitosamente: {}", imagenId);
 
         } catch (Exception e) {
@@ -128,27 +153,41 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
         }
     }
 
+    /**
+     * Obtiene todas las imágenes de una aeronave ordenadas por visualización.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ImagenAeronaveDTO> obtenerImagenesAeronave(Long aeronaveId) {
+
         log.debug("Obteniendo imágenes de aeronave ID: {}", aeronaveId);
 
         List<ImagenAeronave> imagenes = imagenRepository.findByAeronaveIdOrderByOrdenVisualizacion(aeronaveId);
+
         return imagenMapper.toDTOList(imagenes);
     }
 
+    /**
+     * Obtiene imágenes de una aeronave filtradas por tipo.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ImagenAeronaveDTO> obtenerImagenesPorTipo(Long aeronaveId, TipoImagenAeronave tipo) {
+
         log.debug("Obteniendo imágenes de tipo {} para aeronave ID: {}", tipo, aeronaveId);
 
         List<ImagenAeronave> imagenes = imagenRepository.findByAeronaveIdAndTipoOrderByOrdenVisualizacion(aeronaveId, tipo);
+
         return imagenMapper.toDTOList(imagenes);
     }
 
+    /**
+     * Obtiene una imagen específica por su ID.
+     */
     @Override
     @Transactional(readOnly = true)
     public ImagenAeronaveDTO obtenerImagen(Long imagenId) {
+
         log.debug("Obteniendo imagen ID: {}", imagenId);
 
         ImagenAeronave imagen = imagenRepository.findById(imagenId)
@@ -160,41 +199,57 @@ public class ImagenAeronaveServiceImpl implements ImagenAeronaveService {
         return imagenMapper.toDTO(imagen);
     }
 
+    /**
+     * Actualiza el orden de visualización de las imágenes.
+     */
     @Override
     public void actualizarOrdenImagenes(Long aeronaveId, Map<Long, Integer> ordenUpdates) {
+
         log.info("Actualizando orden de imágenes para aeronave ID: {}", aeronaveId);
 
-        // Validar que la aeronave existe
+        // Validar existencia de la aeronave
         if (!aeronaveRepository.existsById(aeronaveId)) {
             log.warn("Aeronave no encontrada con ID: {}", aeronaveId);
             throw new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
         }
 
+        // Actualizar el orden de cada imagen
         ordenUpdates.forEach((imagenId, nuevoOrden) -> {
+
             ImagenAeronave imagen = imagenRepository.findById(imagenId)
                     .orElseThrow(() -> new IllegalArgumentException("Imagen no encontrada con ID: " + imagenId));
 
-            // Validar que la imagen pertenece a la aeronave
+            // Verificar que la imagen pertenece a la aeronave
             if (!imagen.getAeronave().getId().equals(aeronaveId)) {
                 throw new IllegalArgumentException("La imagen no pertenece a la aeronave especificada");
             }
 
             imagen.setOrdenVisualizacion(nuevoOrden);
+
             imagenRepository.save(imagen);
         });
 
         log.info("Orden de imágenes actualizado para aeronave ID: {}", aeronaveId);
     }
 
+    /**
+     * Reordena automáticamente las imágenes de una aeronave.
+     */
     @Override
     public void reordenarImagenesAutomatico(Long aeronaveId) {
+
         log.info("Reordenando imágenes automáticamente para aeronave ID: {}", aeronaveId);
 
+        // Obtener imágenes ordenadas
         List<ImagenAeronave> imagenes = imagenRepository.findByAeronaveIdOrderByOrdenVisualizacion(aeronaveId);
 
+        // Asignar nuevo orden secuencial
         for (int i = 0; i < imagenes.size(); i++) {
+
             ImagenAeronave imagen = imagenes.get(i);
+
             imagen.setOrdenVisualizacion(i);
+
             imagenRepository.save(imagen);
         }
 

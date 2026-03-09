@@ -32,11 +32,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PagoServiceImpl implements PagoService {
 
-    private final PagoRepository pagoRepository;
-    private final VueloRepository vueloRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final MercadoPagoService mercadoPagoService;
-    private final PagoMapper pagoMapper;
+    private final PagoRepository pagoRepository; // Repositorio de pagos
+    private final VueloRepository vueloRepository; // Repositorio de vuelos
+    private final UsuarioRepository usuarioRepository; // Repositorio de usuarios
+    private final MercadoPagoService mercadoPagoService; // Servicio de integración con MercadoPago
+    private final PagoMapper pagoMapper; // Mapper de pagos
 
     @Override
     @Transactional
@@ -56,7 +56,7 @@ public class PagoServiceImpl implements PagoService {
                 ));
 
         // Crear preferencia en MercadoPago
-        MercadoPagoService.PreferenciaResponse preferencia = 
+        MercadoPagoService.PreferenciaResponse preferencia =
                 mercadoPagoService.crearPreferencia(
                         pagoCreateDTO.getVueloId(),
                         pagoCreateDTO.getMonto(),
@@ -76,8 +76,8 @@ public class PagoServiceImpl implements PagoService {
                 .build();
 
         pago = pagoRepository.save(pago);
-        log.info("Pago creado exitosamente. ID: {}, Número Preferencia: {}", 
-                 pago.getId(), preferencia.getNumeroPreferencia());
+        log.info("Pago creado exitosamente. ID: {}, Número Preferencia: {}",
+                pago.getId(), preferencia.getNumeroPreferencia());
 
         PagoDTO pagoDTO = pagoMapper.toDTO(pago);
         pagoDTO.setUrlPago(preferencia.getUrlPago());
@@ -88,6 +88,7 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public PagoDTO obtenerPagoPorId(Long id) {
+        // Busca un pago por su ID
         Pago pago = pagoRepository.findById(id)
                 .orElseThrow(() -> new PagoNoEncontradoException(
                         "Pago no encontrado con ID: " + id
@@ -99,6 +100,7 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public List<PagoDTO> obtenerPagosPorVuelo(Long vueloId) {
+        // Obtiene todos los pagos asociados a un vuelo específico
         List<Pago> pagos = pagoRepository.findByVueloId(vueloId);
         return pagoMapper.toDTOList(pagos);
     }
@@ -106,6 +108,7 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public List<PagoDTO> obtenerPagosPorUsuario(Long usuarioId) {
+        // Obtiene todos los pagos realizados por un usuario específico
         List<Pago> pagos = pagoRepository.findByUsuarioId(usuarioId);
         return pagoMapper.toDTOList(pagos);
     }
@@ -113,6 +116,7 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public List<PagoDTO> obtenerPagosPorEstado(EstadoPago estado) {
+        // Obtiene todos los pagos que tienen un estado específico
         List<Pago> pagos = pagoRepository.findByEstado(estado);
         return pagoMapper.toDTOList(pagos);
     }
@@ -175,8 +179,8 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional
     public void procesarWebhook(String referenciaMercadoPago, String estado) {
-        log.info("Procesando webhook de MercadoPago. Referencia: {}, Estado: {}", 
-                 referenciaMercadoPago, estado);
+        log.info("Procesando webhook de MercadoPago. Referencia: {}, Estado: {}",
+                referenciaMercadoPago, estado);
 
         // Buscar pago por referencia de MercadoPago
         pagoRepository.findByReferenciaMercadoPago(referenciaMercadoPago)
@@ -185,8 +189,8 @@ public class PagoServiceImpl implements PagoService {
                             if ("approved".equalsIgnoreCase(estado)) {
                                 pago.setEstado(EstadoPago.CONFIRMADO);
                                 pago.setFechaPago(LocalDateTime.now());
-                            } else if ("rejected".equalsIgnoreCase(estado) || 
-                                     "cancelled".equalsIgnoreCase(estado)) {
+                            } else if ("rejected".equalsIgnoreCase(estado) ||
+                                    "cancelled".equalsIgnoreCase(estado)) {
                                 pago.setEstado(EstadoPago.RECHAZADO);
                             }
 
@@ -200,6 +204,7 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public Double obtenerTotalPagosConfirmados(Long vueloId) {
+        // Calcula el monto total de pagos confirmados para un vuelo específico
         Double total = pagoRepository.getTotalConfirmedAmountForFlight(vueloId);
         return total != null ? total : 0.0;
     }
@@ -207,10 +212,11 @@ public class PagoServiceImpl implements PagoService {
     @Override
     @Transactional(readOnly = true)
     public boolean tienePagoConfirmado(Long vueloId, Double montoRequerido) {
+        // Verifica si el total de pagos confirmados cubre el monto requerido
         Double totalConfirmado = obtenerTotalPagosConfirmados(vueloId);
         boolean resultado = totalConfirmado >= montoRequerido;
         log.debug("Verificación de pago confirmado - Vuelo: {}, Requerido: {}, Confirmado: {}, Resultado: {}",
-                 vueloId, montoRequerido, totalConfirmado, resultado);
+                vueloId, montoRequerido, totalConfirmado, resultado);
         return resultado;
     }
 
@@ -240,9 +246,9 @@ public class PagoServiceImpl implements PagoService {
         try {
             // Si tenemos referencia de MP, procesamos el reembolso allá
             if (pago.getReferenciaMercadoPago() != null) {
-                MercadoPagoService.RefundResponse refund = 
+                MercadoPagoService.RefundResponse refund =
                         mercadoPagoService.reembolsarPago(
-                                Long.parseLong(pago.getReferenciaMercadoPago()), 
+                                Long.parseLong(pago.getReferenciaMercadoPago()),
                                 pago.getMonto()
                         );
                 log.info("Reembolso procesado en MercadoPago. RefundId: {}", refund.getRefundId());

@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * Mapper MapStruct para conversión entre DocumentoTecnico y sus DTOs.
- * 
+ *
  * NOTA IMPORTANTE sobre cálculos automáticos:
  * - vigente: Se asigna automáticamente como true en @PrePersist de la entidad
  * - fechaCarga: Se asigna automáticamente en @PrePersist si es null
@@ -25,9 +25,9 @@ public interface DocumentoTecnicoMapper {
     @Mapping(target = "aeronaveMatricula", source = "aeronave.matricula")
     @Mapping(target = "cargadoPorId", source = "cargadoPor.id")
     @Mapping(target = "cargadoPorNombre", expression = "java(mapPersonalNombre(entity.getCargadoPor()))")
-    DocumentoTecnicoDTO toDTO(DocumentoTecnico entity);
+    DocumentoTecnicoDTO toDTO(DocumentoTecnico entity); // Convierte entidad a DTO
 
-    List<DocumentoTecnicoDTO> toDTOList(List<DocumentoTecnico> entities);
+    List<DocumentoTecnicoDTO> toDTOList(List<DocumentoTecnico> entities); // Convierte lista de entidades a lista de DTOs
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "aeronave", ignore = true)
@@ -38,7 +38,7 @@ public interface DocumentoTecnicoMapper {
     @Mapping(target = "tamañoBytes", ignore = true)
     @Mapping(target = "tipoArchivo", ignore = true)
     @Mapping(target = "vigente", constant = "true")  // Asignado automáticamente en @PrePersist
-    DocumentoTecnico toEntity(DocumentoTecnicoCreateDTO dto);
+    DocumentoTecnico toEntity(DocumentoTecnicoCreateDTO dto); // Convierte DTO de creación a entidad
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
@@ -49,12 +49,12 @@ public interface DocumentoTecnicoMapper {
     @Mapping(target = "fechaCarga", ignore = true)
     @Mapping(target = "tamañoBytes", ignore = true)
     @Mapping(target = "tipoArchivo", ignore = true)
-    void updateEntityFromDTO(DocumentoTecnicoUpdateDTO dto, @MappingTarget DocumentoTecnico entity);
+    void updateEntityFromDTO(DocumentoTecnicoUpdateDTO dto, @MappingTarget DocumentoTecnico entity); // Actualiza entidad con datos del DTO
 
     default String mapPersonalNombre(Personal personal) {
         if (personal == null || personal.getUsuario() == null) {
             return null;
         }
         return personal.getUsuario().getNombre() + " " + personal.getUsuario().getApellido();
-    }
+    } // Obtiene nombre completo del personal
 }
