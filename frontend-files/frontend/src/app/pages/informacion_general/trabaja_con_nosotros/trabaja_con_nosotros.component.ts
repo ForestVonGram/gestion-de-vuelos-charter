@@ -11,15 +11,16 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
   styleUrls: ['./trabaja_con_nosotros.component.css']
 })
 export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
+  // --- Estados de la interfaz y el formulario ---
   isNavbarScrolled = false;
   isDarkMode = false;
-  applicationForm!: FormGroup;
-  selectedFile: File | null = null;
-  fileName: string = '';
-  isSubmitting = false;
-  submitSuccess = false;
+  applicationForm!: FormGroup; // Formulario reactivo para la postulación
+  selectedFile: File | null = null; // Almacena el archivo (CV) seleccionado
+  fileName: string = ''; // Nombre del archivo para mostrar en la UI
+  isSubmitting = false; // Estado de carga durante el envío
+  submitSuccess = false; // Estado de éxito tras el envío
 
-  // Lista de cargos disponibles
+  // Listado de vacantes disponibles para el selector del formulario
   positions = [
     'Piloto Comercial',
     'Copiloto',
@@ -40,9 +41,9 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkScroll();
-    this.initForm();
+    this.initForm(); // Inicializa el formulario al cargar
 
-    // Check for saved theme preference
+    // Restaura la preferencia de tema guardada
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.isDarkMode = true;
@@ -51,14 +52,16 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup
+    // Limpieza de suscripciones o eventos si fuera necesario
   }
 
+  // Detecta el scroll para cambiar el estilo de la Navbar
   @HostListener('window:scroll')
   onWindowScroll(): void {
     this.checkScroll();
   }
 
+  // Configura los campos del formulario con sus respectivas validaciones
   private initForm(): void {
     this.applicationForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
@@ -75,6 +78,7 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
     });
   }
 
+  // --- Lógica de Modo Oscuro ---
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -96,6 +100,7 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
     this.renderer.removeClass(document.documentElement, 'dark-theme-active');
   }
 
+  // Calcula el cambio de estilo de la Navbar según la altura del Hero
   private checkScroll(): void {
     const heroElement = document.querySelector('.careers-hero');
     if (heroElement) {
@@ -106,10 +111,10 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Maneja la selección del archivo adjunto (Hoja de Vida) y valida su extensión
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
-      // Validar tipo de archivo (PDF, DOC, DOCX)
       const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (validTypes.includes(file.type)) {
         this.selectedFile = file;
@@ -121,7 +126,9 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Procesa el envío de la postulación
   onSubmit(): void {
+    // Si el formulario es inválido, marca todos los campos para mostrar errores
     if (this.applicationForm.invalid) {
       Object.keys(this.applicationForm.controls).forEach(key => {
         const control = this.applicationForm.get(key);
@@ -130,6 +137,7 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validación obligatoria del archivo adjunto
     if (!this.selectedFile) {
       alert('Por favor, adjunta tu hoja de vida');
       return;
@@ -137,13 +145,12 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
 
     this.isSubmitting = true;
 
-    // Aquí iría la lógica para enviar el formulario y el archivo al backend
-    // Simulamos un envío exitoso
+    // Simulación de petición al servidor con delay
     setTimeout(() => {
       this.isSubmitting = false;
       this.submitSuccess = true;
 
-      // Resetear formulario después de 3 segundos
+      // Limpia el formulario automáticamente tras el éxito
       setTimeout(() => {
         this.submitSuccess = false;
         this.applicationForm.reset();
@@ -153,6 +160,6 @@ export class TrabajaConNosotrosComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  // Getters para facilitar el acceso en el HTML
+  // Getter para simplificar el acceso a errores en el template HTML
   get f() { return this.applicationForm.controls; }
 }

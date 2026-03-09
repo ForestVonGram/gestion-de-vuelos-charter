@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implementación del servicio de validación operativa de aeronaves.
- * Valida si una aeronave puede despegar basado en su estado de mantenimiento.
+ * Servicio encargado de validar si una aeronave puede operar
+ * según su estado de mantenimiento.
  */
 @Service
 @RequiredArgsConstructor
@@ -29,31 +29,34 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
     private final AeronaveRepository aeronaveRepository;
     private final MantenimientoRepository mantenimientoRepository;
 
+    /**
+     * Verifica si una aeronave puede operar.
+     */
     @Override
     public boolean esAeronaveOperativa(Long aeronaveId) {
         log.debug("Validando operatividad de aeronave ID: {}", aeronaveId);
 
-        // Validar que la aeronave exista
         if (!aeronaveRepository.existsById(aeronaveId)) {
             log.warn("Intento de validar aeronave inexistente ID: {}", aeronaveId);
             throw new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
         }
 
-        // Una aeronave NO es operativa si tiene mantenimiento CORRECTIVO o PREVENTIVO vencido
         List<Mantenimiento> mantenimientosVencidos = obtenerMantenimientosVencidos(aeronaveId);
 
         boolean tieneMantenimientoVencidoCritico = mantenimientosVencidos.stream()
-                .anyMatch(m -> m.getTipo() == TipoMantenimiento.CORRECTIVO || 
-                              m.getTipo() == TipoMantenimiento.PREVENTIVO);
+                .anyMatch(m -> m.getTipo() == TipoMantenimiento.CORRECTIVO ||
+                        m.getTipo() == TipoMantenimiento.PREVENTIVO);
 
         return !tieneMantenimientoVencidoCritico;
     }
 
+    /**
+     * Obtiene la razón por la cual una aeronave no es operativa.
+     */
     @Override
     public String obtenerRazonNoOperativa(Long aeronaveId) {
         log.debug("Obteniendo razón de no operatividad para aeronave ID: {}", aeronaveId);
 
-        // Validar que la aeronave exista
         if (!aeronaveRepository.existsById(aeronaveId)) {
             log.warn("Intento de obtener razón para aeronave inexistente ID: {}", aeronaveId);
             throw new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
@@ -65,7 +68,6 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
             return null;
         }
 
-        // Obtener el mantenimiento vencido más crítico
         Mantenimiento mantenimientoVencido = mantenimientosVencidos.stream()
                 .filter(m -> m.getTipo() == TipoMantenimiento.CORRECTIVO)
                 .findFirst()
@@ -79,6 +81,9 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
         );
     }
 
+    /**
+     * Verifica si la aeronave tiene mantenimientos vencidos.
+     */
     @Override
     public boolean tieneMantenimientoVencido(Long aeronaveId) {
         log.debug("Verificando si aeronave ID: {} tiene mantenimiento vencido", aeronaveId);
@@ -87,6 +92,9 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
         return !mantenimientosVencidos.isEmpty();
     }
 
+    /**
+     * Verifica si la aeronave tiene mantenimientos pendientes.
+     */
     @Override
     public boolean tieneMantenimientoPendiente(Long aeronaveId) {
         log.debug("Verificando si aeronave ID: {} tiene mantenimiento pendiente", aeronaveId);
@@ -99,26 +107,25 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
         return !mantenimientosPendientes.isEmpty();
     }
 
+    /**
+     * Obtiene un resumen del estado operativo de la aeronave.
+     */
     @Override
     public ResumenOperatividad obtenerResumenOperatividad(Long aeronaveId) {
         log.debug("Obteniendo resumen de operatividad para aeronave ID: {}", aeronaveId);
 
-        // Validar que la aeronave exista
         if (!aeronaveRepository.existsById(aeronaveId)) {
             log.warn("Intento de obtener resumen para aeronave inexistente ID: {}", aeronaveId);
             throw new AeronaveNoEncontradaException("Aeronave no encontrada con ID: " + aeronaveId);
         }
 
-        // Obtener mantenimientos vencidos
         List<Mantenimiento> mantenimientosVencidos = obtenerMantenimientosVencidos(aeronaveId);
 
-        // Obtener mantenimientos pendientes
         List<Mantenimiento> mantenimientosPendientes = mantenimientoRepository.findByAeronaveId(aeronaveId)
                 .stream()
                 .filter(m -> !m.getCompletado())
                 .collect(Collectors.toList());
 
-        // Determinar si es operativa
         boolean esOperativa = esAeronaveOperativa(aeronaveId);
         String razon = obtenerRazonNoOperativa(aeronaveId);
 
@@ -136,10 +143,7 @@ public class ValidadorOperativoServiceImpl implements ValidadorOperativoService 
     }
 
     /**
-     * Método auxiliar para obtener los mantenimientos vencidos de una aeronave.
-     *
-     * @param aeronaveId identificador de la aeronave
-     * @return lista de mantenimientos vencidos
+     * Obtiene los mantenimientos vencidos de una aeronave.
      */
     private List<Mantenimiento> obtenerMantenimientosVencidos(Long aeronaveId) {
         LocalDateTime ahora = LocalDateTime.now();

@@ -1,40 +1,45 @@
-<div class="admin-container">
+<div class="admin-container"> <!-- Contenedor principal del panel de administración -->
 
-  <app-admin-sidebar></app-admin-sidebar>
+  <app-admin-sidebar></app-admin-sidebar> <!-- Sidebar de navegación del panel -->
 
-  <main class="main-content">
+  <main class="main-content"> <!-- Área principal de contenido -->
 
-    <header class="topbar">
+    <header class="topbar"> <!-- Barra superior del panel -->
       <div class="welcome-box">
         <h1>Gestión de Flota</h1>
         <p>Administra las aeronaves registradas en el sistema</p>
       </div>
       <div class="user-profile">
         <div class="avatar-circle">
+          <!-- Inicial del usuario autenticado -->
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
         </div>
       </div>
     </header>
 
-    <div class="section-header">
+    <div class="section-header"> <!-- Encabezado de sección -->
       <h2 class="page-title">Aeronaves</h2>
+      <!-- Botón para crear una nueva aeronave -->
       <button class="btn-primary" routerLink="/admin/create-plane"><i class="fas fa-plus"></i> Nueva Aeronave</button>
     </div>
 
-    <div class="aircraft-grid">
+    <div class="aircraft-grid"> <!-- Grid de tarjetas de aeronaves -->
+      <!-- Itera sobre la lista de aeronaves -->
       <div class="aircraft-card" *ngFor="let avion of aeronaves">
 
-        <div class="card-header">
-          <h3 class="matricula">{{ avion.matricula }}</h3>
+        <div class="card-header"> <!-- Encabezado de la tarjeta -->
+          <h3 class="matricula">{{ avion.matricula }}</h3> <!-- Matrícula de la aeronave -->
+          <!-- Badge de estado con clase dinámica -->
           <span class="status-badge" [ngClass]="getEstadoClase(avion.estado)">
             {{ avion.estado | titlecase }}
           </span>
         </div>
 
-        <div class="card-body">
+        <div class="card-body"> <!-- Cuerpo de la tarjeta -->
+          <!-- Modelo y fabricante -->
           <h4 class="modelo">{{ avion.fabricante }} {{ avion.modelo }}</h4>
 
-          <div class="specs-grid">
+          <div class="specs-grid"> <!-- Grid de especificaciones -->
             <div class="spec-item">
               <i class="fas fa-users"></i>
               <span>Pasajeros: {{ avion.capacidadPasajeros }}</span>
@@ -49,12 +54,13 @@
             </div>
             <div class="spec-item">
               <i class="fas fa-tools"></i>
+              <!-- Fecha de última revisión -->
               <span>Rev: {{ avion.fechaUltimaRevision | date:'mediumDate' }}</span>
             </div>
           </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer"> <!-- Acciones de la tarjeta -->
           <button class="btn-action edit" title="Editar aeronave">
             <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
           </button>

@@ -5,36 +5,49 @@ import { AuthService, User } from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs (Basados en tu backend Java) ---
+
+/**
+ * Enumeración de estados posibles para un vuelo.
+ * Coincide con el enum EstadoVuelo del backend.
+ */
 export enum EstadoVuelo {
-  PENDIENTE = 'PENDIENTE',
-  APROBADO = 'APROBADO',
-  PROGRAMADO = 'PROGRAMADO',
-  EN_VUELO = 'EN_VUELO',
-  COMPLETADO = 'COMPLETADO',
-  CANCELADO = 'CANCELADO'
+  PENDIENTE = 'PENDIENTE', // Pendiente de aprobación
+  APROBADO = 'APROBADO', // Aprobado pero no programado
+  PROGRAMADO = 'PROGRAMADO', // Programado con fecha
+  EN_VUELO = 'EN_VUELO', // Actualmente en curso
+  COMPLETADO = 'COMPLETADO', // Finalizado exitosamente
+  CANCELADO = 'CANCELADO' // Cancelado
 }
 
+/**
+ * DTO que representa un vuelo en el sistema.
+ * Coincide con el VueloDTO del backend.
+ */
 export interface VueloDTO {
-  id: number;
-  usuarioId: number;
-  usuarioNombre: string;
-  aeronaveId?: number;
-  aeronaveMatricula?: string;
-  tripulacionIds?: number[];
-  origen: string;
-  destino: string;
-  fechaSalidaProgramada: string | Date;
-  fechaLlegadaProgramada: string | Date;
-  fechaSalidaReal?: string | Date;
-  fechaLlegadaReal?: string | Date;
-  numeroPasajeros: number;
-  estado: EstadoVuelo;
-  proposito?: string;
-  observaciones?: string;
-  fechaSolicitud?: string | Date;
-  costoEstimado?: number;
+  id: number; // Identificador único
+  usuarioId: number; // ID del usuario solicitante
+  usuarioNombre: string; // Nombre del usuario solicitante
+  aeronaveId?: number; // ID de la aeronave asignada (opcional)
+  aeronaveMatricula?: string; // Matrícula de la aeronave asignada (opcional)
+  tripulacionIds?: number[]; // IDs de la tripulación asignada (opcional)
+  origen: string; // Ciudad de origen
+  destino: string; // Ciudad de destino
+  fechaSalidaProgramada: string | Date; // Fecha y hora programada de salida
+  fechaLlegadaProgramada: string | Date; // Fecha y hora programada de llegada
+  fechaSalidaReal?: string | Date; // Fecha y hora real de salida (opcional)
+  fechaLlegadaReal?: string | Date; // Fecha y hora real de llegada (opcional)
+  numeroPasajeros: number; // Número de pasajeros
+  estado: EstadoVuelo; // Estado actual del vuelo
+  proposito?: string; // Propósito del vuelo (opcional)
+  observaciones?: string; // Observaciones adicionales (opcional)
+  fechaSolicitud?: string | Date; // Fecha de solicitud (opcional)
+  costoEstimado?: number; // Costo estimado del vuelo (opcional)
 }
 
+/**
+ * Componente que muestra y gestiona los vuelos para administradores.
+ * Presenta una tabla con todos los vuelos y su información relevante.
+ */
 @Component({
   selector: 'app-vuelos-admin',
   standalone: true,
@@ -44,21 +57,40 @@ export interface VueloDTO {
 })
 export class VuelosAdminComponent implements OnInit {
 
+  // Usuario actualmente autenticado
   currentUser: User | null = null;
+
+  // Lista de vuelos a mostrar en la tabla
   vuelos: VueloDTO[] = [];
 
+  /**
+   * Constructor del componente
+   * @param authService servicio de autenticación
+   * @param router servicio de navegación
+   */
   constructor(private authService: AuthService, private router: Router) {}
 
+  /**
+   * Inicialización del componente.
+   * Obtiene el usuario actual y carga los datos simulados.
+   */
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
     this.cargarDatosSimulados();
   }
 
+  /**
+   * Cierra la sesión del usuario actual y redirige al login.
+   */
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
+  /**
+   * Simula la carga de datos de vuelos desde el backend.
+   * TODO: Reemplazar con llamada real al servicio de vuelos.
+   */
   cargarDatosSimulados(): void {
     this.vuelos = [
       {
@@ -99,7 +131,11 @@ export class VuelosAdminComponent implements OnInit {
     ];
   }
 
-  // Asigna un color al badge dependiendo del estado del vuelo
+  /**
+   * Obtiene la clase CSS correspondiente al estado del vuelo.
+   * @param estado estado del vuelo
+   * @returns clase CSS para aplicar estilos
+   */
   getEstadoClase(estado: EstadoVuelo): string {
     switch (estado) {
       case EstadoVuelo.EN_VUELO: return 'status-active';

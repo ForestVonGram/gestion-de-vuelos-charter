@@ -5,6 +5,10 @@ import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { PasswordService } from '../../../services/password/password.service';
 
+/**
+ * Componente para la recuperación de contraseña.
+ * Maneja el flujo completo: verificación de código y establecimiento de nueva contraseña.
+ */
 @Component({
   selector: 'app-recuperar-contrasenia',
   standalone: true,
@@ -13,30 +17,47 @@ import { PasswordService } from '../../../services/password/password.service';
   styleUrls: ['./recuperar_contraseña.component.css']
 })
 export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
-  verificationForm!: FormGroup;
-  loading = false;
-  submitted = false;
-  error: string | null = null;
-  email: string = '';
-  showNewPassword = false;
-  token: string = '';
-  codeVerified = false;
 
-  // Password visibility
+  // Formulario reactivo
+  verificationForm!: FormGroup;
+
+  // Estados de la UI
+  loading = false; // Indicador de carga
+  submitted = false; // Indica si el formulario ha sido enviado
+  error: string | null = null; // Mensaje de error
+
+  // Datos del proceso
+  email: string = ''; // Email del usuario
+  showNewPassword = false; // Muestra el formulario de nueva contraseña
+  token: string = ''; // Token de verificación
+  codeVerified = false; // Indica si el código fue verificado
+
+  // Visibilidad de contraseñas
   showPassword = false;
   showConfirmPassword = false;
 
-  // Countdown
+  // Contador regresivo para reenvío de código
   countdown = 300; // 5 minutos en segundos
-  private destroy$ = new Subject<void>();
+  private destroy$ = new Subject<void>(); // Subject para limpiar suscripciones
 
+  /**
+   * Constructor del componente
+   * @param formBuilder FormBuilder para crear formularios reactivos
+   * @param passwordService servicio para operaciones de contraseña
+   * @param router servicio de navegación
+   * @param cdr ChangeDetectorRef para forzar detección de cambios
+   */
   constructor(
     private formBuilder: FormBuilder,
     private passwordService: PasswordService,
     private router: Router,
-    private cdr: ChangeDetectorRef // Añadimos ChangeDetectorRef
+    private cdr: ChangeDetectorRef
   ) {}
 
+  /**
+   * Inicialización del componente.
+   * Obtiene el email guardado y configura el formulario.
+   */
   ngOnInit(): void {
     // Obtener email del sessionStorage
     const savedEmail = sessionStorage.getItem('reset-email');
@@ -51,24 +72,35 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     this.startCountdown();
   }
 
+  /**
+   * Limpieza al destruir el componente.
+   */
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  /**
+   * Inicializa el formulario con sus campos y validaciones.
+   */
   private initializeForm(): void {
     this.verificationForm = this.formBuilder.group({
       codigo: ['', [
         Validators.required,
-        Validators.pattern('^[0-9]{6}$')
+        Validators.pattern('^[0-9]{6}$') // Solo números de 6 dígitos
       ]],
       nuevaPassword: ['', []], // Sin validadores inicialmente
       confirmarPassword: ['']
     }, {
-      validators: this.passwordMatchValidator
+      validators: this.passwordMatchValidator // Validador personalizado
     });
   }
 
+  /**
+   * Validador personalizado que verifica que las contraseñas coincidan.
+   * @param control grupo de controles del formulario
+   * @returns error si no coinciden, null si son iguales
+   */
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('nuevaPassword');
     const confirmPassword = control.get('confirmarPassword');
@@ -81,10 +113,17 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     return null;
   }
 
+  /**
+   * Getter para acceder fácilmente a los controles del formulario.
+   */
   get f() {
     return this.verificationForm.controls;
   }
 
+  /**
+   * Calcula la fortaleza de la contraseña.
+   * @returns número del 0 al 4 indicando fortaleza
+   */
   get passwordStrength(): number {
     const password = this.f['nuevaPassword'].value || '';
     let strength = 0;
@@ -98,6 +137,10 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     return Math.min(strength, 4);
   }
 
+  /**
+   * Obtiene el texto descriptivo de la fortaleza de contraseña.
+   * @returns texto de fortaleza
+   */
   getStrengthText(): string {
     const strength = this.passwordStrength;
     if (strength <= 1) return 'Muy débil';
@@ -106,6 +149,10 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     return 'Fuerte';
   }
 
+  /**
+   * Obtiene la clase CSS para la barra de fortaleza.
+   * @returns clase CSS
+   */
   getStrengthClass(): string {
     const strength = this.passwordStrength;
     if (strength <= 1) return 'weak';
@@ -114,11 +161,16 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     return 'strong';
   }
 
+  /**
+   * Maneja la entrada del código de verificación.
+   * Auto-formatea y valida el código.
+   * @param evento del input
+   */
   onCodeInput(event: any): void {
     // Auto-formatear y validar código
-    let value = event.target.value.replace(/\D/g, '');
+    let value = event.target.value.replace(/\D/g, ''); // Solo números
     if (value.length > 6) {
-      value = value.slice(0, 6);
+      value = value.slice(0, 6); // Limitar a 6 dígitos
     }
     this.verificationForm.patchValue({ codigo: value }, { emitEvent: false });
 
@@ -128,6 +180,9 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Verifica el código de verificación con el backend.
+   */
   verifyCode(): void {
     this.submitted = true;
     this.error = null;
@@ -168,6 +223,11 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Obtiene mensaje de error personalizado para verificación de código.
+   * @param error objeto de error
+   * @returns mensaje descriptivo
+   */
   private getVerifyCodeErrorMessage(error: any): string {
     if (error.status === 400) {
       return 'Ese no es el código. Intenta de nuevo.';
@@ -180,6 +240,10 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Maneja el envío del formulario.
+   * Verifica código o restablece contraseña según el estado.
+   */
   onSubmit(): void {
     this.submitted = true;
     this.error = null;
@@ -218,6 +282,11 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Obtiene mensaje de error personalizado para restablecimiento de contraseña.
+   * @param error objeto de error
+   * @returns mensaje descriptivo
+   */
   private getResetPasswordErrorMessage(error: any): string {
     if (error.status === 0) {
       return 'Error de conexión con el servidor';
@@ -228,6 +297,10 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Reenvía el código de verificación al email.
+   * @param evento del clic
+   */
   resendCode(event: Event): void {
     event.preventDefault();
 
@@ -256,6 +329,9 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Inicia el contador regresivo para reenvío de código.
+   */
   private startCountdown(): void {
     interval(1000)
       .pipe(takeUntil(this.destroy$))
@@ -267,17 +343,28 @@ export class RecuperarContraseniaComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Formatea los segundos a formato mm:ss.
+   * @param segundos totales
+   * @returns string formateado
+   */
   formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
+  /**
+   * Alterna la visibilidad del campo de contraseña.
+   */
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
     this.cdr.detectChanges(); // Forzar detección de cambios
   }
 
+  /**
+   * Alterna la visibilidad del campo de confirmación de contraseña.
+   */
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
     this.cdr.detectChanges(); // Forzar detección de cambios

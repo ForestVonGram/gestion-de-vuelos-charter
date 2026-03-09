@@ -1,39 +1,77 @@
 <div class="admin-container">
 
+  <!-- Sidebar de navegación del panel de administración -->
   <app-admin-sidebar></app-admin-sidebar>
 
   <main class="main-content">
 
+    <!-- =========================
+         BARRA SUPERIOR
+         ========================= -->
     <header class="topbar">
+
+      <!-- Información principal del módulo -->
       <div class="welcome-box">
         <h1>Centro de ReportesComponent</h1>
         <p>Generación y consulta de documentos operativos y consolidados</p>
       </div>
+
+      <!-- Perfil del usuario actual -->
       <div class="user-profile">
+
+        <!-- Avatar con la inicial del usuario -->
         <div class="avatar-circle">
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
         </div>
+
       </div>
+
     </header>
 
+    <!-- =========================
+         ENCABEZADO DE SECCIÓN
+         ========================= -->
     <div class="section-header">
+
+      <!-- Título de la página -->
       <h2 class="page-title">Historial de ReportesComponent</h2>
-      <button class="btn-primary"><i class="fas fa-magic"></i> Generar Nuevo Reporte</button>
+
+      <!-- Botón para generar un nuevo reporte -->
+      <button class="btn-primary">
+        <i class="fas fa-magic"></i>
+        Generar Nuevo Reporte
+      </button>
+
     </div>
 
+    <!-- =========================
+         PANEL DE CONTENIDO
+         ========================= -->
     <section class="content-panel">
+
+      <!-- Encabezado del panel -->
       <div class="panel-header">
+
+        <!-- Título -->
         <h3>Documentos Generados</h3>
+
+        <!-- Filtros por tipo de reporte -->
         <div class="filter-group">
           <button class="filter-btn active">Todos</button>
           <button class="filter-btn">Operativos</button>
           <button class="filter-btn">Flota</button>
           <button class="filter-btn">Horas</button>
         </div>
+
       </div>
 
+      <!-- Contenedor responsive de la tabla -->
       <div class="table-responsive">
+
+        <!-- Tabla administrativa -->
         <table class="admin-table">
+
+          <!-- Encabezado -->
           <thead>
           <tr>
             <th>ID</th>
@@ -45,47 +83,112 @@
             <th class="text-right">Descargar</th>
           </tr>
           </thead>
+
+          <!-- Cuerpo de la tabla -->
           <tbody>
+
+          <!-- Iteración de reportes -->
           <tr *ngFor="let reporte of reportes">
-            <td class="id-cell">#{{ reporte.id }}</td>
 
-            <td>
-                <span class="type-badge" [ngClass]="getTipoClase(reporte.tipo)">
-                  {{ reporte.tipo }}
-                </span>
+            <!-- ID del reporte -->
+            <td class="id-cell">
+              #{{ reporte.id }}
             </td>
 
+            <!-- Tipo de reporte -->
+            <td>
+
+              <!--
+                Badge visual con clase dinámica
+                dependiendo del tipo de reporte
+              -->
+              <span class="type-badge" [ngClass]="getTipoClase(reporte.tipo)">
+                {{ reporte.tipo }}
+              </span>
+
+            </td>
+
+            <!-- Descripción del reporte -->
             <td class="desc-cell">
-              <span class="desc-text">{{ reporte.descripcion }}</span>
-              <span class="records-info">{{ reporte.numeroRegistros }} registros consolidados</span>
+
+              <!-- Descripción principal -->
+              <span class="desc-text">
+                {{ reporte.descripcion }}
+              </span>
+
+              <!-- Información adicional -->
+              <span class="records-info">
+                {{ reporte.numeroRegistros }} registros consolidados
+              </span>
+
             </td>
 
+            <!-- Rango de fechas evaluado -->
             <td>
+
               <div class="date-range">
-                <span><i class="fas fa-calendar-alt"></i> {{ reporte.fechaInicioRango | date:'dd MMM, yy' }}</span>
+
+                <!-- Fecha inicial -->
+                <span>
+                  <i class="fas fa-calendar-alt"></i>
+                  {{ reporte.fechaInicioRango | date:'dd MMM, yy' }}
+                </span>
+
+                <!-- Separador visual -->
                 <i class="fas fa-arrow-right arrow-divider"></i>
-                <span>{{ reporte.fechaFinRango | date:'dd MMM, yy' }}</span>
+
+                <!-- Fecha final -->
+                <span>
+                  {{ reporte.fechaFinRango | date:'dd MMM, yy' }}
+                </span>
+
               </div>
+
             </td>
 
-            <td>{{ reporte.generadoPorNombre }}</td>
-
+            <!-- Usuario que generó el reporte -->
             <td>
-              <div class="date-block">
-                <span class="date">{{ reporte.fechaGeneracion | date:'dd MMM, yyyy' }}</span>
-                <span class="time">{{ reporte.fechaGeneracion | date:'HH:mm' }}</span>
-              </div>
+              {{ reporte.generadoPorNombre }}
             </td>
 
-            <td class="action-cell">
-              <button class="icon-btn download-btn" title="Descargar Reporte">
-                <img src="assets/icons/downloading.svg" alt="Descargar" class="svg-icon">
-              </button>
+            <!-- Fecha y hora de generación -->
+            <td>
+
+              <div class="date-block">
+
+                <!-- Fecha -->
+                <span class="date">
+                  {{ reporte.fechaGeneracion | date:'dd MMM, yyyy' }}
+                </span>
+
+                <!-- Hora -->
+                <span class="time">
+                  {{ reporte.fechaGeneracion | date:'HH:mm' }}
+                </span>
+
+              </div>
+
             </td>
+
+            <!-- Acción para descargar el reporte -->
+            <td class="action-cell">
+
+              <button class="icon-btn download-btn" title="Descargar Reporte">
+
+                <!-- Icono de descarga -->
+                <img src="assets/icons/downloading.svg" alt="Descargar" class="svg-icon">
+
+              </button>
+
+            </td>
+
           </tr>
+
           </tbody>
         </table>
+
       </div>
+
     </section>
 
   </main>

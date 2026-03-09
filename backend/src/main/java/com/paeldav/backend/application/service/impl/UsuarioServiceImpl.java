@@ -18,11 +18,13 @@ import java.util.List;
 
 /**
  * Implementación del servicio de gestión de usuarios.
+ * Se encarga del ciclo de vida de las cuentas, cifrado de credenciales y validación de datos únicos.
  */
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 
+    // Dependencias inyectadas para persistencia, mapeo y seguridad (cifrado de contraseñas)
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
     private final PasswordEncoder passwordEncoder;
@@ -30,23 +32,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO crearUsuario(UsuarioCreateDTO usuarioCreateDTO) {
-        // Verificar que el email no exista
+        // Regla de negocio: El email debe ser único en todo el sistema
         if (usuarioRepository.existsByEmail(usuarioCreateDTO.getEmail())) {
             throw new UsuarioYaExisteException(
                     "Ya existe un usuario con el email: " + usuarioCreateDTO.getEmail()
             );
         }
 
-        // Convertir DTO a entidad
+        // Convertir el DTO de entrada en la entidad de dominio
         Usuario usuario = usuarioMapper.toEntity(usuarioCreateDTO);
 
-        // Encriptar contraseña
+        // Seguridad: Encriptar la contraseña en texto plano antes de persistirla
         usuario.setPassword(passwordEncoder.encode(usuarioCreateDTO.getPassword()));
 
-        // Asegurar que el usuario está activo al crearse
+        // Asegurar que el usuario tenga acceso inmediato al sistema tras su creación
         usuario.setActivo(true);
 
-        // Guardar en base de datos
+        // Guardar el registro en la base de datos y retornar el DTO resultante
         usuario = usuarioRepository.save(usuario);
 
         return usuarioMapper.toDTO(usuario);
@@ -55,6 +57,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public UsuarioDTO obtenerUsuarioPorId(Long id) {
+        // Buscar al usuario por su clave primaria o lanzar una excepción si no existe
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
                         "Usuario no encontrado con ID: " + id
@@ -66,6 +69,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional(readOnly = true)
     public List<UsuarioDTO> obtenerTodosUsuarios() {
+        // Extraer y retornar el listado completo de usuarios registrados
         List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarioMapper.toDTOList(usuarios);
     }
@@ -73,12 +77,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO editarUsuario(Long id, UsuarioUpdateDTO usuarioUpdateDTO) {
+        // Recuperar el usuario actual para aplicar las modificaciones
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
                         "Usuario no encontrado con ID: " + id
                 ));
 
-        // Validar email único si se está actualizando
+        // Validar que si el usuario cambia su email, el nuevo correo no esté tomado por alguien más
         if (usuarioUpdateDTO.getEmail() != null &&
                 !usuarioUpdateDTO.getEmail().equals(usuario.getEmail()) &&
                 usuarioRepository.existsByEmail(usuarioUpdateDTO.getEmail())) {
@@ -87,14 +92,15 @@ public class UsuarioServiceImpl implements UsuarioService {
             );
         }
 
-        // Actualizar campos
+        // Aplicar la actualización de los campos permitidos desde el DTO hacia la entidad
         usuarioMapper.updateEntityFromDTO(usuarioUpdateDTO, usuario);
 
-        // Si se proporciona nueva contraseña, encriptarla
+        // Si la petición incluye una nueva contraseña, encriptarla y sobreescribir la anterior
         if (usuarioUpdateDTO.getPassword() != null && !usuarioUpdateDTO.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioUpdateDTO.getPassword()));
         }
 
+        // Guardar los cambios estructurales en la base de datos
         usuario = usuarioRepository.save(usuario);
 
         return usuarioMapper.toDTO(usuario);
@@ -103,11 +109,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void desactivarUsuario(Long id) {
+        // Buscar el usuario objetivo
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
                         "Usuario no encontrado con ID: " + id
                 ));
 
+        // Revocar el acceso al sistema mediante el borrado lógico (estado inactivo)
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
     }
@@ -115,11 +123,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void activarUsuario(Long id) {
+        // Buscar el usuario objetivo
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
                         "Usuario no encontrado con ID: " + id
                 ));
 
+        // Restaurar el acceso al sistema
         usuario.setActivo(true);
         usuarioRepository.save(usuario);
     }
@@ -127,11 +137,13 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void cambiarPassword(Long id, String nuevaPassword) {
+        // Recuperar el usuario que solicitó el cambio de credenciales
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
                         "Usuario no encontrado con ID: " + id
                 ));
 
+        // Cifrar la nueva contraseña ingresada y actualizar la entidad
         usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         usuarioRepository.save(usuario);
     }

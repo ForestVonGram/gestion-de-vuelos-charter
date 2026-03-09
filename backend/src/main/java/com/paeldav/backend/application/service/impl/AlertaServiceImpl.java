@@ -33,11 +33,11 @@ import java.util.stream.Collectors;
 @Transactional
 public class AlertaServiceImpl implements AlertaService {
 
-    private final AlertaRepository alertaRepository;
-    private final AeronaveRepository aeronaveRepository;
-    private final MantenimientoRepository mantenimientoRepository;
-    private final AlertaMapper alertaMapper;
-    private final MantenimientoService mantenimientoService;
+    private final AlertaRepository alertaRepository; // Repositorio de alertas
+    private final AeronaveRepository aeronaveRepository; // Repositorio de aeronaves
+    private final MantenimientoRepository mantenimientoRepository; // Repositorio de mantenimientos
+    private final AlertaMapper alertaMapper; // Mapper de alertas
+    private final MantenimientoService mantenimientoService; // Servicio de mantenimientos
 
     @Override
     public AlertaDTO crearAlerta(AlertaCreateDTO alertaCreateDTO) {
@@ -176,9 +176,9 @@ public class AlertaServiceImpl implements AlertaService {
                     return new AlertaNoEncontradaException("Alerta no encontrada con ID: " + id);
                 });
 
-        alerta.setActiva(false);
-        alerta.setFechaResolucion(LocalDateTime.now());
-        alerta.setObservaciones(observaciones);
+        alerta.setActiva(false); // Marcar como inactiva
+        alerta.setFechaResolucion(LocalDateTime.now()); // Fecha de resolución
+        alerta.setObservaciones(observaciones); // Observaciones de la resolución
 
         Alerta alertaActualizada = alertaRepository.save(alerta);
         log.info("Alerta resuelta exitosamente con ID: {}", id);

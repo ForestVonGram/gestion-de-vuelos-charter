@@ -10,15 +10,16 @@ import { Router } from '@angular/router';
   imports: [CommonModule]
 })
 export class TerminosCondicionesComponent implements OnInit, OnDestroy {
+  // Estado para controlar si el modo oscuro está activo
   isDarkMode = false;
 
   constructor(
     private router: Router,
-    private renderer: Renderer2
+    private renderer: Renderer2 // Renderer2 para manipular el DOM de forma segura
   ) {}
 
   ngOnInit(): void {
-    // Check for saved theme preference
+    // Al iniciar, verifica si existe una preferencia de tema guardada en el navegador
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.isDarkMode = true;
@@ -27,9 +28,10 @@ export class TerminosCondicionesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Cleanup
+    // Espacio para limpieza de procesos si fuera necesario
   }
 
+  // Alterna entre modo claro y oscuro y guarda la elección
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -41,17 +43,20 @@ export class TerminosCondicionesComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Agrega las clases CSS necesarias al body y al html para el modo oscuro
   private enableDarkMode(): void {
     this.renderer.addClass(document.body, 'dark-theme');
     this.renderer.addClass(document.documentElement, 'dark-theme-active');
   }
 
+  // Elimina las clases CSS del modo oscuro para volver al tema claro
   private disableDarkMode(): void {
     this.renderer.removeClass(document.body, 'dark-theme');
     this.renderer.removeClass(document.documentElement, 'dark-theme-active');
   }
 
+  // Método para manejar la navegación hacia atrás (pendiente de implementar ruta)
   regresar(): void {
-
+    // Por ejemplo: this.router.navigate(['/auth/register']);
   }
 }

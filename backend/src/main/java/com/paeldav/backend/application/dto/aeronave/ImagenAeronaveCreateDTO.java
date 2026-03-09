@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 /**
- * DTO para la creación de una nueva imagen de aeronave.
+ * DTO para crear una nueva imagen de aeronave.
  */
 @Getter
 @Setter
@@ -15,9 +15,9 @@ import lombok.*;
 public class ImagenAeronaveCreateDTO {
 
     @NotNull(message = "El tipo de imagen es obligatorio")
-    private TipoImagenAeronave tipo;
+    private TipoImagenAeronave tipo; // Tipo de imagen (vista general, cabina, etc.)
 
-    private String descripcion;
+    private String descripcion; // Descripción de la imagen
 
-    private Integer ordenVisualizacion;
+    private Integer ordenVisualizacion; // Orden para mostrar la imagen
 }

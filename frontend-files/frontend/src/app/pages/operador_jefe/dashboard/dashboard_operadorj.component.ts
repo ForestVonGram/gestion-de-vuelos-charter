@@ -11,9 +11,10 @@ import { AuthService } from '../../../services/auth/auth.service';
   imports: [CommonModule, RouterModule]
 })
 export class DashboardOperadorJComponent implements OnInit {
+  // --- Propiedades de Perfil y Estado ---
   userName: string = 'Operador Jefe';
   userEmail: string = '';
-  esAdmin: boolean = false;
+  esAdmin: boolean = false; // Define si el usuario tiene privilegios administrativos
   isDropdownOpen: boolean = false;
 
   constructor(
@@ -22,28 +23,34 @@ export class DashboardOperadorJComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarDatosUsuario();
+    this.cargarDatosUsuario(); // Al iniciar, recupera la identidad del usuario
   }
 
+  // Extrae los datos del usuario logueado para personalizar la vista y permisos
   cargarDatosUsuario(): void {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
       this.userName = currentUser.nombreCompleto || 'Operador Jefe';
       this.userEmail = currentUser.email || '';
+      // Verificación de rol para mostrar opciones administrativas si aplica
       this.esAdmin = currentUser.rol === 'ADMINISTRADOR';
     }
   }
 
+  // Gestiona la apertura y cierre del menú de perfil
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  // Finaliza la sesión y redirige al usuario a la pantalla de acceso
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
-  // Navegación a los diferentes módulos
+  // --- Módulo de Navegación ---
+  // Estos métodos centralizan el acceso a las diferentes secciones de la app
+
   irAMantenimiento(): void {
     this.router.navigate(['/operador/mantenimiento']);
   }
@@ -72,6 +79,7 @@ export class DashboardOperadorJComponent implements OnInit {
     this.router.navigate(['/reportes']);
   }
 
+  // Acceso especial al panel administrativo si el rol lo permite
   irAAdmin(): void {
     this.router.navigate(['/admin/dashboard']);
   }

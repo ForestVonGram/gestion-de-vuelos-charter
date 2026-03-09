@@ -1,16 +1,20 @@
 /* =========================================
-   LAYOUT
+   LAYOUT PRINCIPAL
    ========================================= */
+/**
+ * Área de contenido principal.
+ * Aplica un degradado radial sutil para dar profundidad al "Dark Mode".
+ */
 .main-content {
   flex: 1;
   background: radial-gradient(circle at top right, #3a3a75 0%, var(--color-dark) 40%);
   padding: 2.5rem 3rem;
   overflow-y: auto;
-  min-width: 0;
+  min-width: 0; /* Previene el desbordamiento en layouts flex */
 }
 
 /* =========================================
-   TOPBAR
+   TOPBAR & BIENVENIDA
    ========================================= */
 .topbar {
   display: flex;
@@ -35,17 +39,7 @@
 }
 
 /* =========================================
-   SECTION HEADER
-   ========================================= */
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-/* =========================================
-   FILTERS
+   FILTROS Y BÚSQUEDA
    ========================================= */
 .filters-bar {
   display: flex;
@@ -55,6 +49,9 @@
   margin-bottom: var(--spacing-xl);
 }
 
+/**
+ * Contenedor de búsqueda con ícono absoluto.
+ */
 .search-wrapper {
   flex: 1 1 260px;
   position: relative;
@@ -76,7 +73,7 @@
   background: var(--dark-bg-secondary);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-lg);
-  padding: 10px 14px 10px 36px;
+  padding: 10px 14px 10px 36px; /* Espacio extra a la izquierda para el ícono */
   color: var(--dark-text-primary);
   font-family: 'Libre Franklin', sans-serif;
   font-style: italic;
@@ -85,22 +82,12 @@
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.search-input::placeholder {
-  color: var(--dark-text-secondary);
-  opacity: 0.7;
-}
-
 .search-input:focus {
   border-color: var(--color-light);
-  box-shadow: 0 0 0 3px rgba(204,204,255,0.12);
+  box-shadow: 0 0 0 3px rgba(204, 204, 255, 0.12);
 }
 
-.filter-selects {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-sm);
-}
-
+/* Selectores de filtrado (Cargo, Estado, etc.) */
 .filter-select {
   background: var(--dark-bg-secondary);
   border: 1px solid var(--dark-border);
@@ -116,18 +103,12 @@
   transition: border-color var(--transition-fast);
 }
 
-.filter-select option {
-  background: var(--dark-bg-tertiary);
-  color: var(--dark-text-primary);
-}
-
-.filter-select:focus {
-  border-color: var(--color-light);
-}
-
 /* =========================================
-   TABLE WRAPPER
+   TABLA DE PERSONAL
    ========================================= */
+/**
+ * Envoltorio de la tabla para control de scroll y sombras.
+ */
 .table-wrapper {
   width: 100%;
   overflow-x: auto;
@@ -137,18 +118,10 @@
   box-shadow: var(--dark-shadow-lg);
 }
 
-/* =========================================
-   TABLE
-   ========================================= */
 .personal-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 600px;
-}
-
-.personal-table thead tr {
-  background: var(--dark-bg-tertiary);
-  border-bottom: 2px solid var(--dark-border);
 }
 
 .personal-table thead th {
@@ -159,29 +132,17 @@
   text-transform: uppercase;
   letter-spacing: 0.07em;
   text-align: left;
-  white-space: nowrap;
 }
-
-.personal-table tbody tr {
-  border-bottom: 1px solid var(--dark-border);
-  transition: background-color var(--transition-fast);
-}
-
-.personal-table tbody tr:last-child { border-bottom: none; }
 
 .personal-table tbody tr:hover {
   background: var(--dark-bg-hover);
 }
 
-.personal-table tbody td {
-  padding: 13px 18px;
-  font-size: 0.875rem;
-  vertical-align: middle;
-}
+/* --- ELEMENTOS DE CELDA --- */
 
-/* =========================================
-   CELL ELEMENTS
-   ========================================= */
+/**
+ * Celda de nombre: Incluye el avatar y la info principal.
+ */
 .name-cell {
   display: flex;
   align-items: center;
@@ -209,16 +170,9 @@
   font-style: italic;
   font-weight: 600;
   font-size: 0.9rem;
-  white-space: nowrap;
 }
 
-.email-text {
-  color: var(--dark-text-secondary);
-  font-family: 'Libre Franklin', sans-serif;
-  font-style: italic;
-  font-size: 0.82rem;
-}
-
+/* Etiquetas de Cargo */
 .cargo-tag {
   display: inline-block;
   background-color: var(--color-mid);
@@ -228,10 +182,13 @@
   font-family: 'Jost', sans-serif;
   font-style: italic;
   font-size: 0.8rem;
-  white-space: nowrap;
   opacity: 0.85;
 }
 
+/**
+ * Sistema de Badges de Estado.
+ * Cada estado tiene su propia combinación de colores para semántica inmediata.
+ */
 .estado-badge {
   display: inline-block;
   border-radius: var(--radius-lg);
@@ -240,28 +197,14 @@
   font-size: 0.7rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  white-space: nowrap;
-  background-color: white;
 }
 
-.badge-activo     { background: rgba(68, 32, 6, 0.18);   border: 1px solid rgba(39,174,96,0.5);    color: var(--color-success); }
-.badge-inactivo   { background: rgba(163,163,204,0.14); border: 1px solid rgba(17, 17, 17, 0.35); color: var(--color-light-mid); }
-.badge-permiso    { background: rgba(243,156,18,0.18);  border: 1px solid rgba(243,156,18,0.5);   color: var(--color-warning); }
-.badge-suspendido { background: rgba(231,76,60,0.18);   border: 1px solid rgba(231,76,60,0.5);    color: var(--color-error); }
-.badge-retirado   { background: rgba(52,73,94,0.35);    border: 1px solid rgba(52,73,94,0.7);     color: var(--color-light-mid); }
+.badge-activo     { background: rgba(68, 32, 6, 0.18);   border: 1px solid rgba(39, 174, 96, 0.5);   color: var(--color-success); }
+.badge-inactivo   { background: rgba(163, 163, 204, 0.14); border: 1px solid rgba(17, 17, 17, 0.35);  color: var(--color-light-mid); }
+.badge-permiso    { background: rgba(243, 156, 18, 0.18);  border: 1px solid rgba(243, 156, 18, 0.5);  color: var(--color-warning); }
+.badge-suspendido { background: rgba(231, 76, 60, 0.18);   border: 1px solid rgba(231, 76, 60, 0.5);   color: var(--color-error); }
 
-.date-text {
-  color: var(--dark-text-secondary);
-  font-family: 'Libre Franklin', sans-serif;
-  font-style: italic;
-  font-size: 0.83rem;
-}
-
-/* =========================================
-   EMPTY STATE
-   ========================================= */
-.empty-state { padding: var(--spacing-2xl) !important; }
-
+/* --- ESTADO VACÍO (EMPTY STATE) --- */
 .empty-inner {
   display: flex;
   flex-direction: column;
@@ -272,47 +215,13 @@
   font-style: italic;
 }
 
-.empty-icon { font-size: 2rem; opacity: 0.5; }
-
-/* =========================================
-   TABLE FOOTER
-   ========================================= */
-.table-footer {
-  margin-top: var(--spacing-md);
-  text-align: right;
-}
-
-.record-count {
-  color: var(--dark-text-secondary);
-  font-family: 'Libre Franklin', sans-serif;
-  font-style: italic;
-  font-size: 0.85rem;
-}
-
-.record-count strong {
-  color: var(--color-light);
-  font-style: normal;
-}
-
-/* =========================================
-   RESPONSIVE
-   ========================================= */
+/* --- RESPONSIVIDAD --- */
+/**
+ * Optimización para dispositivos táctiles y pantallas pequeñas.
+ */
 @media (max-width: 900px) {
-  .admin-container  { flex-direction: column; overflow-y: auto; height: auto; }
-  .main-content     { padding: var(--spacing-lg); }
-  .topbar           { flex-direction: column; align-items: flex-start; gap: var(--spacing-md); }
-  .section-header   { flex-direction: column; align-items: flex-start; gap: var(--spacing-md); }
+  .admin-container  { flex-direction: column; height: auto; }
+  .topbar, .section-header, .filters-bar { flex-direction: column; align-items: flex-start; }
   .welcome-box h1   { font-size: 1.7rem; }
-  .page-title       { font-size: 1.4rem; }
-  .filters-bar      { flex-direction: column; }
-  .search-wrapper   { width: 100%; }
-  .filter-selects   { width: 100%; }
-  .filter-select    { flex: 1 1 140px; }
-}
-
-@media (max-width: 600px) {
-  .main-content   { padding: var(--spacing-md); }
-  .welcome-box h1 { font-size: 1.35rem; }
-  .btn-primary    { font-size: 0.85rem; padding: 8px 14px; }
-  .table-footer   { text-align: center; }
+  .filter-select    { width: 100%; }
 }

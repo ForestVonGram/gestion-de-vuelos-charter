@@ -5,17 +5,23 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header-tripulante',
-  imports: [RouterLink],
+  standalone: true, // Arquitectura modular e independiente
+  imports: [RouterLink], // Permite la navegación declarativa en el HTML
   templateUrl: './header-tripulante.component.html',
   styleUrl: './header-tripulante.component.css',
 })
 export class HeaderTripulante {
 
-  userName!: string;
-  userEmail!: string;
-  isDropdownOpen: boolean = false;
+  // --- Datos de Identidad ---
+  userName!: string;  // Nombre extraído del token/auth para mostrar en el saludo
+  userEmail!: string; // Email del tripulante para el menú desplegable
+  isDropdownOpen: boolean = false; // Control de visibilidad del menú de perfil
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService, // Inyección para acceder al estado de sesión
+    private router: Router             // Inyección para redirección tras logout
+  ) {
+    // Al instanciar el componente, recuperamos los datos del usuario actual
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
       this.userName = currentUser.nombreCompleto;
@@ -23,14 +29,20 @@ export class HeaderTripulante {
     }
   }
 
+  /**
+   * Cambia el estado de visibilidad del menú desplegable del usuario (perfil/cerrar sesión).
+   */
   toggleDropdown() {
-    console.log("Toggle dropdown")
+    console.log("Toggle dropdown");
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  /**
+   * Ejecuta el proceso de salida segura.
+   * Llama al método logout del servicio para borrar tokens y limpia la navegación.
+   */
   logOut(): void {
-    this.authService.logout(); // Limpia token y localstorage
-    this.router.navigate(['/auth/login']); // Redirige al login
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
-
 }

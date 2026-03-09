@@ -2,6 +2,10 @@
    ESTILOS ESPECÍFICOS: PÁGINA FLOTA AÉREA
    ========================================= */
 
+/**
+ * Cabecera de la sección.
+ * Organiza el título centrado y los botones de acción (como "Añadir Aeronave") a los extremos.
+ */
 .section-header {
   display: flex;
   justify-content: space-between;
@@ -14,9 +18,13 @@
   color: var(--color-white);
   font-size: 1.8rem;
   text-align: center;
-  flex-grow: 1; /* Centra el título como en tu imagen */
+  flex-grow: 1; /* Técnica para empujar otros elementos y quedar centrado */
 }
 
+/**
+ * Botón principal de la sección.
+ * Utiliza el color de marca (mid) con bordes redondeados y transiciones suaves.
+ */
 .btn-primary {
   background-color: var(--color-mid);
   color: var(--color-white);
@@ -33,17 +41,25 @@
   background-color: var(--color-light-mid);
 }
 
-/* GRID DE TARJETAS LAVANDA */
+/* --- GRID DE TARJETAS LAVANDA --- */
+/**
+ * Rejilla principal de la flota.
+ * Definida en 3 columnas para aprovechar el ancho de escritorio.
+ */
 .aircraft-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   max-width: 1100px;
   margin: 0 auto;
 }
 
+/**
+ * Tarjeta individual de aeronave.
+ * Color lavanda distintivo para separarla visualmente de los paneles de estadísticas.
+ */
 .aircraft-card {
-  background-color: var(--color-light); /* Color lavanda de tu imagen */
+  background-color: var(--color-light); /* Tono lavanda */
   border-radius: 20px;
   padding: 1.5rem;
   min-height: 220px;
@@ -67,6 +83,7 @@
   padding-bottom: 0.8rem;
 }
 
+/* Matrícula destacada en Archivo Black para identificación rápida */
 .matricula {
   font-family: 'Archivo Black', sans-serif;
   color: var(--color-dark);
@@ -87,6 +104,9 @@
   margin-bottom: 1rem;
 }
 
+/**
+ * Sub-rejilla para las especificaciones técnicas dentro de la tarjeta.
+ */
 .specs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -115,18 +135,14 @@
   margin-top: 1rem;
 }
 
+/**
+ * Manejo de íconos SVG dentro de botones de acción.
+ * object-fit: contain asegura que el ícono no se estire ni se corte.
+ */
 .svg-icon {
-  /* Usamos porcentajes para que se adapte al padre (.btn-action) */
-  width: 65%;  /* Ocupará el 65% del ancho del botón */
-  height: 65%; /* Ocupará el 65% del alto del botón */
-
-  /* 'object-fit: contain' es la clave: asegura que el SVG se
-     muestre completo dentro del espacio asignado sin deformarse,
-     incluso si no es perfectamente cuadrado. */
+  width: 65%;
+  height: 65%;
   object-fit: contain;
-
-  /* Opcional: si tu SVG es negro y quieres que cambie de color al hacer hover */
-  /* filter: invert(1);  <-- Descomenta esto si necesitas invertir el color (ej. de negro a blanco) */
   transition: transform 0.2s ease;
 }
 
@@ -146,18 +162,32 @@
 }
 
 .btn-action:hover .svg-icon {
-  transform: scale(1.1);
+  transform: scale(1.1); /* Efecto de aumento sutil en el ícono */
 }
 
-/* Status Badges INDIVIDUALES */
-.status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; font-family: 'Libre Franklin', sans-serif; text-transform: uppercase; }
+/* --- STATUS BADGES INDIVIDUALES --- */
+/* Etiquetas semánticas para conocer el estado operativo de la aeronave */
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Libre Franklin', sans-serif;
+  text-transform: uppercase;
+}
 .status-success { background: rgba(39, 174, 96, 0.15); color: #2ecc71; border: 1px solid rgba(39, 174, 96, 0.3); }
 .status-error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
 .status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
 
 
-/* Responsividad */
-@media (max-width: 1100px) { .aircraft-grid { grid-template-columns: repeat(2, 1fr); } }
+/* --- RESPONSIVIDAD --- */
+
+/* Ajuste a 2 columnas para pantallas medianas */
+@media (max-width: 1100px) {
+  .aircraft-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Ajuste a 1 columna y reordenamiento de layout para móviles */
 @media (max-width: 768px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }

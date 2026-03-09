@@ -28,14 +28,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TripulanteServiceImpl implements TripulanteService {
 
-    private final TripulanteRepository tripulanteRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final TripulanteMapper tripulanteMapper;
-    private final ValidadorCertificacionesService validadorCertificaciones;
+    private final TripulanteRepository tripulanteRepository; // Repositorio de tripulantes
+    private final UsuarioRepository usuarioRepository; // Repositorio de usuarios
+    private final TripulanteMapper tripulanteMapper; // Mapper de tripulantes
+    private final ValidadorCertificacionesService validadorCertificaciones; // Servicio para validar certificaciones
 
     @Override
     @Transactional
     public TripulanteDTO registrarTripulante(TripulanteCreateDTO tripulanteCreateDTO) {
+        // Registra un nuevo tripulante en el sistema
+
         // Verificar que el usuario exista
         Usuario usuario = usuarioRepository.findById(tripulanteCreateDTO.getUsuarioId())
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -62,6 +64,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public TripulanteDTO obtenerTripulantePorId(Long id) {
+        // Obtiene un tripulante por su ID de usuario
         Tripulante tripulante = tripulanteRepository.findByUsuarioId(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
@@ -72,6 +75,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public TripulanteDTO obtenerTripulantePorNumeroLicencia(String numeroLicencia) {
+        // Obtiene un tripulante por su número de licencia
         Tripulante tripulante = tripulanteRepository.findByNumeroLicencia(numeroLicencia)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con licencia: " + numeroLicencia
@@ -82,6 +86,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public List<TripulanteDTO> obtenerTodosTripulantes() {
+        // Obtiene todos los tripulantes registrados
         List<Tripulante> tripulantes = tripulanteRepository.findAll();
         return tripulanteMapper.toDTOList(tripulantes);
     }
@@ -89,6 +94,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public List<TripulanteDTO> obtenerPilotos() {
+        // Obtiene todos los tripulantes que son pilotos
         List<Tripulante> pilotos = tripulanteRepository.findAll().stream()
                 .filter(t -> t.getEsPiloto() != null && t.getEsPiloto())
                 .collect(Collectors.toList());
@@ -98,6 +104,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public List<TripulanteDTO> obtenerAuxiliares() {
+        // Obtiene todos los tripulantes que son auxiliares (no pilotos)
         List<Tripulante> auxiliares = tripulanteRepository.findAll().stream()
                 .filter(t -> t.getEsPiloto() == null || !t.getEsPiloto())
                 .collect(Collectors.toList());
@@ -107,6 +114,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional
     public TripulanteDTO editarTripulante(Long id, TripulanteUpdateDTO tripulanteUpdateDTO) {
+        // Edita los datos de un tripulante existente
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
@@ -122,6 +130,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional
     public void eliminarTripulante(Long id) {
+        // Elimina un tripulante del sistema
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
@@ -132,6 +141,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public void validarTripulante(Long id) {
+        // Valida que un tripulante cumpla con todas las certificaciones requeridas
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
@@ -142,6 +152,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional(readOnly = true)
     public List<TripulanteDTO> obtenerTripulantesDisponibles() {
+        // Obtiene todos los tripulantes que están disponibles para asignar a vuelos
         List<Tripulante> disponibles = tripulanteRepository.findByEstado(EstadoTripulante.DISPONIBLE);
         return tripulanteMapper.toDTOList(disponibles);
     }
