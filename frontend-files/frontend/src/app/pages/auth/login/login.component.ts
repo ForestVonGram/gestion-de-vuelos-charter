@@ -16,11 +16,14 @@ import { RolUsuario } from '../../../models/users/auth.models';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit, OnDestroy {
+  // --- Propiedades del componente ---
   loginForm!: FormGroup;
   loading = false;
   submitted = false;
   error: string | null = null;
   showPassword = false;
+
+  // Sujeto para gestionar la desuscripción automática de Observables
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -28,9 +31,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private recaptchaV3Service: ReCaptchaV3Service,
-    private cdr: ChangeDetectorRef // Añadimos ChangeDetectorRef
+    private cdr: ChangeDetectorRef // Inyección para control manual de renderizado
   ) {
-    // Verificar si ya está autenticado
+    // Redirección automática si el usuario ya tiene una sesión activa
     if (this.authService.isAuthenticated()) {
       const currentUser = this.authService.currentUserValue;
       if (currentUser?.rol === RolUsuario.ADMINISTRADOR) {
@@ -42,14 +45,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.initializeForm(); // Configuración inicial del formulario
   }
 
   ngOnDestroy(): void {
+    // Limpieza de suscripciones al destruir el componente
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Define la estructura y validaciones del formulario de acceso
   private initializeForm(): void {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -58,22 +63,25 @@ export class LoginComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Getter para facilitar el acceso a los controles del formulario en el HTML
   get f() {
     return this.loginForm.controls;
   }
 
+  // Lógica principal de envío del formulario
   onSubmit(): void {
     this.submitted = true;
     this.error = null;
 
+    // Detener el proceso si el formulario no cumple las validaciones
     if (this.loginForm.invalid) {
       return;
     }
 
     this.loading = true;
-    this.cdr.detectChanges(); // Forzar detección de cambios
+    this.cdr.detectChanges(); // Asegura que el spinner se muestre de inmediato
 
-    // Ejecutar reCAPTCHA v3
+    // Paso 1: Obtener token de reCAPTCHA v3 para validación de seguridad
     this.recaptchaV3Service.execute('login')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -84,13 +92,15 @@ export class LoginComponent implements OnInit, OnDestroy {
             recaptchaToken: token
           };
 
+          // Paso 2: Intentar el inicio de sesión con el servicio de autenticación
           this.authService.login(loginRequest)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 this.loading = false;
-                this.cdr.detectChanges(); // Forzar detección de cambios
+                this.cdr.detectChanges();
 
+                // Manejo de flujo según la respuesta (2FA o Redirección por Rol)
                 if (response.requires2FA) {
                   this.router.navigate(['/auth/verify-2fa'], {
                     queryParams: { sessionToken: response.sessionToken }
@@ -105,8 +115,8 @@ export class LoginComponent implements OnInit, OnDestroy {
               },
               error: (error) => {
                 this.loading = false;
-                this.error = this.getErrorMessage(error);
-                this.cdr.detectChanges(); // Forzar detección de cambios
+                this.error = this.getErrorMessage(error); // Traducir error del servidor
+                this.cdr.detectChanges();
                 console.error('Error en login:', error);
               }
             });
@@ -114,12 +124,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.loading = false;
           this.error = 'Error en validación de seguridad. Por favor intente nuevamente';
-          this.cdr.detectChanges(); // Forzar detección de cambios
+          this.cdr.detectChanges();
           console.error('reCAPTCHA v3 error:', error);
         }
       });
   }
 
+  // Centraliza la lógica de mensajes de error para el usuario final
   private getErrorMessage(error: any): string {
     if (error.status === 401) {
       return 'Email o contraseña inválidos';
@@ -132,8 +143,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Alternar visualización de caracteres en el campo de contraseña
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
-    this.cdr.detectChanges(); // Forzar detección de cambios
+    this.cdr.detectChanges();
   }
 }

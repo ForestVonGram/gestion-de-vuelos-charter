@@ -6,6 +6,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PasswordService } from '../../../services/password/password.service';
 
+/**
+ * Componente para la solicitud de recuperación de contraseña.
+ * Permite al usuario ingresar su email para recibir un código de verificación.
+ */
 @Component({
   selector: 'app-solicitud-recuperacion',
   standalone: true,
@@ -14,44 +18,72 @@ import { PasswordService } from '../../../services/password/password.service';
   styleUrls: ['./solicitud_recuperacion.component.css']
 })
 export class RecuperarSolicitudComponent implements OnInit, OnDestroy {
-  forgotForm!: FormGroup;
-  loading = false;
-  submitted = false;
-  success = false;
-  error: string | null = null;
-  private destroy$ = new Subject<void>();
 
+  // Formulario reactivo
+  forgotForm!: FormGroup;
+
+  // Estados de la UI
+  loading = false; // Indicador de carga
+  submitted = false; // Indica si el formulario ha sido enviado
+  success = false; // Indica si la solicitud fue exitosa
+  error: string | null = null; // Mensaje de error
+
+  private destroy$ = new Subject<void>(); // Subject para limpiar suscripciones
+
+  /**
+   * Constructor del componente
+   * @param formBuilder FormBuilder para crear formularios reactivos
+   * @param passwordService servicio para operaciones de contraseña
+   * @param router servicio de navegación
+   */
   constructor(
     private formBuilder: FormBuilder,
     private passwordService: PasswordService,
     private router: Router
   ) {}
 
+  /**
+   * Inicialización del componente.
+   * Configura el formulario con sus validaciones.
+   */
   ngOnInit(): void {
     this.initializeForm();
   }
 
+  /**
+   * Limpieza al destruir el componente.
+   */
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  /**
+   * Inicializa el formulario con sus campos y validaciones.
+   */
   private initializeForm(): void {
     this.forgotForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]] // Email válido y obligatorio
     });
   }
 
+  /**
+   * Getter para acceder fácilmente a los controles del formulario.
+   */
   get f() {
     return this.forgotForm.controls;
   }
 
+  /**
+   * Maneja el envío del formulario.
+   * Envía solicitud de recuperación al backend.
+   */
   onSubmit(): void {
     this.submitted = true;
     this.error = null;
 
     if (this.forgotForm.invalid) {
-      return;
+      return; // No enviar si el formulario es inválido
     }
 
     this.loading = true;
@@ -77,6 +109,7 @@ export class RecuperarSolicitudComponent implements OnInit, OnDestroy {
             this.error = 'Error de conexión con el servidor';
           } else {
             // Por seguridad, mostramos éxito aunque haya error
+            // Esto evita que un atacante pueda verificar qué emails existen
             this.success = true;
             setTimeout(() => {
               this.router.navigate(['/auth/recuperar/verificar']);
@@ -86,10 +119,14 @@ export class RecuperarSolicitudComponent implements OnInit, OnDestroy {
       });
   }
 
+  /**
+   * Reenvía el código de verificación.
+   * @param evento del clic
+   */
   resendCode(event: Event): void {
     event.preventDefault();
     if (this.f['email'].value) {
-      this.onSubmit();
+      this.onSubmit(); // Reutiliza el mismo método de envío
     }
   }
 }

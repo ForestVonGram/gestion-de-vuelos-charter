@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-// Enum simulado basado en tu DTO (ajustalo según tu backend real)
+// Definición de roles disponibles para el registro de nuevos usuarios
 export enum RolUsuario {
   USUARIO = 'USUARIO',
   ADMINISTRADOR = 'ADMINISTRADOR'
@@ -21,9 +21,12 @@ export enum RolUsuario {
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
+  // --- Propiedades de estado ---
   registerForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
+
+  // Manejador para cancelar suscripciones activas al destruir el componente
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -34,39 +37,49 @@ export class RegisterComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.initForm();
+    this.initForm(); // Inicializa la estructura del formulario al cargar
   }
 
   ngOnDestroy(): void {
+    // Limpieza de observables para evitar fugas de memoria
     this.destroy$.next();
     this.destroy$.complete();
   }
 
+  // Configuración del formulario reactivo con sus respectivas validaciones
   private initForm(): void {
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.pattern(/^[0-9]{7,15}$/)]], // Patrón según DTO backend
+      // Validación de teléfono: solo números, entre 7 y 15 dígitos
+      telefono: ['', [Validators.pattern(/^[0-9]{7,15}$/)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
+      // Obliga a que los términos y condiciones estén marcados
       acceptTerms: [false, [Validators.requiredTrue]]
-    }, { validators: this.passwordMatchValidator });
+    }, {
+      // Validador de grupo para asegurar que ambas contraseñas coincidan
+      validators: this.passwordMatchValidator
+    });
   }
 
-  // Validador personalizado para comparar contraseñas
+  // Validador personalizado: Compara 'password' y 'confirmPassword'
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 
     if (password && confirmPassword && password.value !== confirmPassword.value) {
+      // Setea el error directamente en el campo de confirmación
       confirmPassword.setErrors({ mismatch: true });
       return { passwordMismatch: true };
     }
     return null;
   }
 
+  // Lógica de procesamiento del registro
   onSubmit(): void {
+    // Si el formulario no es válido, marca campos para mostrar errores visuales
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
@@ -75,31 +88,34 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Ejecutar reCAPTCHA v3
+    // Paso 1: Ejecutar validación invisible de reCAPTCHA v3
     this.recaptchaV3Service.execute('register')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (token: string) => {
-          // Construcción del objeto basado en RegisterRequest
+          // Paso 2: Mapear datos del formulario al objeto de petición (Request)
           const request = {
             nombre: this.registerForm.get('nombre')?.value,
             apellido: this.registerForm.get('apellido')?.value,
             email: this.registerForm.get('email')?.value,
             password: this.registerForm.get('password')?.value,
             telefono: this.registerForm.get('telefono')?.value || null,
-            rol: RolUsuario.USUARIO,
+            rol: RolUsuario.USUARIO, // Por defecto se registra como rol estándar
             recaptchaToken: token
           };
 
+          // Paso 3: Llamada al servicio de autenticación para el registro
           this.authService.register(request)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (response) => {
                 this.isLoading = false;
+                // Si el registro es exitoso, redirige al login
                 this.router.navigate(['/auth/login']);
               },
               error: (err) => {
                 this.isLoading = false;
+                // Manejo de errores específicos del servidor (email duplicado, captcha, etc.)
                 if (err.error?.message?.includes('reCAPTCHA')) {
                   this.errorMessage = 'Validación reCAPTCHA fallida. Por favor intente nuevamente.';
                 } else if (err.error?.message?.includes('email')) {
@@ -118,6 +134,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Getters para facilitar el acceso en el HTML
+  // Getter de conveniencia para acceder a los campos en el template HTML
   get f() { return this.registerForm.controls; }
 }

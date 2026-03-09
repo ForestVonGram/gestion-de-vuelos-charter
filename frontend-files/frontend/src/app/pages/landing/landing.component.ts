@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./landing.component.css']
 })
 export class LandingComponent implements OnInit, OnDestroy {
+  // --- Estados de UI y Animación ---
   isNavbarScrolled = false;
   parallaxOffset = 0;
   isDarkMode = false;
@@ -23,10 +24,11 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkScroll();
+    // Configura accesibilidad y preferencias de movimiento al iniciar
     this.setupReducedMotionPreference();
     this.setupAriaAnnouncements();
 
-    // Check for saved theme preference
+    // Lógica de jerarquía para el tema: 1. LocalStorage, 2. Preferencia del Sistema
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.isDarkMode = true;
@@ -40,19 +42,21 @@ export class LandingComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    // Limpieza de listeners de medios y restauración del scroll del body
     if (this.mediaQueryListener) {
       this.mediaQueryListener();
     }
-    // Ensure body scroll is restored on destroy
     this.renderer.removeClass(document.body, 'menu-open');
   }
 
+  // Escucha el scroll para actualizar la Navbar y el efecto Parallax
   @HostListener('window:scroll')
   onWindowScroll(): void {
     this.checkScroll();
     this.updateParallax();
   }
 
+  // Cierra el menú móvil al presionar la tecla Escape (Accesibilidad)
   @HostListener('document:keydown.escape')
   onEscapePress(): void {
     if (this.isMobileMenuOpen) {
@@ -60,14 +64,15 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Cierra el menú móvil si se cambia el tamaño de la ventana a escritorio
   @HostListener('window:resize')
   onWindowResize(): void {
-    // Close mobile menu if viewport grows past mobile breakpoint
     if (window.innerWidth > 768 && this.isMobileMenuOpen) {
       this.closeMobileMenu();
     }
   }
 
+  // Gestiona la apertura/cierre del menú móvil y bloquea el scroll del body
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
     if (this.isMobileMenuOpen) {
@@ -84,6 +89,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.renderer.removeClass(document.body, 'menu-open');
   }
 
+  // Alterna modo oscuro y notifica auditivamente a usuarios con lectores de pantalla
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;
     if (this.isDarkMode) {
@@ -109,6 +115,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     window.dispatchEvent(new Event('darkmode-change'));
   }
 
+  // Detecta si el sistema operativo del usuario prefiere modo oscuro
   private checkSystemTheme(): void {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     this.isDarkMode = prefersDark.matches;
@@ -119,6 +126,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Deshabilita animaciones si el usuario tiene activada la opción "Reducir movimiento" en su OS
   private setupReducedMotionPreference(): void {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const handleReducedMotion = (e: MediaQueryListEvent | MediaQueryList) => {
@@ -138,9 +146,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     const elements = ['.cloud-large', '.cloud-small', '.aircraft'];
     elements.forEach(selector => {
       const el = this.elementRef.nativeElement.querySelector(selector);
-      if (el) {
-        el.style.transform = 'none';
-      }
+      if (el) { el.style.transform = 'none'; }
     });
   }
 
@@ -148,6 +154,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.updateParallax();
   }
 
+  // Crea un elemento invisible para enviar notificaciones de voz a lectores de pantalla (ARIA)
   private setupAriaAnnouncements(): void {
     let announcer = document.getElementById('aria-announcer');
     if (!announcer) {
@@ -170,6 +177,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Controla el estado visual de la Navbar según el scroll relativo al Hero
   private checkScroll(): void {
     const heroElement = document.querySelector('.hero');
     if (heroElement) {
@@ -180,6 +188,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Calcula el progreso del scroll para mover elementos a diferentes velocidades (Parallax)
   private updateParallax(): void {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     if (mediaQuery.matches) return;
@@ -189,6 +198,7 @@ export class LandingComponent implements OnInit, OnDestroy {
       const rect = statementElement.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
+      // Solo calcula si el elemento es visible en pantalla
       if (rect.top < windowHeight && rect.bottom > 0) {
         const scrollProgress = Math.max(0, Math.min(1,
           (windowHeight - rect.top) / (windowHeight + rect.height)
@@ -200,6 +210,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Aplica las transformaciones CSS para mover nubes y aviones de forma asíncrona
   private applyParallaxTransform(): void {
     const cloudLarge = document.querySelector('.cloud-large') as HTMLElement;
     const cloudSmall = document.querySelector('.cloud-small') as HTMLElement;
