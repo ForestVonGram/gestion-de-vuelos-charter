@@ -95,7 +95,8 @@ public class SecurityConfig {
                 "https://www.astranimbus.com",
                 "https://astranimbus.com",
                 "https://api.astranimbus.com",
-                "http://localhost:4200"
+                "http://localhost:4200",
+                "https://gestion-de-vuelos-charter.onrender.com"
                 ));
 
         // Permitir métodos HTTP comunes
