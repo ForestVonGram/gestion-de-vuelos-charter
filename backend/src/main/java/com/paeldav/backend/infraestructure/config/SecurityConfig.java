@@ -96,17 +96,31 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of(
                 "https://www.astranimbus.com",
                 "https://astranimbus.com",
-                "http://localhost:4200"
+                "https://api.astranimbus.com",
+                "http://localhost:4200",
+                "https://gestion-de-vuelos-charter.onrender.com"
                 ));
 
         // Permitir métodos HTTP comunes
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
-        // Permitir todos los headers (Authorization, Content-Type, etc.)
-        configuration.setAllowedHeaders(List.of("*"));
+        // Permitir headers específicos (no usar * cuando allowCredentials es true)
+        configuration.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin"
+        ));
 
         // Importante si usas cookies o headers de autorización
         configuration.setAllowCredentials(true);
+        
+        // Permitir que el navegador exponga headers específicos
+        configuration.setExposedHeaders(List.of("Authorization"));
+        
+        // Cache preflight requests por 1 hora
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
