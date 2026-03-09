@@ -97,7 +97,7 @@ public class PersonalController {
     /**
      * Desactiva personal en el sistema.
      */
-    @PutMapping("/{id}/desactivar")
+    @PutMapping("/{id}/desactiva")
     public ResponseEntity<String> desactivarPersonal(@PathVariable Long id) {
         personalService.desactivarPersonal(id);
         return ResponseEntity.ok("Personal desactivado exitosamente");
@@ -106,7 +106,7 @@ public class PersonalController {
     /**
      * Activa personal desactivado.
      */
-    @PutMapping("/{id}/activar")
+    @PutMapping("/{id}/activa")
     public ResponseEntity<String> activarPersonal(@PathVariable Long id) {
         personalService.activarPersonal(id);
         return ResponseEntity.ok("Personal activado exitosamente");

@@ -1,201 +1,102 @@
 <div class="admin-container">
 
-  <!-- Sidebar del panel de administración -->
   <app-admin-sidebar></app-admin-sidebar>
 
   <div class="main-content">
 
-    <!-- Barra superior del módulo -->
     <div class="topbar">
-
-      <!-- Título y descripción del módulo -->
       <div class="welcome-box">
         <h1>Gestión de Personal</h1>
         <p>Administra y consulta el equipo operativo</p>
       </div>
-
-      <!-- Avatar del usuario actual (muestra la inicial del nombre) -->
-      <div class="avatar-circle">
-        {{ currentUser?.nombreCompleto?.charAt(0) }}
-      </div>
-
+      <div class="avatar-circle">{{ currentUser?.nombreCompleto?.charAt(0) }}</div>
     </div>
 
 
-    <!-- =========================
-         BARRA DE FILTROS
-         ========================= -->
+    <!-- FILTERS -->
     <div class="filters-bar">
-
-      <!-- Buscador por nombre -->
       <div class="search-wrapper">
-
-        <!-- Icono visual del buscador -->
         <span class="search-icon">🔍</span>
-
-        <!--
-          Input para filtrar por nombre.
-          Cada vez que el usuario escribe:
-          1. Se guarda el valor en filtroNombre
-          2. Se ejecuta la función filtrar()
-        -->
         <input
           type="text"
           class="search-input"
           placeholder="Buscar por nombre…"
           (input)="filtroNombre = $any($event.target).value; filtrar()"
         />
-
       </div>
-
-      <!-- Selectores de filtrado -->
       <div class="filter-selects">
-
-        <!-- Filtro por cargo -->
         <select class="filter-select" (change)="filtroCargo = $any($event.target).value; filtrar()">
-
-          <!-- Opción por defecto -->
           <option value="">Todos los cargos</option>
-
-          <!--
-            Iteración sobre la lista de cargos
-            usando la sintaxis moderna @for de Angular
-          -->
           @for (c of cargos; track c) {
-            <option [value]="c">
-              {{ formatear(c) }}
-            </option>
+            <option [value]="c">{{ formatear(c) }}</option>
           }
-
         </select>
-
-        <!-- Filtro por estado -->
         <select class="filter-select" (change)="filtroEstado = $any($event.target).value; filtrar()">
-
-          <!-- Opción por defecto -->
           <option value="">Todos los estados</option>
-
-          <!-- Iteración de los estados disponibles -->
           @for (e of estados; track e) {
-            <option [value]="e">
-              {{ formatear(e) }}
-            </option>
+            <option [value]="e">{{ formatear(e) }}</option>
           }
-
         </select>
-
       </div>
-
     </div>
 
-    <!-- =========================
-         TABLA DE PERSONAL
-         ========================= -->
+    <!-- TABLE -->
     <div class="table-wrapper">
-
       <table class="personal-table">
-
-        <!-- Encabezado de la tabla -->
         <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Email</th>
-          <th>Cargo</th>
-          <th>Estado</th>
-          <th>Contratación</th>
-        </tr>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Cargo</th>
+            <th>Estado</th>
+            <th>Contratación</th>
+            <th scope="col" class="text-left">Acciones</th>
+          </tr>
         </thead>
-
-        <!-- Cuerpo de la tabla -->
         <tbody>
-
-        <!--
-          Iteración de la lista de personal filtrado
-          track emp.id optimiza el renderizado
-        -->
           @for (emp of personalFiltrado; track emp.id) {
-
             <tr>
-
-              <!-- Nombre del empleado -->
               <td>
-
                 <div class="name-cell">
-
-                  <!-- Avatar pequeño con iniciales -->
-                  <div class="avatar-sm">
-                    {{ getInitials(emp.usuarioNombre) }}
-                  </div>
-
-                  <!-- Nombre completo -->
-                  <span class="name-primary">
-                    {{ emp.usuarioNombre }}
-                  </span>
-
+                  <div class="avatar-sm">{{ getInitials(emp.usuarioNombre) }}</div>
+                  <span class="name-primary">{{ emp.usuarioNombre }}</span>
                 </div>
-
               </td>
-
-              <!-- Email del empleado -->
+              <td><span class="email-text">{{ emp.usuarioEmail }}</span></td>
+              <td><span class="cargo-tag">{{ emp.cargo  }}</span></td>
               <td>
-                <span class="email-text">
-                  {{ emp.usuarioEmail }}
+                <span class="estado-badge" >
+                  {{ emp.estado  }}
                 </span>
               </td>
-
-              <!-- Cargo -->
+              <td><span class="date-text">{{ formatDate(emp.fechaContratacion) }}</span></td>
               <td>
-                <span class="cargo-tag">
-                  {{ emp.cargo }}
-                </span>
-              </td>
-
-              <!-- Estado del empleado -->
-              <td>
-                <span class="estado-badge">
-                  {{ emp.estado }}
-                </span>
-              </td>
-
-              <!-- Fecha de contratación -->
-              <td>
-                <span class="date-text">
-                  {{ formatDate(emp.fechaContratacion) }}
-                </span>
-              </td>
-
+                <div class="action-btns">
+                <button class="btn-action btn-view" title="Ver">
+                <span class="material-symbols-rounded">visibility</span>
+                </button>
+                <button class="btn-action btn-delete" title="Eliminar" (click)="onDelete(emp.id)">
+                <span class="material-symbols-rounded">delete</span>
+                </button>
+                <button class="btn-action btn-edit" title="activar" (click)="onActivate(emp.id)">
+                <span class="material-symbols-rounded">toggle_on</span>
+                </button>
+                </div>
+                </td>
             </tr>
 
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">
+                <div class="empty-inner">
+                  <span class="empty-icon">🔎</span>
+                  <p>No se encontraron registros.</p>
+                </div>
+              </td>
+            </tr>
           }
-
-        <!-- Estado cuando no hay resultados -->
-        @empty {
-
-          <tr>
-
-            <!-- colspan permite que el mensaje ocupe todas las columnas -->
-            <td colspan="5" class="empty-state">
-
-              <div class="empty-inner">
-
-                <!-- Icono visual -->
-                <span class="empty-icon">🔎</span>
-
-                <!-- Mensaje -->
-                <p>No se encontraron registros.</p>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-        }
-
         </tbody>
-
       </table>
-
     </div>
 
 
