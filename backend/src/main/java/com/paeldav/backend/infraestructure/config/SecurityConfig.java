@@ -95,18 +95,29 @@ public class SecurityConfig {
                 "https://www.astranimbus.com",
                 "https://astranimbus.com",
                 "https://api.astranimbus.com",
-                "http://astranimbus.us-east-2.elasticbeanstalk.com",
                 "http://localhost:4200"
                 ));
 
         // Permitir métodos HTTP comunes
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
-        // Permitir todos los headers (Authorization, Content-Type, etc.)
-        configuration.setAllowedHeaders(List.of("*"));
+        // Permitir headers específicos (no usar * cuando allowCredentials es true)
+        configuration.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin"
+        ));
 
         // Importante si usas cookies o headers de autorización
         configuration.setAllowCredentials(true);
+        
+        // Permitir que el navegador exponga headers específicos
+        configuration.setExposedHeaders(List.of("Authorization"));
+        
+        // Cache preflight requests por 1 hora
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
