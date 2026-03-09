@@ -6,7 +6,7 @@ import { TokenService } from '../token_service/token-service'; // Importamos Tok
 import { HttpHeaders } from '@angular/common/http'; // Importamos HttpHeaders para agregar el token en las solicitudes HTTP
 import { PersonalCreateDTO } from '../../models/personal/create-personal-dto';
 import { HttpParams } from '@angular/common/http'; // Importamos HttpParams para manejar los parámetros de consulta en las solicitudes HTTP
-
+import { PersonalUpdateDTO } from '../../models/personal/update-personal-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -70,6 +70,23 @@ export class PersonalService {
       'Authorization': `Bearer ${token}`,
     });
     return this.http.put(`${this.apiUrl}/${id}/activa`, {}, { headers, responseType: 'text' });
+  }
+
+  obtenerPersonalPorId(id: number): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get(`${this.apiUrl}/${id}`, { headers });
+  }
+
+  actualizarPersonal(id: number, data: PersonalUpdateDTO): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put(`${this.apiUrl}/${id}`, data, { headers });
   }
 
 }

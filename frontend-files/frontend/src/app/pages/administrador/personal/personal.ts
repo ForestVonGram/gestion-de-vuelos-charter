@@ -163,7 +163,7 @@ export class Personal implements OnInit {
       error: (error) => {
         Swal.fire({
           icon: 'error',
-          title: '¡Error!', 
+          title: '¡Error!',
           text: 'Ocurrió un error al activar el personal. Por favor, inténtelo de nuevo.',
           confirmButtonText: 'Aceptar'
         });

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
 import { EstadoAeronave } from '../flota-aerea-admin/flota-aerea-admin.component';
+import { AdminSidebarComponent } from "../../../shared/admin-sidebar/admin-sidebar.component";
 
 /**
  * Componente para la creación de nuevas aeronaves.
@@ -8,7 +9,7 @@ import { EstadoAeronave } from '../flota-aerea-admin/flota-aerea-admin.component
  */
 @Component({
   selector: 'app-create-plane',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, AdminSidebarComponent],
   templateUrl: './create-plane.html',
   styleUrl: './create-plane.css',
 })
