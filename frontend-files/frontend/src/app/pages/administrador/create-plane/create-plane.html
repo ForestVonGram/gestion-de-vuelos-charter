@@ -1,17 +1,11 @@
 <div class="section-header">
   <h2 class="page-title">Nueva Aeronave</h2>
-  <div class="login-container">
-  <a routerLink="/admin/flota" class="back-btn" title="Volver al dashboard">
-    <svg class="back-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </a>
-  </div>
+
 </div>
 
 <div class="form-card">
-
+    <app-admin-sidebar
+    ></app-admin-sidebar>
 <form [formGroup]="avionForm" (ngSubmit)="crearAvion()">
 
 <div class="form-grid">

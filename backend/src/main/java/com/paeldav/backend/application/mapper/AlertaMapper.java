@@ -19,9 +19,9 @@ public interface AlertaMapper {
     @Mapping(source = "aeronave.id", target = "aeronaveId")
     @Mapping(source = "aeronave.matricula", target = "aeronaveMatricula")
     @Mapping(source = "mantenimientoRelacionado.id", target = "mantenimientoRelacionadoId")
-    AlertaDTO toDTO(Alerta alerta);
+    AlertaDTO toDTO(Alerta alerta); // Convierte entidad a DTO
 
-    List<AlertaDTO> toDTOList(List<Alerta> alertas);
+    List<AlertaDTO> toDTOList(List<Alerta> alertas); // Convierte lista de entidades a lista de DTOs
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "aeronave", ignore = true)
@@ -29,7 +29,7 @@ public interface AlertaMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaResolucion", ignore = true)
     @Mapping(target = "activa", constant = "true")
-    Alerta toEntity(AlertaCreateDTO alertaCreateDTO);
+    Alerta toEntity(AlertaCreateDTO alertaCreateDTO); // Convierte DTO de creación a entidad
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "aeronave", ignore = true)
@@ -37,5 +37,5 @@ public interface AlertaMapper {
     @Mapping(target = "fechaCreacion", ignore = true)
     @Mapping(target = "fechaResolucion", ignore = true)
     @Mapping(target = "activa", ignore = true)
-    void updateEntityFromDTO(AlertaCreateDTO alertaCreateDTO, @MappingTarget Alerta alerta);
+    void updateEntityFromDTO(AlertaCreateDTO alertaCreateDTO, @MappingTarget Alerta alerta); // Actualiza entidad con datos del DTO
 }

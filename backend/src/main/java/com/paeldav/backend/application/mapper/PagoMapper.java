@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * MapStruct mapper para convertir entre entidad Pago y DTOs.
  */
-@Mapper(componentModel = "spring", 
+@Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PagoMapper {
 
@@ -25,7 +25,7 @@ public interface PagoMapper {
     @Mapping(source = "usuario.id", target = "usuarioId")
     @Mapping(source = "usuario.nombre", target = "usuarioNombre")
     @Mapping(target = "urlPago", ignore = true)  // Generada por MercadoPago, no mapeada desde entity
-    PagoDTO toDTO(Pago pago);
+    PagoDTO toDTO(Pago pago); // Convierte entidad a DTO
 
     /**
      * Convierte una lista de entidades Pago a lista de PagoDTO.
@@ -33,5 +33,5 @@ public interface PagoMapper {
      * @param pagos lista de entidades a convertir
      * @return lista de DTOs convertidos
      */
-    List<PagoDTO> toDTOList(List<Pago> pagos);
+    List<PagoDTO> toDTOList(List<Pago> pagos); // Convierte lista de entidades a lista de DTOs
 }

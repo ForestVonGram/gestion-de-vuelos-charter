@@ -72,7 +72,7 @@
               <td><span class="date-text">{{ formatDate(emp.fechaContratacion) }}</span></td>
               <td>
                 <div class="action-btns">
-                <button class="btn-action btn-view" title="Ver">
+                <button class="btn-action btn-view" [routerLink]="['/admin/persona', emp.id]"  title="Ver">
                 <span class="material-symbols-rounded">visibility</span>
                 </button>
                 <button class="btn-action btn-delete" title="Eliminar" (click)="onDelete(emp.id)">

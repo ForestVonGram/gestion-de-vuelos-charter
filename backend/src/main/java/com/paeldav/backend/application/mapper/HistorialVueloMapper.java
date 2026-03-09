@@ -16,12 +16,12 @@ public interface HistorialVueloMapper {
     @Mapping(target = "vueloId", source = "vuelo.id")
     @Mapping(target = "usuarioResponsableId", source = "usuarioResponsable.id")
     @Mapping(target = "usuarioResponsableNombre", expression = "java(mapUsuarioNombre(entity.getUsuarioResponsable()))")
-    HistorialVueloDTO toDTO(HistorialVuelo entity);
+    HistorialVueloDTO toDTO(HistorialVuelo entity); // Convierte entidad a DTO
 
-    List<HistorialVueloDTO> toDTOList(List<HistorialVuelo> entities);
+    List<HistorialVueloDTO> toDTOList(List<HistorialVuelo> entities); // Convierte lista de entidades a lista de DTOs
 
     default String mapUsuarioNombre(Usuario usuario) {
         if (usuario == null) return null;
         return usuario.getNombre() + " " + usuario.getApellido();
-    }
+    } // Obtiene nombre completo del usuario
 }

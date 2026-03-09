@@ -2,8 +2,12 @@
    ESTILOS ESPECÍFICOS: PANEL Y TABLA DE VUELOS
    ========================================= */
 
+/**
+ * Contenedor principal con efecto Glassmorphism.
+ * El fondo oscuro semi-transparente permite que el gradiente del body sea visible.
+ */
 .content-panel {
-  background-color: rgba(20, 20, 40, 0.6); /* Glassmorphism oscuro */
+  background-color: rgba(20, 20, 40, 0.6);
   border-radius: 20px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -24,7 +28,11 @@
   margin: 0;
 }
 
-/* Filtros */
+/* --- FILTROS DE OPERACIÓN --- */
+/**
+ * Grupo de filtros rápidos (Ej: Todos, Pendientes, Cancelados).
+ * Diseño tipo "Pill" que ahorra espacio y es táctil.
+ */
 .filter-group {
   display: flex;
   gap: 0.5rem;
@@ -48,7 +56,7 @@
 .filter-btn:hover { color: var(--color-white); }
 .filter-btn.active { background-color: var(--color-mid); color: var(--color-white); }
 
-/* Tabla */
+/* --- TABLA DE VUELOS --- */
 .table-responsive { overflow-x: auto; }
 .admin-table { width: 100%; border-collapse: collapse; }
 
@@ -72,17 +80,22 @@
   vertical-align: middle;
 }
 
-/* Celdas específicas */
+/* --- CELDAS ESPECÍFICAS --- */
+
+/* ID del Vuelo: Negrita para referencia rápida */
 .id-cell { font-weight: 700; color: var(--color-white); font-family: 'Libre Franklin', sans-serif; }
 
+/* Ruta: Muestra Origen -> Destino con un ícono intermedio */
 .route-cell { display: flex; align-items: center; gap: 10px; }
 .route-cell .city { font-weight: 600; color: var(--color-white); }
 .route-icon { color: var(--color-mid); font-size: 0.8rem; }
 
+/* Bloque de Tiempo: Fecha arriba, Hora abajo con menor contraste */
 .date-block { display: flex; flex-direction: column; }
 .date-block .date { color: var(--color-white); font-weight: 500; }
 .date-block .time { color: var(--color-light-mid); font-size: 0.8rem; font-family: 'Libre Franklin', sans-serif; }
 
+/* Matrícula de la aeronave asignada */
 .aircraft-badge {
   background-color: rgba(255,255,255,0.1);
   padding: 4px 8px;
@@ -93,7 +106,10 @@
 }
 .unassigned-text { color: var(--color-warning); font-size: 0.85rem; font-style: italic; }
 
-/* Status Badges para VuelosComponent */
+/* --- STATUS BADGES --- */
+/**
+ * Etiquetas semánticas para el ciclo de vida de un vuelo.
+ */
 .status-badge {
   padding: 6px 12px;
   border-radius: 20px;
@@ -104,14 +120,14 @@
   display: inline-block;
 }
 
-.status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
-.status-approved { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); }
+.status-pending   { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
+.status-approved  { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); }
 .status-scheduled { background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
-.status-active { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); } /* En vuelo */
-.status-success { background: rgba(39, 174, 96, 0.2); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.4); } /* Completado */
-.status-error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); } /* Cancelado */
+.status-active    { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); } /* En vuelo */
+.status-success   { background: rgba(39, 174, 96, 0.2);   color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.4); } /* Completado */
+.status-error     { background: rgba(231, 76, 60, 0.15);  color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); } /* Cancelado */
 
-/* Acciones */
+/* --- ACCIONES --- */
 .text-right { text-align: right; }
 .action-cell { text-align: right; white-space: nowrap; }
 
@@ -130,12 +146,16 @@
   transition: all 0.2s;
 }
 
-.icon-btn:hover { background: var(--color-mid); color: var(--color-white); border-color: var(--color-mid); transform: translateY(-2px); }
+.icon-btn:hover {
+  background: var(--color-mid);
+  color: var(--color-white);
+  border-color: var(--color-mid);
+  transform: translateY(-2px);
+}
 
-/* SVG Ajuste (Igual que en Flota) */
 .svg-icon { width: 55%; height: 55%; object-fit: contain; }
 
-/* Responsividad */
+/* --- RESPONSIVIDAD --- */
 @media (max-width: 900px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }

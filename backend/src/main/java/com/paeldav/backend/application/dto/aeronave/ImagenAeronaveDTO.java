@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * DTO de respuesta para ImagenAeronave.
+ * DTO con los datos de una imagen de aeronave para responder.
  */
 @Getter
 @Setter
@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class ImagenAeronaveDTO {
-    private Long id;
-    private String urlImagen;
-    private String idCloudinary;
-    private TipoImagenAeronave tipo;
-    private String descripcion;
-    private Integer ordenVisualizacion;
-    private LocalDateTime fechaCarga;
-    private Long tamanoBytes;
-    private String cargadoPorNombre;
+    private Long id; // Identificador único
+    private String urlImagen; // URL de la imagen
+    private String idCloudinary; // ID en Cloudinary
+    private TipoImagenAeronave tipo; // Tipo de imagen
+    private String descripcion; // Descripción
+    private Integer ordenVisualizacion; // Orden de visualización
+    private LocalDateTime fechaCarga; // Fecha de carga
+    private Long tamanoBytes; // Tamaño en bytes
+    private String cargadoPorNombre; // Nombre de quien cargó la imagen
 }

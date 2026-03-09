@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 
+/**
+ * Servicio encargado de gestionar las sesiones activas de los usuarios.
+ */
 @Service
 @RequiredArgsConstructor
 public class SesionServiceImpl implements SesionService {
@@ -24,6 +27,9 @@ public class SesionServiceImpl implements SesionService {
     private final SesionActivaRepository sesionActivaRepository;
     private final JwtService jwtService;
 
+    /**
+     * Crea una nueva sesión para un usuario autenticado.
+     */
     @Override
     @Transactional
     public SesionActiva crearSesion(Usuario usuario, String token, String dispositivo, String direccionIp, String userAgent) {
@@ -43,6 +49,9 @@ public class SesionServiceImpl implements SesionService {
         return sesionActivaRepository.save(sesion);
     }
 
+    /**
+     * Obtiene las sesiones activas de un usuario.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<SesionActivaDTO> obtenerSesionesActivas(Long usuarioId, String tokenActual) {
@@ -63,6 +72,9 @@ public class SesionServiceImpl implements SesionService {
                 .toList();
     }
 
+    /**
+     * Revoca una sesión específica del usuario.
+     */
     @Override
     @Transactional
     public void revocarSesion(Long sesionId, Long usuarioId) {
@@ -77,12 +89,18 @@ public class SesionServiceImpl implements SesionService {
         sesionActivaRepository.save(sesion);
     }
 
+    /**
+     * Revoca todas las sesiones activas de un usuario.
+     */
     @Override
     @Transactional
     public void revocarTodasLasSesiones(Long usuarioId) {
         sesionActivaRepository.revocarTodasLasSesiones(usuarioId);
     }
 
+    /**
+     * Revoca todas las sesiones excepto la actual.
+     */
     @Override
     @Transactional
     public void revocarOtrasSesiones(Long usuarioId, String tokenActual) {
@@ -97,6 +115,9 @@ public class SesionServiceImpl implements SesionService {
                 });
     }
 
+    /**
+     * Valida si una sesión sigue siendo válida.
+     */
     @Override
     @Transactional(readOnly = true)
     public boolean validarSesion(String token) {
@@ -104,6 +125,9 @@ public class SesionServiceImpl implements SesionService {
         return sesionActivaRepository.findValidSession(tokenHash, LocalDateTime.now()).isPresent();
     }
 
+    /**
+     * Actualiza la última actividad de una sesión.
+     */
     @Override
     @Transactional
     public void actualizarUltimaActividad(String token) {
@@ -111,6 +135,9 @@ public class SesionServiceImpl implements SesionService {
         sesionActivaRepository.actualizarUltimaActividad(tokenHash, LocalDateTime.now());
     }
 
+    /**
+     * Genera un hash SHA-256 del token para almacenarlo de forma segura.
+     */
     @Override
     public String hashToken(String token) {
         try {

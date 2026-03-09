@@ -28,11 +28,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ExportarReporteServiceImpl implements ExportarReporteService {
 
-    private final ReporteRepository reporteRepository;
-    private final ReporteMapper reporteMapper;
-    private final FormateadorPdfService formateadorPdf;
-    private final FormateadorExcelService formateadorExcel;
-    private final FormateadorCsvService formateadorCsv;
+    private final ReporteRepository reporteRepository; // Repositorio de reportes
+    private final ReporteMapper reporteMapper; // Mapper de reportes
+    private final FormateadorPdfService formateadorPdf; // Servicio para exportar a PDF
+    private final FormateadorExcelService formateadorExcel; // Servicio para exportar a Excel
+    private final FormateadorCsvService formateadorCsv; // Servicio para exportar a CSV
 
     @Override
     public ByteArrayOutputStream exportarReporte(Long reporteId, FormatoExportacion formato) {
@@ -45,7 +45,7 @@ public class ExportarReporteServiceImpl implements ExportarReporteService {
         ReporteDTO reporteDTO = reporteMapper.toDTO(reporte);
 
         // Registrar en logs
-        log.info("Exportando reporte tipo: {}, generado por: {}", 
+        log.info("Exportando reporte tipo: {}, generado por: {}",
                 reporte.getTipo(), reporte.getGeneradoPor().getNombre());
 
         // Seleccionar formateador según el tipo

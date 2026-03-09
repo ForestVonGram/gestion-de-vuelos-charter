@@ -6,103 +6,183 @@
 
     <header class="topbar">
       <div class="welcome-box">
+        <!-- Título principal de la sección de gestión -->
         <h1>Gestión de Personal</h1>
+
+        <!-- Descripción breve del propósito del módulo -->
         <p>Registro y administración del personal operativo</p>
       </div>
 
+      <!-- Avatar del usuario actual (muestra la primera letra del nombre) -->
       <div class="avatar-circle">
         {{ currentUser?.nombreCompleto?.charAt(0)}}
       </div>
     </header>
 
+    <!-- Encabezado de la sección del formulario -->
     <div class="section-header">
       <h2 class="page-title">Nuevo Personal</h2>
     </div>
 
+    <!-- Panel contenedor del formulario -->
     <section class="content-panel">
 
+      <!--
+        Formulario reactivo de Angular:
+        - formGroup conecta el formulario con el FormGroup del componente
+        - ngSubmit ejecuta guardarPersonal() al enviar el formulario
+      -->
       <form [formGroup]="personalForm" (ngSubmit)="guardarPersonal()" class="form-grid">
 
-        <!-- Usuario -->
+        <!-- =========================
+             Campo: Usuario ID
+             ========================= -->
         <div class="form-group">
           <label>Usuario ID *</label>
-          <input type="number" formControlName="usuarioId" min="0" step="1" (keydown)="blockNegative($event)"
-                (input)="sanitizeNumber('usuarioId')">
+
+          <!--
+            Input numérico para identificar el usuario asociado al personal
+            - min="0" evita números negativos
+            - step="1" permite solo enteros
+            - blockNegative bloquea la escritura de números negativos
+            - sanitizeNumber limpia valores inválidos
+          -->
+          <input type="number"
+                 formControlName="usuarioId"
+                 min="0"
+                 step="1"
+                 (keydown)="blockNegative($event)"
+                 (input)="sanitizeNumber('usuarioId')">
+
+          <!--
+            Mensaje de error mostrado cuando:
+            - El formulario fue enviado (submitted)
+            - El campo es inválido
+          -->
           @if(submitted && personalForm.controls['usuarioId'].invalid){
-          <span class="error">
+            <span class="error">
             El usuario es obligatorio
           </span>
-            }
+          }
         </div>
 
-        <!-- Número empleado -->
+        <!-- =========================
+             Campo: Número de empleado
+             ========================= -->
         <div class="form-group">
           <label>Número de Empleado *</label>
-          <input type="text" formControlName="numeroEmpleado" 
-                (keydown)="blockNegative($event)"
-                (input)="sanitizeNumber('numeroEmpleado')">
-            @if(submitted && personalForm.controls['numeroEmpleado'].invalid){
-             <span class="error">
-                El número de empleado es obligatorio
-            </span>
-            }
+
+          <!--
+            Campo para registrar el número interno del empleado
+            Se reutilizan las funciones de validación numérica
+          -->
+          <input type="text"
+                 formControlName="numeroEmpleado"
+                 (keydown)="blockNegative($event)"
+                 (input)="sanitizeNumber('numeroEmpleado')">
+
+          <!-- Validación obligatoria -->
+          @if(submitted && personalForm.controls['numeroEmpleado'].invalid){
+            <span class="error">
+              El número de empleado es obligatorio
+          </span>
+          }
         </div>
 
-        <!-- Cargo -->
+        <!-- =========================
+             Campo: Cargo
+             ========================= -->
         <div class="form-group">
           <label>Cargo *</label>
 
+          <!--
+            Selector de cargo del personal.
+            Las opciones se generan dinámicamente desde el arreglo "cargos"
+          -->
           <select formControlName="cargo">
             <option value="">Seleccione un cargo</option>
 
+            <!--
+              @for es la nueva sintaxis de Angular para iterar listas
+              track cargos ayuda al rendimiento del renderizado
+            -->
             @for (cargo of cargos; track cargos) {
-            <option >
-              {{ cargo }}
-            </option>
+              <option>
+                {{ cargo }}
+              </option>
             }
           </select>
 
-            @if(submitted && personalForm.controls['cargo'].invalid){
-             <span class="error" >
-                El cargo es obligatorio
-            </span>
-            }
+          <!-- Validación obligatoria -->
+          @if(submitted && personalForm.controls['cargo'].invalid){
+            <span class="error">
+              El cargo es obligatorio
+          </span>
+          }
         </div>
 
-        <!-- Área -->
+        <!-- =========================
+             Campo: Área de especialización
+             ========================= -->
         <div class="form-group">
           <label>Área de Especialización</label>
+
+          <!-- Campo opcional -->
           <input type="text" formControlName="areaEspecializacion">
         </div>
 
-        <!-- Certificaciones -->
+        <!-- =========================
+             Campo: Certificaciones
+             ========================= -->
         <div class="form-group">
           <label>Certificaciones</label>
+
+          <!-- Campo opcional para registrar certificaciones profesionales -->
           <input type="text" formControlName="certificaciones">
         </div>
 
-        <!-- Fecha contratación -->
+        <!-- =========================
+             Campo: Fecha de contratación
+             ========================= -->
         <div class="form-group">
           <label>Fecha de Contratación</label>
+
+          <!-- Selector de fecha -->
           <input type="date" formControlName="fechaContratacion">
         </div>
 
-        <!-- Turno -->
+        <!-- =========================
+             Campo: Turno
+             ========================= -->
         <div class="form-group">
           <label>Turno</label>
+
+          <!-- Permite registrar el turno laboral -->
           <input type="text" formControlName="turno">
         </div>
 
-        <!-- Observaciones -->
+        <!-- =========================
+             Campo: Observaciones
+             ========================= -->
         <div class="form-group full-width">
           <label>Observaciones</label>
+
+          <!-- Área de texto para comentarios adicionales -->
           <textarea rows="4" formControlName="observaciones"></textarea>
         </div>
 
-        <!-- Botón -->
+        <!-- =========================
+             Botón de envío
+             ========================= -->
         <div class="form-actions">
+
+          <!--
+            Botón que envía el formulario
+            ejecutando guardarPersonal()
+          -->
           <button class="btn-primary" type="submit">
 
+            <!-- Icono visual -->
             <i class="fas fa-save"></i>
 
             Guardar Personal

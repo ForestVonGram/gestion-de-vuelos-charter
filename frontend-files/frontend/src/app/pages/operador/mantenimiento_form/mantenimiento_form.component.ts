@@ -13,6 +13,7 @@ import { AuthService } from '../../../services/auth/auth.service';
   imports: [CommonModule, ReactiveFormsModule, RouterModule]
 })
 export class MantenimientoFormComponent implements OnInit {
+  // --- Propiedades de Estado y Control ---
   mantenimientoForm: FormGroup;
   isEditMode: boolean = false;
   isViewMode: boolean = false;
@@ -20,12 +21,12 @@ export class MantenimientoFormComponent implements OnInit {
   loading = false;
   mantenimientoId: number | null = null;
 
-  // Propiedades para el dropdown de usuario
+  // Propiedades para la cabecera de usuario
   userName: string = 'Operador';
   userEmail: string = '';
   isDropdownOpen: boolean = false;
 
-  // Tipos de mantenimiento según el enum del backend
+  // Opciones para el selector de tipos de mantenimiento (Match con Backend Enum)
   tipos_mantenimiento = [
     { value: 'PREVENTIVO', label: 'Preventivo', icon: '🔧', desc: 'Mantenimiento programado' },
     { value: 'CORRECTIVO', label: 'Correctivo', icon: '⚙️', desc: 'Reparación de fallas' },
@@ -33,7 +34,7 @@ export class MantenimientoFormComponent implements OnInit {
     { value: 'INSPECCION', label: 'Inspección', icon: '🔍', desc: 'Inspección técnica' }
   ];
 
-  // Datos de ejemplo para selects (esto vendría del backend)
+  // Listados auxiliares para poblar los Selects del formulario
   aeronaves = [
     { id: 101, matricula: 'LV-ABC' },
     { id: 102, matricula: 'LV-XYZ' },
@@ -55,41 +56,41 @@ export class MantenimientoFormComponent implements OnInit {
     private mantenimientoService: MantenimientoService,
     private authService: AuthService
   ) {
+    // Inicialización del formulario reactivo con validaciones según el DTO de creación
     this.mantenimientoForm = this.fb.group({
-      aeronaveId: ['', Validators.required],           // @NotNull
-      tipo: ['PREVENTIVO', Validators.required],       // @NotNull
-      descripcion: ['', [Validators.required, Validators.minLength(10)]], // @NotBlank
-      fechaInicio: [this.getCurrentDateTime()],        // Opcional en DTO
-      responsableId: [''],                              // Opcional en DTO
-      costo: [''],                                      // Opcional en DTO
-      kilometrajeAeronave: [''],                        // Opcional en DTO
-      horasVueloAeronave: [''],                         // Opcional en DTO
-      observaciones: ['']                               // Opcional en DTO
-      // 👆 ELIMINADO: completado - No existe en MantenimientoCreateDTO
+      aeronaveId: ['', Validators.required],
+      tipo: ['PREVENTIVO', Validators.required],
+      descripcion: ['', [Validators.required, Validators.minLength(10)]],
+      fechaInicio: [this.getCurrentDateTime()],
+      responsableId: [''],
+      costo: [''],
+      kilometrajeAeronave: [''],
+      horasVueloAeronave: [''],
+      observaciones: ['']
     });
   }
 
   ngOnInit(): void {
     this.cargarDatosUsuario();
 
-    // Verificar si hay tipo en query params (viene de mantenimientos ofrecidos)
+    // Captura parámetros opcionales de la URL (ej: tipo sugerido)
     this.route.queryParams.subscribe(params => {
       if (params['tipo']) {
-        this.mantenimientoForm.patchValue({
-          tipo: params['tipo']
-        });
+        this.mantenimientoForm.patchValue({ tipo: params['tipo'] });
       }
     });
 
+    // Determina si el componente está en modo lectura (ver detalle) o creación
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isViewMode = true;
       this.mantenimientoId = Number(id);
       this.cargarMantenimiento(this.mantenimientoId);
-      this.mantenimientoForm.disable();
+      this.mantenimientoForm.disable(); // Desactiva edición en modo visualización
     }
   }
 
+  // Recupera información de sesión para la UI
   cargarDatosUsuario(): void {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
@@ -107,11 +108,13 @@ export class MantenimientoFormComponent implements OnInit {
     this.router.navigate(['/auth/login']);
   }
 
+  // Genera fecha actual compatible con inputs tipo datetime-local
   getCurrentDateTime(): string {
     const now = new Date();
     return now.toISOString().slice(0, 16);
   }
 
+  // Obtiene los datos de un mantenimiento existente para poblar el formulario
   cargarMantenimiento(id: number): void {
     this.loading = true;
     this.mantenimientoService.obtenerPorId(id).subscribe({
@@ -130,38 +133,29 @@ export class MantenimientoFormComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        console.error('Error al cargar mantenimiento:', error);
-        alert('Error al cargar los datos del mantenimiento');
+        console.error('Error al cargar:', error);
+        alert('Error al cargar los datos');
         this.loading = false;
         this.router.navigate(['/operador/mantenimiento']);
       }
     });
   }
 
+  // Procesa el envío del formulario al backend
   onSubmit(): void {
-    if (this.isViewMode) {
-      return;
-    }
+    if (this.isViewMode) return;
 
     this.submitted = true;
 
+    // Validación preventiva antes del envío
     if (this.mantenimientoForm.invalid) {
       this.markFormGroupTouched(this.mantenimientoForm);
-
-      // Mostrar qué campos están inválidos para depuración
-      Object.keys(this.mantenimientoForm.controls).forEach(key => {
-        const control = this.mantenimientoForm.get(key);
-        if (control?.invalid) {
-          console.log(`Campo inválido: ${key}`, control.errors);
-        }
-      });
-
       return;
     }
 
     this.loading = true;
 
-    // Preparar los datos exactamente como los espera el backend (MantenimientoCreateDTO)
+    // Conversión de tipos de datos para coincidir con MantenimientoCreateDTO
     const formData = {
       aeronaveId: Number(this.mantenimientoForm.value.aeronaveId),
       tipo: this.mantenimientoForm.value.tipo,
@@ -174,8 +168,7 @@ export class MantenimientoFormComponent implements OnInit {
       observaciones: this.mantenimientoForm.value.observaciones || null
     };
 
-    console.log('Enviando datos al backend:', formData);
-
+    // Llamada al servicio para persistir los datos
     this.mantenimientoService.crearMantenimiento(formData).subscribe({
       next: (nuevoMantenimiento) => {
         this.loading = false;
@@ -185,18 +178,12 @@ export class MantenimientoFormComponent implements OnInit {
       error: (error) => {
         console.error('Error al crear:', error);
         this.loading = false;
-
-        // Mostrar mensaje de error más detallado
-        if (error.error) {
-          console.error('Detalles del error:', error.error);
-          alert(`Error al crear el mantenimiento: ${error.error.message || 'Error desconocido'}`);
-        } else {
-          alert('Error al crear el mantenimiento');
-        }
+        alert(`Error al crear el mantenimiento: ${error.error?.message || 'Error desconocido'}`);
       }
     });
   }
 
+  // Activa visualmente los errores de todos los campos del formulario
   markFormGroupTouched(formGroup: FormGroup) {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -210,11 +197,13 @@ export class MantenimientoFormComponent implements OnInit {
     this.router.navigate(['/operador/mantenimiento']);
   }
 
+  // Utilidad para verificar si un campo debe mostrar error visual
   isFieldInvalid(controlName: string): boolean {
     const control = this.mantenimientoForm.get(controlName);
     return control ? (control.touched && control.invalid) : false;
   }
 
+  // Generador de mensajes de error personalizados para el usuario
   getErrorMessage(controlName: string): string {
     const control = this.mantenimientoForm.get(controlName);
     if (!control?.touched) return '';

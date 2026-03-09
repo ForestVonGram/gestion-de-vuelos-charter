@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class NominaServiceImpl implements NominaService {
 
-    private final NominaRepository nominaRepository;
-    private final PersonalRepository personalRepository;
-    private final NominaMapper nominaMapper;
+    private final NominaRepository nominaRepository; // Repositorio de nóminas
+    private final PersonalRepository personalRepository; // Repositorio de personal
+    private final NominaMapper nominaMapper; // Mapper de nóminas
 
     @Override
     public NominaDTO generarNomina(NominaCreateDTO nominaCreateDTO) {
@@ -48,7 +48,7 @@ public class NominaServiceImpl implements NominaService {
 
         Nomina nomina = nominaMapper.toEntity(nominaCreateDTO);
         nomina.setPersonal(personal);
-        
+
         // Calcular deducciones totales
         Double deduccionesTotal = nominaCreateDTO.getDeducciones() +
                 nominaCreateDTO.getDescuentoImpuesto() +
@@ -128,14 +128,14 @@ public class NominaServiceImpl implements NominaService {
         nominaMapper.updateEntityFromDTO(nominaUpdateDTO, nomina);
 
         // Si se actualiza bonificaciones o deducciones adicionales, recalcular deducciones totales
-        if (nominaUpdateDTO.getDeducciones() != null || 
-            nominaUpdateDTO.getDescuentoImpuesto() != null ||
-            nominaUpdateDTO.getDescuentoAfiliacion() != null) {
-            
+        if (nominaUpdateDTO.getDeducciones() != null ||
+                nominaUpdateDTO.getDescuentoImpuesto() != null ||
+                nominaUpdateDTO.getDescuentoAfiliacion() != null) {
+
             Double deduccionesTotal = (nominaUpdateDTO.getDeducciones() != null ? nominaUpdateDTO.getDeducciones() : nomina.getDeducciones());
             Double descuentoImpuesto = nominaUpdateDTO.getDescuentoImpuesto() != null ? nominaUpdateDTO.getDescuentoImpuesto() : nomina.getDescuentoImpuesto();
             Double descuentoAfiliacion = nominaUpdateDTO.getDescuentoAfiliacion() != null ? nominaUpdateDTO.getDescuentoAfiliacion() : nomina.getDescuentoAfiliacion();
-            
+
             nomina.setDeducciones(deduccionesTotal + descuentoImpuesto + descuentoAfiliacion);
             nomina.setDescuentoImpuesto(descuentoImpuesto);
             nomina.setDescuentoAfiliacion(descuentoAfiliacion);
@@ -186,14 +186,14 @@ public class NominaServiceImpl implements NominaService {
     @Override
     public Integer procesarPagosNominaPendientes() {
         List<Nomina> nominasPendientes = nominaRepository.findByEstado(EstadoNomina.PENDIENTE);
-        
+
         int procesadas = 0;
         for (Nomina nomina : nominasPendientes) {
             nomina.setEstado(EstadoNomina.EN_PROCESO);
             nominaRepository.save(nomina);
             procesadas++;
         }
-        
+
         return procesadas;
     }
 

@@ -1,4 +1,8 @@
 /* --- TARJETAS DE ESTADÍSTICAS --- */
+/**
+ * Layout de rejilla (Grid) para las métricas principales.
+ * El uso de auto-fit y minmax asegura que las tarjetas sean responsivas automáticamente.
+ */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -6,10 +10,14 @@
   margin-bottom: 3rem;
 }
 
+/**
+ * Tarjeta individual con efecto Glassmorphism.
+ * Utiliza un fondo semi-transparente y desenfoque de fondo para un look moderno.
+ */
 .stat-card {
   background-color: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); /* Efecto de cristal esmerilado */
   padding: 1.5rem;
   border-radius: 16px;
   display: flex;
@@ -20,10 +28,13 @@
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px); /* Elevación suave al pasar el mouse */
   background-color: rgba(255, 255, 255, 0.06);
 }
 
+/**
+ * Contenedor del ícono dentro de la tarjeta de estadística.
+ */
 .stat-icon {
   width: 55px;
   height: 55px;
@@ -40,6 +51,7 @@
   flex-direction: column;
 }
 
+/* Valor numérico destacado con tipografía Archivo Black para máxima legibilidad */
 .stat-value {
   font-family: 'Archivo Black', sans-serif;
   color: var(--color-white);
@@ -54,6 +66,10 @@
 }
 
 /* --- TABLA DE DATOS --- */
+/**
+ * Panel principal que contiene las tablas de administración.
+ * Diseño robusto con bordes sutiles y sombras profundas.
+ */
 .content-panel {
   background-color: rgba(20, 20, 40, 0.6);
   border-radius: 20px;
@@ -76,6 +92,9 @@
   margin: 0;
 }
 
+/**
+ * Botones de acción estilizados con bordes redondeados (estilo píldora).
+ */
 .btn-action {
   background: transparent;
   color: var(--color-mid);
@@ -94,6 +113,7 @@
   color: var(--color-white);
 }
 
+/* Contenedor para habilitar scroll horizontal en pantallas pequeñas */
 .table-responsive {
   overflow-x: auto;
 }
@@ -103,6 +123,7 @@
   border-collapse: collapse;
 }
 
+/* Encabezados de tabla con espaciado de letras para un look profesional */
 .admin-table th {
   text-align: left;
   padding: 1.2rem 1rem;
@@ -122,13 +143,18 @@
   font-size: 0.95rem;
 }
 
+/* Estilo para identificadores únicos (IDs) */
 .id-cell {
   font-weight: 600;
   color: var(--color-white);
   font-family: 'Libre Franklin', sans-serif;
 }
 
-/* Etiquetas de Estado */
+/* --- ETIQUETAS DE ESTADO (BADGES) --- */
+/**
+ * Pequeños indicadores visuales de estado con colores temáticos.
+ * Utilizan un fondo con baja opacidad y bordes para no saturar el diseño.
+ */
 .status-badge {
   padding: 5px 12px;
   border-radius: 20px;
@@ -143,6 +169,7 @@
 .status-error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
 .status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
 
+/* Botones circulares para íconos (Editar, Eliminar, etc.) */
 .icon-btn {
   background: none;
   border: none;

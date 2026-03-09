@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Implementación del servicio de gestión de registros de auditoría.
+ * Servicio encargado de gestionar los registros de auditoría del sistema.
  */
 @Service
 @RequiredArgsConstructor
@@ -23,11 +23,14 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
     private final RegistroAuditoriaRepository registroAuditoriaRepository;
     private final RegistroAuditoriaMapper registroAuditoriaMapper;
 
+    /**
+     * Registra un evento de auditoría en el sistema.
+     */
     @Override
     @Transactional
     public RegistroAuditoriaDTO registrarEvento(Long usuarioId, TipoEventoAuditoria tipoEvento,
-                                               String directorIP, String navegador,
-                                               Boolean resultado, String detallesError) {
+                                                String directorIP, String navegador,
+                                                Boolean resultado, String detallesError) {
         RegistroAuditoria registro = RegistroAuditoria.builder()
                 .usuarioId(usuarioId)
                 .tipoEvento(tipoEvento)
@@ -41,6 +44,9 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTO(registro);
     }
 
+    /**
+     * Obtiene todos los eventos de auditoría de un usuario.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerAuditoriaPorUsuario(Long usuarioId) {
@@ -48,6 +54,9 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene eventos de auditoría según su tipo.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerEventosPorTipo(TipoEventoAuditoria tipoEvento) {
@@ -55,6 +64,9 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene eventos registrados dentro de un rango de fechas.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerEventosPorFecha(LocalDateTime inicio, LocalDateTime fin) {
@@ -62,16 +74,22 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene eventos de un usuario dentro de un rango de fechas.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerEventosPorUsuarioYFecha(Long usuarioId,
-                                                                      LocalDateTime inicio,
-                                                                      LocalDateTime fin) {
+                                                                     LocalDateTime inicio,
+                                                                     LocalDateTime fin) {
         List<RegistroAuditoria> registros = registroAuditoriaRepository
                 .findByUsuarioIdAndTimestampBetween(usuarioId, inicio, fin);
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene los eventos donde el acceso fue denegado.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerIntentosAccesoDenegados() {
@@ -79,6 +97,9 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene intentos de acceso denegados filtrados por tipo de evento.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerIntentosAccesoDenegadosPorTipo(TipoEventoAuditoria tipoEvento) {
@@ -87,6 +108,9 @@ public class RegistroAuditoriaServiceImpl implements RegistroAuditoriaService {
         return registroAuditoriaMapper.toDTOList(registros);
     }
 
+    /**
+     * Obtiene todos los eventos de auditoría registrados.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<RegistroAuditoriaDTO> obtenerTodosLosEventos() {
