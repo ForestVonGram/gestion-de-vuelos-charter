@@ -11,6 +11,7 @@ public interface EmailService {
     @Async
     public void enviarEmailConfirmacionCambio(String destinatario, String nombreUsuario);
 
+    @Async
     void enviarEmailRecuperacionConCodigo(String to, String codigo, String nombreCompleto);
 
     String buildMensajeRecuperacion(String nombre, String resetUrl);

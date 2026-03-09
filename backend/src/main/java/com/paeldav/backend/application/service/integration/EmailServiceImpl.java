@@ -128,6 +128,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void enviarEmailRecuperacionConCodigo(String to, String codigo, String nombreCompleto) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -153,7 +154,7 @@ public class EmailServiceImpl implements EmailService {
 
         } catch (Exception e) {
             log.error("Error al enviar email de recuperación con código a: {}", to, e);
-            throw new RuntimeException("Error al enviar el email de recuperación", e);
+            // No lanzar excepción aquí para no bloquear el flujo de recuperación
         }
     }
 }

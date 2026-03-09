@@ -235,6 +235,84 @@ class PasswordServiceTest {
     }
 
     @Nested
+    @DisplayName("Verificar Código y Generar Token Tests")
+    class VerificarCodigoYGenerarTokenTests {
+
+        @Test
+        @DisplayName("Verificar código válido retorna token UUID")
+        void verificarCodigoYGenerarToken_ConCodigoValido_RetornaToken() {
+            // Arrange
+            String codigoEsperado = "123456";
+            String emailEsperado = "juan@test.com";
+            TokenRecuperacion tokenConCodigo = TokenRecuperacion.builder()
+                    .id(1L)
+                    .usuario(usuarioTest)
+                    .token("valid-token-123")
+                    .codigo(codigoEsperado)
+                    .fechaExpiracion(LocalDateTime.now().plusHours(1))
+                    .usado(false)
+                    .build();
+
+            when(tokenRecuperacionRepository.findValidTokenByCodigoAndEmailWithUser(
+                    eq(codigoEsperado), eq(emailEsperado), any(LocalDateTime.class)))
+                    .thenReturn(Optional.of(tokenConCodigo));
+
+            // Act
+            String tokenRetornado = passwordService.verificarCodigoYGenerarToken(emailEsperado, codigoEsperado);
+
+            // Assert
+            assertNotNull(tokenRetornado);
+            assertEquals("valid-token-123", tokenRetornado);
+            verify(tokenRecuperacionRepository).findValidTokenByCodigoAndEmailWithUser(
+                    eq(codigoEsperado), eq(emailEsperado), any(LocalDateTime.class));
+        }
+
+        @Test
+        @DisplayName("Verificar código inválido lanza excepción")
+        void verificarCodigoYGenerarToken_ConCodigoInvalido_LanzaExcepcion() {
+            // Arrange
+            when(tokenRecuperacionRepository.findValidTokenByCodigoAndEmailWithUser(
+                    anyString(), anyString(), any(LocalDateTime.class)))
+                    .thenReturn(Optional.empty());
+
+            // Act & Assert
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+                passwordService.verificarCodigoYGenerarToken("juan@test.com", "000000");
+            });
+
+            assertEquals("Código inválido o expirado", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("Verificar código expirado lanza excepción")
+        void verificarCodigoYGenerarToken_ConCodigoExpirado_LanzaExcepcion() {
+            // Arrange - el código está expirado, findValidTokenByCodigoAndEmailWithUser retorna empty
+            when(tokenRecuperacionRepository.findValidTokenByCodigoAndEmailWithUser(
+                    anyString(), anyString(), any(LocalDateTime.class)))
+                    .thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> {
+                passwordService.verificarCodigoYGenerarToken("juan@test.com", "123456");
+            });
+        }
+
+        @Test
+        @DisplayName("Verificar código para email incorrecto lanza excepción")
+        void verificarCodigoYGenerarToken_ConEmailIncorrecto_LanzaExcepcion() {
+            // Arrange
+            when(tokenRecuperacionRepository.findValidTokenByCodigoAndEmailWithUser(
+                    anyString(), eq("otro@test.com"), any(LocalDateTime.class)))
+                    .thenReturn(Optional.empty());
+
+            // Act & Assert
+            assertThrows(IllegalArgumentException.class, () -> {
+                passwordService.verificarCodigoYGenerarToken("otro@test.com", "123456");
+            });
+        }
+    }
+
+    @Nested
     @DisplayName("Validar Token Tests")
     class ValidarTokenTests {
 
