@@ -9,6 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+/**
+ * Servicio encargado de enviar correos electrónicos del sistema.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,6 +25,9 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
+    /**
+     * Envía un correo para recuperación de contraseña con enlace.
+     */
     @Override
     @Async
     public void enviarEmailRecuperacion(String destinatario, String token, String nombreUsuario) {
@@ -41,6 +47,9 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     * Envía un correo confirmando el cambio de contraseña.
+     */
     @Override
     @Async
     public void enviarEmailConfirmacionCambio(String destinatario, String nombreUsuario) {
@@ -58,6 +67,9 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     * Construye el mensaje de recuperación de contraseña.
+     */
     @Override
     public String buildMensajeRecuperacion(String nombre, String resetUrl) {
         return String.format("""
@@ -77,6 +89,9 @@ public class EmailServiceImpl implements EmailService {
             """, nombre, resetUrl);
     }
 
+    /**
+     * Construye el mensaje de confirmación de cambio de contraseña.
+     */
     @Override
     public String buildMensajeConfirmacion(String nombre) {
         return String.format("""
@@ -91,6 +106,9 @@ public class EmailServiceImpl implements EmailService {
             """, nombre);
     }
 
+    /**
+     * Envía el código de verificación para autenticación en dos factores (2FA).
+     */
     @Override
     @Async
     public void enviarCodigoVerificacion2FA(String destinatario, String codigo, String nombreUsuario) {
@@ -108,6 +126,9 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     * Construye el mensaje con el código de verificación 2FA.
+     */
     @Override
     public String buildMensajeCodigoVerificacion(String nombre, String codigo) {
         return String.format("""
@@ -127,6 +148,9 @@ public class EmailServiceImpl implements EmailService {
             """, nombre, codigo);
     }
 
+    /**
+     * Envía un correo de recuperación usando un código en lugar de un enlace.
+     */
     @Override
     public void enviarEmailRecuperacionConCodigo(String to, String codigo, String nombreCompleto) {
         try {
