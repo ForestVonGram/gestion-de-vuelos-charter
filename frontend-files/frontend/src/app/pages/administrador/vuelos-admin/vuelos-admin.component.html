@@ -1,38 +1,76 @@
 <div class="admin-container">
 
+  <!-- Sidebar del panel administrativo -->
   <app-admin-sidebar></app-admin-sidebar>
 
   <main class="main-content">
 
+    <!-- =========================
+         BARRA SUPERIOR
+         ========================= -->
     <header class="topbar">
+
+      <!-- Información del módulo -->
       <div class="welcome-box">
         <h1>Centro de Operaciones</h1>
         <p>Gestión y programación de vuelos</p>
       </div>
+
+      <!-- Perfil del usuario actual -->
       <div class="user-profile">
+
+        <!-- Avatar con inicial del usuario -->
         <div class="avatar-circle">
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
         </div>
+
       </div>
+
     </header>
 
+    <!-- =========================
+         ENCABEZADO DE SECCIÓN
+         ========================= -->
     <div class="section-header">
+
+      <!-- Título de la página -->
       <h2 class="page-title">Directorio de VuelosComponent</h2>
-      <button class="btn-primary"><i class="fas fa-plus"></i> Programar Vuelo</button>
+
+      <!-- Botón para crear un nuevo vuelo -->
+      <button class="btn-primary">
+        <i class="fas fa-plus"></i>
+        Programar Vuelo
+      </button>
+
     </div>
 
+    <!-- =========================
+         PANEL DE CONTENIDO
+         ========================= -->
     <section class="content-panel">
+
+      <!-- Encabezado del panel -->
       <div class="panel-header">
+
+        <!-- Título -->
         <h3>Registro General</h3>
+
+        <!-- Filtros de estado -->
         <div class="filter-group">
           <button class="filter-btn active">Todos</button>
           <button class="filter-btn">Pendientes</button>
           <button class="filter-btn">En Vuelo</button>
         </div>
+
       </div>
 
+      <!-- Contenedor responsive de la tabla -->
       <div class="table-responsive">
+
+        <!-- Tabla administrativa -->
         <table class="admin-table">
+
+          <!-- Encabezado de columnas -->
           <thead>
           <tr>
             <th>ID Vuelo</th>
@@ -44,39 +82,105 @@
             <th class="text-right">Acciones</th>
           </tr>
           </thead>
+
+          <!-- Cuerpo de la tabla -->
           <tbody>
+
+          <!-- Iteración de la lista de vuelos -->
           <tr *ngFor="let vuelo of vuelos">
-            <td class="id-cell">#{{ vuelo.id }}</td>
-            <td>{{ vuelo.usuarioNombre }}</td>
+
+            <!-- ID del vuelo -->
+            <td class="id-cell">
+              #{{ vuelo.id }}
+            </td>
+
+            <!-- Usuario que solicitó el vuelo -->
+            <td>
+              {{ vuelo.usuarioNombre }}
+            </td>
+
+            <!-- Ruta del vuelo -->
             <td class="route-cell">
-              <span class="city">{{ vuelo.origen.substring(0, 3) }}</span>
+
+              <!-- Código abreviado del aeropuerto de origen -->
+              <span class="city">
+                {{ vuelo.origen.substring(0, 3) }}
+              </span>
+
+              <!-- Icono visual de vuelo -->
               <i class="fas fa-plane route-icon"></i>
-              <span class="city">{{ vuelo.destino.substring(0, 3) }}</span>
+
+              <!-- Código abreviado del aeropuerto de destino -->
+              <span class="city">
+                {{ vuelo.destino.substring(0, 3) }}
+              </span>
+
             </td>
+
+            <!-- Fecha y hora programada -->
             <td>
+
               <div class="date-block">
-                <span class="date">{{ vuelo.fechaSalidaProgramada | date:'dd MMM, yyyy' }}</span>
-                <span class="time">{{ vuelo.fechaSalidaProgramada | date:'HH:mm' }}</span>
-              </div>
-            </td>
-            <td>
-              <span class="aircraft-badge" *ngIf="vuelo.aeronaveMatricula">{{ vuelo.aeronaveMatricula }}</span>
-              <span class="unassigned-text" *ngIf="!vuelo.aeronaveMatricula">Sin asignar</span>
-            </td>
-            <td>
-                <span class="status-badge" [ngClass]="getEstadoClase(vuelo.estado)">
-                  {{ vuelo.estado | titlecase }}
+
+                <!-- Fecha -->
+                <span class="date">
+                  {{ vuelo.fechaSalidaProgramada | date:'dd MMM, yyyy' }}
                 </span>
+
+                <!-- Hora -->
+                <span class="time">
+                  {{ vuelo.fechaSalidaProgramada | date:'HH:mm' }}
+                </span>
+
+              </div>
+
             </td>
+
+            <!-- Aeronave asignada -->
+            <td>
+
+              <!-- Matrícula si hay aeronave asignada -->
+              <span class="aircraft-badge" *ngIf="vuelo.aeronaveMatricula">
+                {{ vuelo.aeronaveMatricula }}
+              </span>
+
+              <!-- Texto cuando no hay aeronave asignada -->
+              <span class="unassigned-text" *ngIf="!vuelo.aeronaveMatricula">
+                Sin asignar
+              </span>
+
+            </td>
+
+            <!-- Estado del vuelo -->
+            <td>
+
+              <!-- Badge con clase dinámica según el estado -->
+              <span class="status-badge" [ngClass]="getEstadoClase(vuelo.estado)">
+                {{ vuelo.estado | titlecase }}
+              </span>
+
+            </td>
+
+            <!-- Acciones -->
             <td class="action-cell">
+
+              <!-- Botón para editar vuelo -->
               <button class="icon-btn edit-btn" title="Editar Vuelo">
+
                 <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+
               </button>
+
             </td>
+
           </tr>
+
           </tbody>
+
         </table>
+
       </div>
+
     </section>
 
   </main>

@@ -5,33 +5,46 @@ import { AuthService, User } from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs (Reflejo de tu backend Java) ---
+
+/**
+ * Enumeración de estados posibles para una nómina.
+ * Coincide con el enum EstadoNomina del backend.
+ */
 export enum EstadoNomina {
-  BORRADOR = 'BORRADOR',
-  PENDIENTE = 'PENDIENTE',
-  PAGADA = 'PAGADA',
-  RECHAZADA = 'RECHAZADA',
-  ANULADA = 'ANULADA'
+  BORRADOR = 'BORRADOR', // Nómina en borrador
+  PENDIENTE = 'PENDIENTE', // Nómina pendiente de pago
+  PAGADA = 'PAGADA', // Nómina pagada
+  RECHAZADA = 'RECHAZADA', // Nómina rechazada
+  ANULADA = 'ANULADA' // Nómina anulada
 }
 
+/**
+ * DTO que representa una nómina en el sistema.
+ * Coincide con el NominaDTO del backend.
+ */
 export interface NominaDTO {
-  id: number;
-  personalId: number;
-  personalNombre: string;
-  personalApellido: string;
-  mes: number;
-  ano: number;
-  salarioBase: number;
-  deducciones: number;
-  bonificaciones: number;
-  descuentoImpuesto: number;
-  descuentoAfiliacion: number;
-  totalNeto: number;
-  estado: EstadoNomina;
-  fechaPago?: string | Date;
-  fechaGeneracion: string | Date;
-  observaciones?: string;
+  id: number; // Identificador único
+  personalId: number; // ID del empleado
+  personalNombre: string; // Nombre del empleado
+  personalApellido: string; // Apellido del empleado
+  mes: number; // Mes de la nómina (1-12)
+  ano: number; // Año de la nómina
+  salarioBase: number; // Salario base
+  deducciones: number; // Deducciones aplicadas
+  bonificaciones: number; // Bonificaciones adicionales
+  descuentoImpuesto: number; // Descuento por impuestos
+  descuentoAfiliacion: number; // Descuento por afiliación
+  totalNeto: number; // Total neto a pagar
+  estado: EstadoNomina; // Estado actual
+  fechaPago?: string | Date; // Fecha en que se pagó (opcional)
+  fechaGeneracion: string | Date; // Fecha de generación
+  observaciones?: string; // Observaciones adicionales (opcional)
 }
 
+/**
+ * Componente que muestra y gestiona las nóminas del personal para administradores.
+ * Presenta una tabla con todas las nóminas generadas y su información relevante.
+ */
 @Component({
   selector: 'app-nomina-admin',
   standalone: true,
@@ -41,28 +54,52 @@ export interface NominaDTO {
 })
 export class NominaAdminComponent implements OnInit {
 
+  // Usuario actualmente autenticado
   currentUser: User | null = null;
+
+  // Lista de nóminas a mostrar en la tabla
   nominas: NominaDTO[] = [];
 
   // Nombres de los meses para mostrar en la tabla en lugar del número
   meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
 
+  /**
+   * Constructor del componente
+   * @param authService servicio de autenticación
+   * @param router servicio de navegación
+   */
   constructor(private authService: AuthService, private router: Router) {}
 
+  /**
+   * Inicialización del componente.
+   * Obtiene el usuario actual y carga los datos simulados.
+   */
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
     this.cargarDatosSimulados();
   }
 
+  /**
+   * Cierra la sesión del usuario actual y redirige al login.
+   */
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
+  /**
+   * Convierte el número de mes a su nombre abreviado.
+   * @param mesNumero número del mes (1-12)
+   * @returns nombre abreviado del mes o 'N/A' si es inválido
+   */
   getNombreMes(mesNumero: number): string {
     return this.meses[mesNumero - 1] || 'N/A';
   }
 
+  /**
+   * Simula la carga de datos de nóminas desde el backend.
+   * TODO: Reemplazar con llamada real al servicio de nóminas.
+   */
   cargarDatosSimulados(): void {
     this.nominas = [
       {
@@ -92,6 +129,11 @@ export class NominaAdminComponent implements OnInit {
     ];
   }
 
+  /**
+   * Obtiene la clase CSS correspondiente al estado de la nómina.
+   * @param estado estado de la nómina
+   * @returns clase CSS para aplicar estilos
+   */
   getEstadoClase(estado: EstadoNomina): string {
     switch (estado) {
       case EstadoNomina.PAGADA: return 'status-success';

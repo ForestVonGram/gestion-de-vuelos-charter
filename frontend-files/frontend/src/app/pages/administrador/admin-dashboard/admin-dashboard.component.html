@@ -1,41 +1,45 @@
-<div class="admin-container">
+<div class="admin-container"> <!-- Contenedor principal del panel de administración -->
 
-  <app-admin-sidebar></app-admin-sidebar>
+  <app-admin-sidebar></app-admin-sidebar> <!-- Componente del menú lateral del admin -->
 
-  <main class="main-content">
+  <main class="main-content"> <!-- Área principal del contenido -->
 
-    <header class="topbar">
+    <header class="topbar"> <!-- Barra superior del panel -->
       <div class="welcome-box">
         <h1>Panel de Control</h1>
+        <!-- Mensaje de bienvenida mostrando el nombre del usuario -->
         <p>Bienvenido de nuevo, {{ currentUser?.nombreCompleto || 'Administrador' }}</p>
       </div>
       <div class="user-profile">
         <div class="avatar-circle">
+          <!-- Muestra la inicial del nombre del usuario -->
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
         </div>
       </div>
     </header>
 
-    <section class="stats-grid">
+    <section class="stats-grid"> <!-- Sección de tarjetas de estadísticas -->
+      <!-- Itera sobre las estadísticas disponibles -->
       <div class="stat-card" *ngFor="let stat of stats">
-        <div class="stat-icon" [style.color]="stat.color">
+        <div class="stat-icon" [style.color]="stat.color"> <!-- Icono con color dinámico -->
           <i [class]="stat.icon"></i>
         </div>
         <div class="stat-info">
-          <span class="stat-value">{{ stat.value }}</span>
-          <span class="stat-title">{{ stat.title }}</span>
+          <span class="stat-value">{{ stat.value }}</span> <!-- Valor de la estadística -->
+          <span class="stat-title">{{ stat.title }}</span> <!-- Título de la estadística -->
         </div>
       </div>
     </section>
 
-    <section class="content-panel">
+    <section class="content-panel"> <!-- Panel que contiene la tabla de vuelos -->
       <div class="panel-header">
         <h3>VuelosComponent Recientes</h3>
+        <!-- Botón para ver todos los vuelos -->
         <button class="btn-action">Ver Todos</button>
       </div>
 
-      <div class="table-responsive">
-        <table class="admin-table">
+      <div class="table-responsive"> <!-- Contenedor responsive de la tabla -->
+        <table class="admin-table"> <!-- Tabla de vuelos recientes -->
           <thead>
           <tr>
             <th>ID Vuelo</th>
@@ -47,17 +51,20 @@
           </tr>
           </thead>
           <tbody>
+          <!-- Itera sobre la lista de vuelos recientes -->
           <tr *ngFor="let flight of recentFlights">
-            <td class="id-cell">#{{ flight.id }}</td>
-            <td>{{ flight.pilot }}</td>
-            <td>{{ flight.route }}</td>
+            <td class="id-cell">#{{ flight.id }}</td> <!-- ID del vuelo -->
+            <td>{{ flight.pilot }}</td> <!-- Nombre del piloto -->
+            <td>{{ flight.route }}</td> <!-- Ruta del vuelo -->
             <td>
-                <span class="status-badge" [ngClass]="getStatusClass(flight.status)">
+              <!-- Badge visual que cambia según el estado -->
+              <span class="status-badge" [ngClass]="getStatusClass(flight.status)">
                   {{ flight.status }}
                 </span>
             </td>
-            <td>{{ flight.time }}</td>
+            <td>{{ flight.time }}</td> <!-- Duración del vuelo -->
             <td>
+              <!-- Botón de acciones -->
               <button class="icon-btn"><i class="fas fa-ellipsis-v"></i></button>
             </td>
           </tr>
