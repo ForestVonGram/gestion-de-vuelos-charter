@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://astranimbus-backend.onrender.com',
+  apiUrl: 'https://astranimbus-backend.onrender.com/api',
   recaptcha: {
     siteKey: '6LfIkmwsAAAAABHM4iYcWsi8Jdgz3c34ohTB0k7Q',
   }
