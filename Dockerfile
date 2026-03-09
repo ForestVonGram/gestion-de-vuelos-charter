@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8.9-jdk21 AS builder
+FROM gradle:8.14-jdk21 AS builder
 WORKDIR /app
 COPY backend/build.gradle .
 COPY backend/gradle ./gradle
