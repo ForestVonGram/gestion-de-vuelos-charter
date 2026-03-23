@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OnInit, ChangeDetectorRef } from '@angular/core';
 import {AdminSidebarComponent} from '../../../shared/admin-sidebar/admin-sidebar.component';
@@ -14,7 +15,7 @@ import Swal from 'sweetalert2';
  */
 @Component({
   selector: 'app-personal',
-  imports: [FormsModule, AdminSidebarComponent],
+  imports: [FormsModule, AdminSidebarComponent, RouterModule],
   templateUrl: './personal.html',
   styleUrl: './personal.css',
 })
