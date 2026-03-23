@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, interval, takeUntil } from 'rxjs';
 import { PasswordService } from '../../../services/password/password.service';
+import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 
 /**
  * Componente para la recuperación de contraseña.
@@ -12,7 +13,7 @@ import { PasswordService } from '../../../services/password/password.service';
 @Component({
   selector: 'app-recuperar-contrasenia',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './recuperar_contraseña.component.html',
   styleUrls: ['./recuperar_contraseña.component.css']
 })

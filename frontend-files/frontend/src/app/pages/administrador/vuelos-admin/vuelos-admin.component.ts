@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 // --- ENUMS Y DTOs (Basados en tu backend Java) ---
 
@@ -51,7 +52,7 @@ export interface VueloDTO {
 @Component({
   selector: 'app-vuelos-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
   templateUrl: './vuelos-admin.component.html',
   styleUrls: ['./vuelos-admin.component.css']
 })

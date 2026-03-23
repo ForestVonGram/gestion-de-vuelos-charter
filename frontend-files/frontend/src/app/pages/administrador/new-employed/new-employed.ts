@@ -5,6 +5,7 @@ import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sideb
 import { AuthService } from '../../../services/auth/auth.service';
 import { PersonalService } from '../../../services/personal/personal-service';
 import Swal from 'sweetalert2';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 /**
  * Componente para la creación de nuevo personal.
@@ -12,7 +13,7 @@ import Swal from 'sweetalert2';
  */
 @Component({
   selector: 'app-new-employed',
-  imports: [ReactiveFormsModule, AdminSidebarComponent],
+  imports: [ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent],
   templateUrl: './new-employed.html',
   styleUrl: './new-employed.css',
 })

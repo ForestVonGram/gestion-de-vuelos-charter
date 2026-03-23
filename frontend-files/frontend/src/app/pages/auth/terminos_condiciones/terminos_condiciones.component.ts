@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-terminos-condiciones',
   templateUrl: './terminos_condiciones.component.html',
   styleUrls: ['./terminos_condiciones.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, AccesibilidadComponent]
 })
 export class TerminosCondicionesComponent implements OnInit, OnDestroy {
   // Estado para controlar si el modo oscuro está activo

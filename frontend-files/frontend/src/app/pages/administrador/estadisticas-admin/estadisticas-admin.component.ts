@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 // --- DTOs (Espejo de tu backend Java) ---
 
@@ -65,7 +66,7 @@ export interface MetricasDTO {
 @Component({
   selector: 'app-estadisticas-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
   templateUrl: './estadisticas-admin.component.html',
   styleUrls: ['./estadisticas-admin.component.css']
 })

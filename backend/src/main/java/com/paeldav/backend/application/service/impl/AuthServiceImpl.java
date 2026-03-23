@@ -183,6 +183,9 @@ public class AuthServiceImpl implements AuthService {
             if (usuarioRepository.existsByEmail(request.getEmail())) {
                 throw new IllegalArgumentException("El email ya está registrado");
             }
+            if (usuarioRepository.existsByTelefono(request.getTelefono())) {
+                throw new IllegalArgumentException("El telefono ya está registrado");
+            }
 
             // Crear nuevo usuario
             Usuario usuario = Usuario.builder()

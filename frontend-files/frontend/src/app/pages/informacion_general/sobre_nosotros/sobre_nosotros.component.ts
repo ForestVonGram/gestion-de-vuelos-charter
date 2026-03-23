@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-sobre-nosotros',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './sobre_nosotros.component.html',
   styleUrls: ['./sobre_nosotros.component.css']
 })

@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AccesibilidadComponent } from '../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css']
 })

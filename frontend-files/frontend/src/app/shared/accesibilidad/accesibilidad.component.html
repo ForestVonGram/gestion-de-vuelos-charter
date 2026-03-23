@@ -1,0 +1,95 @@
+<div class="a11y-wrapper" [class.is-open]="isOpen">
+
+  <!-- Floating trigger button -->
+  <button
+    class="a11y-trigger"
+    (click)="togglePanel()"
+    [attr.aria-expanded]="isOpen"
+    aria-label="Opciones de accesibilidad"
+    title="Accesibilidad"
+  >
+    <!-- WCAG / Universal Accessibility person icon (not wheelchair) -->
+    <svg class="a11y-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Head -->
+      <circle cx="32" cy="10" r="7"/>
+      <!-- Body upright with arms open -->
+      <line x1="32" y1="17" x2="32" y2="40" stroke-width="5" stroke-linecap="round"/>
+      <!-- Left arm -->
+      <line x1="32" y1="26" x2="14" y2="22" stroke-width="5" stroke-linecap="round"/>
+      <!-- Right arm -->
+      <line x1="32" y1="26" x2="50" y2="22" stroke-width="5" stroke-linecap="round"/>
+      <!-- Left leg -->
+      <line x1="32" y1="40" x2="18" y2="56" stroke-width="5" stroke-linecap="round"/>
+      <!-- Right leg -->
+      <line x1="32" y1="40" x2="46" y2="56" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <!-- Accessibility panel -->
+  <div
+    class="a11y-panel"
+    role="dialog"
+    aria-label="Panel de accesibilidad AstraNimbus"
+    [attr.aria-hidden]="!isOpen"
+  >
+    <div class="a11y-panel-header">
+      <span class="a11y-panel-title">Accesibilidad</span>
+      <span class="a11y-brand">AstraNimbus</span>
+    </div>
+
+    <div class="a11y-section">
+      <p class="a11y-section-label">Tamaño del texto</p>
+
+      <div class="a11y-font-controls">
+        <button
+          class="a11y-btn a11y-btn--icon"
+          (click)="decrease()"
+          [disabled]="isMinLevel"
+          aria-label="Reducir tamaño de fuente"
+          title="Reducir"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+
+        <div class="a11y-font-display" aria-live="polite" aria-atomic="true">
+          <span class="a11y-font-value">{{ currentFontSize }}</span>
+          <span class="a11y-font-unit">px</span>
+        </div>
+
+        <button
+          class="a11y-btn a11y-btn--icon"
+          (click)="increase()"
+          [disabled]="isMaxLevel"
+          aria-label="Aumentar tamaño de fuente"
+          title="Aumentar"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Level indicator dots -->
+      <div class="a11y-level-track" aria-hidden="true">
+        <span
+          *ngFor="let dot of [0,1,2,3,4,5]; let i = index"
+          class="a11y-dot"
+          [class.active]="i <= (currentLevel + 2)"
+        ></span>
+      </div>
+
+      <button
+        class="a11y-btn a11y-btn--reset"
+        (click)="reset()"
+        [disabled]="isDefault"
+        aria-label="Restablecer tamaño de fuente predeterminado"
+      >
+        Restablecer
+      </button>
+    </div>
+  </div>
+
+</div>

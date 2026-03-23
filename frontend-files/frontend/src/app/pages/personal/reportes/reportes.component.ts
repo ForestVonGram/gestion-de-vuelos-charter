@@ -2,10 +2,11 @@ import { Component, input } from '@angular/core';
 import { HeaderTripulante} from '../../../shared/header-tripulante/header-tripulante.component';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-reportes',
-  imports: [HeaderTripulante, ReactiveFormsModule],
+  imports: [HeaderTripulante, ReactiveFormsModule, AccesibilidadComponent],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.css',
 })

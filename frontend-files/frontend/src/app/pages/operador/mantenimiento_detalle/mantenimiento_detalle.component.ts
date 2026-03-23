@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-mantenimiento-detalle',
   templateUrl: './mantenimiento_detalle.component.html',
   styleUrls: ['./mantenimiento_detalle.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, AccesibilidadComponent]
 })
 export class MantenimientoDetalleComponent implements OnInit {
   // Objeto que almacena la información detallada de la orden de mantenimiento

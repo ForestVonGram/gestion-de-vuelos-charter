@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { OnInit, ChangeDetectorRef } from '@angular/core';
 import {AdminSidebarComponent} from '../../../shared/admin-sidebar/admin-sidebar.component';
@@ -7,7 +8,7 @@ import { PersonalService } from '../../../services/personal/personal-service';
 import { CargoPersonal } from '../../../models/personal/cargo';
 import { EstadoPersonal } from '../../../models/personal/estado-personal';
 import Swal from 'sweetalert2';
-import { RouterModule } from '@angular/router';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 /**
  * Componente que muestra y gestiona la lista de personal.
@@ -15,7 +16,7 @@ import { RouterModule } from '@angular/router';
  */
 @Component({
   selector: 'app-personal',
-  imports: [FormsModule, AdminSidebarComponent, RouterModule],
+  imports: [FormsModule, AdminSidebarComponent, RouterModule, AccesibilidadComponent],
   templateUrl: './personal.html',
   styleUrl: './personal.css',
 })
@@ -42,8 +43,7 @@ export class Personal implements OnInit {
    * @param personalService servicio para operaciones con personal
    * @param cdr ChangeDetectorRef para forzar detección de cambios
    */
-  constructor(private authService: AuthService, private personalService: PersonalService,
-     private cdr: ChangeDetectorRef) {
+  constructor(private authService: AuthService, private personalService: PersonalService, private cdr: ChangeDetectorRef) {
     this.currentUser = this.authService.currentUserValue;
     console.log('cargos:', this.cargos);
     console.log('estados:', this.estados);

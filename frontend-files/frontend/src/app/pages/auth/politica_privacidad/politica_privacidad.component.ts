@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {Router, RouterModule} from '@angular/router';
+import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   // Selector que permite usar el componente en HTML como <app-politica-privacidad>
@@ -16,7 +17,7 @@ import { Router } from '@angular/router';
   standalone: true,
 
   // Módulos que utiliza el componente
-  imports: [CommonModule]
+  imports: [CommonModule, AccesibilidadComponent],
 })
 export class PoliticaPrivacidadComponent implements OnInit, OnDestroy {
 

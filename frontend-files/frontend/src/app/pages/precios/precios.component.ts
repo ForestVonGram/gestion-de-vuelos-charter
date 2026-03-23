@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import {AccesibilidadComponent} from '../../shared/accesibilidad/accesibilidad.component';
 
 interface Plan {
   name: string;
@@ -15,7 +16,7 @@ interface Plan {
 @Component({
   selector: 'app-precios',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './precios.component.html',
   styleUrls: ['./precios.component.css']
 })

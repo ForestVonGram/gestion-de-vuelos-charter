@@ -3,6 +3,7 @@ package com.paeldav.backend.infraestructure.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -10,6 +11,7 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import java.time.Duration;
 
 @Configuration
+@EnableAsync
 public class AppConfig {
 
     @Bean

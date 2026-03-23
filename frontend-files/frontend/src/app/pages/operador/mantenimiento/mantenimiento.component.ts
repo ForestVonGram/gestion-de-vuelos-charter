@@ -5,13 +5,14 @@ import { Router, RouterModule } from '@angular/router';
 import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
 import { TruncatePipe } from '../pipes/truncate.pipe';
 import { AuthService } from '../../../services/auth/auth.service';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-mantenimiento',
   templateUrl: './mantenimiento.component.html',
   styleUrls: ['./mantenimiento.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, TruncatePipe, RouterModule]
+  imports: [CommonModule, FormsModule, TruncatePipe, RouterModule, AccesibilidadComponent]
 })
 export class MantenimientoComponent implements OnInit {
   // --- Listados de datos ---

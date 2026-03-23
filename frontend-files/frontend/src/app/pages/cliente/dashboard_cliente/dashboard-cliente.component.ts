@@ -2,11 +2,12 @@ import { Component, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-client-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './dashboard-cliente.component.html',
   styleUrls: ['./dashboard-cliente.component.css']
 })
