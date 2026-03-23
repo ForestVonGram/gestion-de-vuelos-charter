@@ -47,6 +47,8 @@ public class AuthController {
 
             AuthResponse response = authService.login(request, dispositivo, direccionIp, userAgent);
             log.info("Login exitoso para: {}", request.getEmail());
+            log.info("dispositivo: {}", dispositivo);
+            log.info("direccionIp: {}", direccionIp);
             return ResponseEntity.ok(response);
 
         } catch (BadCredentialsException e) {
