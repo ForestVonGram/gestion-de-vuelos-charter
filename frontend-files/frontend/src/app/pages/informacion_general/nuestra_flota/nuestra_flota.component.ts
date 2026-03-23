@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-nuestra-flota',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './nuestra_flota.component.html',
   styleUrls: ['./nuestra_flota.component.css']
 })

@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { PasswordService } from '../../../services/password/password.service';
+import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 
 /**
  * Componente para la solicitud de recuperación de contraseña.
@@ -13,7 +14,7 @@ import { PasswordService } from '../../../services/password/password.service';
 @Component({
   selector: 'app-solicitud-recuperacion',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, AccesibilidadComponent],
   templateUrl: './solicitud_recuperacion.component.html',
   styleUrls: ['./solicitud_recuperacion.component.css']
 })

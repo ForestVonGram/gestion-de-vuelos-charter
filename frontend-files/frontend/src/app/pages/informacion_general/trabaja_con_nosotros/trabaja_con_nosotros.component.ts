@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-trabaja-con-nosotros',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, AccesibilidadComponent],
   templateUrl: './trabaja_con_nosotros.component.html',
   styleUrls: ['./trabaja_con_nosotros.component.css']
 })

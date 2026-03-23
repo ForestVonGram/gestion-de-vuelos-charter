@@ -7,11 +7,12 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 import { RolUsuario } from '../../../models/users/auth.models';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RecaptchaV3Module, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RecaptchaV3Module, RouterModule, AccesibilidadComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })

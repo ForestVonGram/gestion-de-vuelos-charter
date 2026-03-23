@@ -6,6 +6,7 @@ import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 // Definición de roles disponibles para el registro de nuevos usuarios
 export enum RolUsuario {
@@ -16,7 +17,7 @@ export enum RolUsuario {
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, RecaptchaV3Module],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, RecaptchaV3Module, AccesibilidadComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
