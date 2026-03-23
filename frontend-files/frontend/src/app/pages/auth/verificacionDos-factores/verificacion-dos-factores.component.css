@@ -1,0 +1,84 @@
+@import '../login/login.component.css';
+
+/* Step Indicator (ya está en el componente recuperar, pero lo dejamos por si acaso) */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-2xl);
+  padding: 0 var(--spacing-md);
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex: 1;
+  max-width: 80px;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-light);
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--transition-base);
+}
+
+.step-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-light-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.step.completed .step-number {
+  background-color: var(--color-success);
+  color: var(--color-white);
+}
+
+.step.active .step-number {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+  box-shadow: 0 0 0 3px rgba(92, 92, 153, 0.2);
+  transform: scale(1.1);
+}
+
+.step-line {
+  flex: 1;
+  height: 2px;
+  background-color: var(--color-light);
+  margin: 0 var(--spacing-xs);
+}
+
+/* Code Input */
+.code-input {
+  font-size: 18px;
+  letter-spacing: 4px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Countdown Timer */
+.countdown-timer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-dark);
+  background-color: rgba(92, 92, 153, 0.1);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.countdown-timer strong {
+  color: var(--color-mid);
+  font-size: 14px;
+}

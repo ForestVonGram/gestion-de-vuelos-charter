@@ -102,8 +102,10 @@ export class LoginComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
 
                 // Manejo de flujo según la respuesta (2FA o Redirección por Rol)
+                // login.component.ts
                 if (response.requires2FA) {
-                  this.router.navigate(['/auth/verify-2fa'], {
+                  sessionStorage.setItem('2fa-email', response.email);
+                  this.router.navigate(['/auth/verificacion-2fa'], {
                     queryParams: { sessionToken: response.sessionToken }
                   });
                 } else {
