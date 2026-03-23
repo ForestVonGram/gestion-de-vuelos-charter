@@ -1,5 +1,6 @@
 package com.paeldav.backend.application.dto.usuario;
 
+import com.paeldav.backend.domain.enums.MetodoDosFactores;
 import com.paeldav.backend.domain.enums.RolUsuario;
 import lombok.*;
 
@@ -23,4 +24,6 @@ public class UsuarioDTO {
     private RolUsuario rol;
     private LocalDateTime fechaRegistro;
     private Boolean activo;
+    private Boolean dosFactoresHabilitado;
+    private MetodoDosFactores metodoDosFactores;
 }

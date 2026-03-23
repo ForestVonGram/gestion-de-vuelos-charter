@@ -27,7 +27,7 @@ import { TripulacionComponent} from './pages/personal/tripulacion/tripulacion.co
 import { VuelosComponent } from './pages/personal/vuelos/vuelos.component';
 import { CertificadosComponent } from './pages/personal/certificados/certificados.component';
 import { ReportesComponent} from './pages/personal/reportes/reportes.component';
-import { MyProfile } from './shared/my-profile/my-profile';
+import { ProfileComponent} from './pages/cliente/profile/profile.component';
 
 import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/admin-dashboard.component';
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
@@ -39,6 +39,7 @@ import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 import { NewEmployed } from './pages/administrador/new-employed/new-employed';
 import { Personal } from './pages/administrador/personal/personal';
 import { DetallesPersonal } from './pages/administrador/detalles-personal/detalles-personal';
+import {MyProfile} from './shared/my-profile/my-profile';
 
 export const routes: Routes = [
   {
@@ -114,9 +115,13 @@ export const routes: Routes = [
     canActivate: []
   },
   {
-    path: 'profile',
+    path: 'tripulante-perfil',
     component: MyProfile,
     canActivate: []
+  },
+  {
+    path: 'perfil',
+    component: ProfileComponent
   },
   {
     path: 'admin',
