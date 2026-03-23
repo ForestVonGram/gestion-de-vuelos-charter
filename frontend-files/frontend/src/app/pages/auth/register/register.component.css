@@ -5,16 +5,14 @@
   justify-content: center;
   padding: var(--spacing-lg);
   position: relative;
-  /* Fondo heredado del body, pero nos aseguramos */
   background: linear-gradient(135deg, var(--color-dark) 0%, var(--color-mid) 50%, var(--color-dark) 100%);
   overflow: hidden;
 }
 
-/* Efecto de nubes o fondo sutil detrás */
 .bg-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url('/assets/images/nube_grande.webp'); /* Asegúrate de que la ruta sea correcta */
+  background-image: url('/assets/images/nube_grande.webp');
   background-size: cover;
   background-position: center;
   opacity: 0.1;
@@ -80,7 +78,7 @@
 .form-panel {
   flex: 1.2;
   padding: var(--spacing-2xl);
-  overflow-y: auto; /* Por si la pantalla es muy pequeña verticalmente */
+  overflow-y: auto;
   background-color: var(--color-white);
 }
 
@@ -102,7 +100,6 @@
   opacity: 0.7;
 }
 
-/* Estilos de inputs */
 .register-form {
   display: flex;
   flex-direction: column;
@@ -157,6 +154,102 @@ input.is-invalid {
   margin-top: 2px;
 }
 
+/* ── Barra de fortaleza ── */
+.strength-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.strength-bar {
+  flex: 1;
+  height: 5px;
+  background-color: #e0e0e0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.35s ease, background-color 0.35s ease;
+  width: 0%;
+}
+
+.strength-bar-fill.weak {
+  width: 33%;
+  background-color: #e53935;
+}
+
+.strength-bar-fill.medium {
+  width: 66%;
+  background-color: #fb8c00;
+}
+
+.strength-bar-fill.strong {
+  width: 100%;
+  background-color: #43a047;
+}
+
+.strength-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  min-width: 42px;
+  text-align: right;
+  letter-spacing: 0.02em;
+}
+
+.strength-label.weak   { color: #e53935; }
+.strength-label.medium { color: #fb8c00; }
+.strength-label.strong { color: #43a047; }
+
+/* ── Checklist de requisitos ── */
+.password-requirements {
+  list-style: none;
+  padding: 10px 12px;
+  margin: 4px 0 0;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.password-requirements li.met {
+  color: #43a047;
+}
+
+.password-requirements li.unmet {
+  color: #9e9e9e;
+}
+
+.req-icon {
+  font-size: 0.85rem;
+  font-weight: 700;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.password-requirements li.met .req-icon {
+  color: #43a047;
+}
+
+.password-requirements li.unmet .req-icon {
+  color: #bdbdbd;
+}
+
 /* Checkbox */
 .form-check {
   display: flex;
@@ -172,6 +265,13 @@ input.is-invalid {
   cursor: pointer;
 }
 
+/* Botón submit */
+.btn-block {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: 14px;
+}
+
 /* Google Register Button */
 .google-button {
   width: 100%;
@@ -214,13 +314,6 @@ input.is-invalid {
   font-style: italic;
   opacity: 0.7;
   font-weight: 500;
-}
-
-/* Botón */
-.btn-block {
-  width: 100%;
-  margin-top: var(--spacing-md);
-  padding: 14px;
 }
 
 /* Footer del form */
@@ -235,7 +328,7 @@ input.is-invalid {
   color: var(--color-mid);
 }
 
-/* Loader simple */
+/* Loader */
 .loader {
   display: inline-block;
   width: 20px;
@@ -246,59 +339,14 @@ input.is-invalid {
   animation: spin 1s ease-in-out infinite;
 }
 
-/* Google Register Button */
-.google-button {
-  width: 100%;
-  padding: 14px;
-  background-color: var(--color-white);
-  border: 2px solid #E0E0E0;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-dark);
-  cursor: pointer;
-  transition: all var(--transition-base);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  min-height: 48px;
-  margin-top: var(--spacing-md);
-}
-
-.google-button:hover:not(:disabled) {
-  border-color: #BDBDBD;
-  background-color: #F5F5F5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-}
-
-.google-button:disabled {
-  opacity: 0.85;
-  cursor: not-allowed;
-}
-
-.google-logo {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.coming-soon {
-  font-style: italic;
-  opacity: 0.7;
-  font-weight: 500;
-}
-
-/* --- Botón al inicio --- */
-
+/* Botón volver */
 .back-btn {
   position: absolute;
   top: 30px;
   left: 30px;
   width: 50px;
   height: 50px;
-  background-color: rgba(255, 255, 255, 0.15); /* Un poco más visible */
+  background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
@@ -318,32 +366,26 @@ input.is-invalid {
   transition: transform 0.3s ease;
 }
 
-/* Efecto Hover */
 .back-btn:hover {
   background-color: var(--color-white);
-  color: var(--color-mid); /* Icono color morado de la marca */
-  transform: scale(1.1); /* Crece ligeramente */
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5); /* Resplandor */
+  color: var(--color-mid);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 .back-btn:hover .back-icon {
   transform: translateX(-3px);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .back-btn {
-    top: 20px;
-    left: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(0, 0, 0, 0.2); /* Fondo oscuro en móvil para contraste si el fondo es claro */
-  }
-
-  .back-btn:hover {
-    background-color: var(--color-dark);
-    color: var(--color-white);
-  }
+.alert-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 @keyframes spin {
@@ -358,7 +400,7 @@ input.is-invalid {
   }
 
   .brand-panel {
-    display: none; /* Ocultamos el branding lateral en móvil para ahorrar espacio */
+    display: none;
   }
 
   .form-row {
@@ -374,8 +416,22 @@ input.is-invalid {
     padding: var(--spacing-lg);
   }
 
+  .back-btn {
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .back-btn:hover {
+    background-color: var(--color-dark);
+    color: var(--color-white);
+  }
+
   .google-button {
     font-size: 0.95rem;
     min-height: 44px;
   }
+
 }

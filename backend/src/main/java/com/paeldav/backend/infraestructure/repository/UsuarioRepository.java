@@ -29,6 +29,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
      */
     boolean existsByEmail(String email);
 
+    boolean existsByTelefono(String telefono);
+
     /**
      * Obtiene todos los usuarios que tienen un rol específico.
      * @param rol rol del usuario (ADMIN, CLIENTE, TRIPULANTE, etc.)

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
@@ -6,12 +6,25 @@ import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 import { AuthService } from '../../../services/auth/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 
-// Definición de roles disponibles para el registro de nuevos usuarios
 export enum RolUsuario {
   USUARIO = 'USUARIO',
   ADMINISTRADOR = 'ADMINISTRADOR'
+}
+
+function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value || '';
+  const hasUppercase = /[A-Z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+
+  const errors: ValidationErrors = {};
+  if (!hasUppercase) errors['noUppercase'] = true;
+  if (!hasNumber) errors['noNumber'] = true;
+  if (!hasSpecial) errors['noSpecial'] = true;
+
+  return Object.keys(errors).length > 0 ? errors : null;
 }
 
 @Component({
@@ -22,65 +35,96 @@ export enum RolUsuario {
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit, OnDestroy {
-  // --- Propiedades de estado ---
   registerForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
 
-  // Manejador para cancelar suscripciones activas al destruir el componente
+  passwordStrength: 'none' | 'weak' | 'medium' | 'strong' = 'none';
+  passwordStrengthLabel = '';
+  strengthChecks = {
+    minLength: false,
+    hasUppercase: false,
+    hasNumber: false,
+    hasSpecial: false
+  };
+
   private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private recaptchaV3Service: ReCaptchaV3Service
+    private recaptchaV3Service: ReCaptchaV3Service,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.initForm(); // Inicializa la estructura del formulario al cargar
+    this.initForm();
+    this.registerForm.get('password')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => this.evaluatePasswordStrength(value));
   }
 
   ngOnDestroy(): void {
-    // Limpieza de observables para evitar fugas de memoria
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // Configuración del formulario reactivo con sus respectivas validaciones
   private initForm(): void {
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required]],
       apellido: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      // Validación de teléfono: solo números, entre 7 y 15 dígitos
       telefono: ['', [Validators.pattern(/^[0-9]{7,15}$/)]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        passwordStrengthValidator
+      ]],
       confirmPassword: ['', [Validators.required]],
-      // Obliga a que los términos y condiciones estén marcados
       acceptTerms: [false, [Validators.requiredTrue]]
     }, {
-      // Validador de grupo para asegurar que ambas contraseñas coincidan
       validators: this.passwordMatchValidator
     });
   }
 
-  // Validador personalizado: Compara 'password' y 'confirmPassword'
   private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
 
     if (password && confirmPassword && password.value !== confirmPassword.value) {
-      // Setea el error directamente en el campo de confirmación
       confirmPassword.setErrors({ mismatch: true });
       return { passwordMismatch: true };
     }
     return null;
   }
 
-  // Lógica de procesamiento del registro
+  private evaluatePasswordStrength(value: string): void {
+    this.strengthChecks = {
+      minLength: value.length >= 8,
+      hasUppercase: /[A-Z]/.test(value),
+      hasNumber: /[0-9]/.test(value),
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)
+    };
+
+    const passed = Object.values(this.strengthChecks).filter(Boolean).length;
+
+    if (!value) {
+      this.passwordStrength = 'none';
+      this.passwordStrengthLabel = '';
+    } else if (passed <= 2) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthLabel = 'Débil';
+    } else if (passed === 3) {
+      this.passwordStrength = 'medium';
+      this.passwordStrengthLabel = 'Media';
+    } else {
+      this.passwordStrength = 'strong';
+      this.passwordStrengthLabel = 'Fuerte';
+    }
+  }
+
   onSubmit(): void {
-    // Si el formulario no es válido, marca campos para mostrar errores visuales
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
       return;
@@ -88,42 +132,59 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
     this.errorMessage = null;
+    this.cdr.detectChanges();
 
-    // Paso 1: Ejecutar validación invisible de reCAPTCHA v3
     this.recaptchaV3Service.execute('register')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (token: string) => {
-          // Paso 2: Mapear datos del formulario al objeto de petición (Request)
           const request = {
             nombre: this.registerForm.get('nombre')?.value,
             apellido: this.registerForm.get('apellido')?.value,
             email: this.registerForm.get('email')?.value,
             password: this.registerForm.get('password')?.value,
             telefono: this.registerForm.get('telefono')?.value || null,
-            rol: RolUsuario.USUARIO, // Por defecto se registra como rol estándar
+            rol: RolUsuario.USUARIO,
             recaptchaToken: token
           };
 
-          // Paso 3: Llamada al servicio de autenticación para el registro
           this.authService.register(request)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-              next: (response) => {
+              next: () => {
                 this.isLoading = false;
-                // Si el registro es exitoso, redirige al login
+                this.cdr.detectChanges();
                 this.router.navigate(['/auth/login']);
               },
               error: (err) => {
                 this.isLoading = false;
-                // Manejo de errores específicos del servidor (email duplicado, captcha, etc.)
-                if (err.error?.message?.includes('reCAPTCHA')) {
-                  this.errorMessage = 'Validación reCAPTCHA fallida. Por favor intente nuevamente.';
-                } else if (err.error?.message?.includes('email')) {
-                  this.errorMessage = 'El email ya está registrado.';
-                } else {
-                  this.errorMessage = err.error?.message || 'Error al registrar usuario. Intente nuevamente.';
+                let errorMsg = '';
+
+                if (err.error) {
+                  if (typeof err.error === 'string') {
+                    errorMsg = err.error;
+                  } else if (err.error.message) {
+                    errorMsg = err.error.message;
+                  } else if (err.error.error) {
+                    errorMsg = err.error.error;
+                  }
+                } else if (err.message) {
+                  errorMsg = err.message;
                 }
+
+                console.log('Mensaje de error extraído:', errorMsg);
+
+                if (errorMsg.includes('reCAPTCHA')) {
+                  this.errorMessage = 'Validación reCAPTCHA fallida. Por favor intente nuevamente.';
+                } else if (errorMsg.includes('El email ya está registrado')) {
+                  this.errorMessage = 'El correo electrónico ya está registrado. Por favor utiliza otro.';
+                } else if (errorMsg.includes('El telefono ya está registrado') || errorMsg.includes('teléfono ya está registrado')) {
+                  this.errorMessage = 'El número de teléfono ya está registrado. Por favor utiliza otro.';
+                } else {
+                  this.errorMessage = errorMsg || 'Error al registrar usuario. Intente nuevamente.';
+                }
+
+                this.cdr.detectChanges();
               }
             });
         },
@@ -131,10 +192,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.errorMessage = 'Error en validación de seguridad. Por favor intente nuevamente';
           console.error('reCAPTCHA v3 error:', error);
+          this.cdr.detectChanges();
         }
       });
   }
 
-  // Getter de conveniencia para acceder a los campos en el template HTML
   get f() { return this.registerForm.controls; }
 }
