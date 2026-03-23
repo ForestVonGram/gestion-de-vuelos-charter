@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<body>
+<div th:replace="~{emails/base :: layout(titulo='Contraseña actualizada', contenido=~{::contenido})}">
+
+  <th:block th:fragment="contenido">
+
+    <p style="margin:0 0 16px 0;">
+      Hola <strong th:text="${nombre}">Usuario</strong>,
+    </p>
+
+    <p style="margin:0 0 18px 0;color:#6b7280;">
+      Tu contraseña ha sido <strong style="color:#374151;">actualizada exitosamente</strong>.
+    </p>
+
+    <div style="background:#f0fdf4;border-left:4px solid #16a34a;padding:14px 18px;margin-bottom:24px;">
+      <p style="margin:0;color:#15803d;font-size:14px;">
+        ✔ Cambio registrado el
+        <strong th:text="${#temporals.format(fechaCambio, 'dd/MM/yyyy HH:mm')}">01/01/2025 00:00</strong>
+      </p>
+    </div>
+
+    <div style="background:#fef2f2;border-left:4px solid #dc2626;padding:14px 18px;margin-bottom:24px;">
+      <p style="margin:0;color:#991b1b;font-size:13px;">
+        <strong>¿No realizaste este cambio?</strong><br/>
+        Contacta inmediatamente con nuestro equipo de soporte. Tu cuenta podría estar comprometida.
+      </p>
+    </div>
+
+    <p style="margin:0;font-size:13px;color:#9ca3af;">
+      Por tu seguridad, si no reconoces esta actividad contacta con soporte lo antes posible.
+    </p>
+
+  </th:block>
+
+</div>
+</body>
+</html>

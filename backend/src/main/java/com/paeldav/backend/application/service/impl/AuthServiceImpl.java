@@ -6,10 +6,7 @@ import com.paeldav.backend.application.dto.auth.EstadoDosFactoresDTO;
 import com.paeldav.backend.application.dto.auth.LoginRequest;
 import com.paeldav.backend.application.dto.auth.RegisterRequest;
 import com.paeldav.backend.application.dto.auth.VerificarCodigoRequest;
-import com.paeldav.backend.application.service.base.AuthService;
-import com.paeldav.backend.application.service.base.DosFactoresService;
-import com.paeldav.backend.application.service.base.RecaptchaService;
-import com.paeldav.backend.application.service.base.SesionService;
+import com.paeldav.backend.application.service.base.*;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.domain.enums.MetodoDosFactores;
 import com.paeldav.backend.domain.enums.RolUsuario;
@@ -64,6 +61,8 @@ public class AuthServiceImpl implements AuthService {
 
     // Servicio para validación de reCAPTCHA
     private final RecaptchaService recaptchaService;
+
+    private final EmailService emailService;
 
     /**
      * Realiza el proceso de autenticación del usuario.
@@ -153,6 +152,12 @@ public class AuthServiceImpl implements AuthService {
 
             // Crear sesión activa del usuario
             sesionService.crearSesion(usuario, token, dispositivo, direccionIp, userAgent);
+            emailService.sendEmailLogin(
+                    usuario.getEmail(),
+                    usuario.getNombre() + " " + usuario.getApellido(),
+                    direccionIp,
+                    dispositivo
+            );
 
             log.info("Login exitoso para usuario: {}", usuario.getEmail());
 
