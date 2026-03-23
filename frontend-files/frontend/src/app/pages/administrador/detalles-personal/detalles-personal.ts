@@ -9,10 +9,11 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-detalles-personal',
-  imports: [AdminSidebarComponent, CommonModule, FormsModule],
+  imports: [AdminSidebarComponent, CommonModule, FormsModule, AccesibilidadComponent],
   templateUrl: './detalles-personal.html',
   styleUrl: './detalles-personal.css',
 })
@@ -24,13 +25,13 @@ export class DetallesPersonal implements OnInit {
   currentUser: any
 
 
-  constructor(private personalService: PersonalService, private authService: AuthService, 
+  constructor(private personalService: PersonalService, private authService: AuthService,
     private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef) {
     this.currentUser = this.authService.currentUserValue;
   }
 
   ngOnInit(): void {
-    const id = this.activatedRoute.snapshot.paramMap.get('id');  
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
     if (id) {
       this.personalService.obtenerPersonalPorId(+id).subscribe({
         next: (response) => {

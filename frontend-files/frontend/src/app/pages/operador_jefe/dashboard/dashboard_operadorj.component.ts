@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-dashboard-operadorj',
   templateUrl: './dashboard_operadorj.component.html',
   styleUrls: ['./dashboard_operadorj.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule]
+  imports: [CommonModule, RouterModule, AccesibilidadComponent]
 })
 export class DashboardOperadorJComponent implements OnInit {
   // --- Propiedades de Perfil y Estado ---

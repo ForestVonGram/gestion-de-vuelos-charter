@@ -4,13 +4,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-mantenimiento-form',
   templateUrl: './mantenimiento_form.component.html',
   styleUrls: ['./mantenimiento_form.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, AccesibilidadComponent]
 })
 export class MantenimientoFormComponent implements OnInit {
   // --- Propiedades de Estado y Control ---

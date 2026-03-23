@@ -4,10 +4,11 @@ import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripu
 import { ProfileService } from '../../../services/auth/profile-service';
 import { ProfileDto } from '../../../models/users/profile-dto';
 import { ChangeDetectorRef } from '@angular/core';
+import { AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-tripulante',
-  imports: [CommonModule, HeaderTripulante],
+  imports: [CommonModule, HeaderTripulante, AccesibilidadComponent],
   templateUrl: './tripulante.component.html',
   styleUrls: ['./tripulante.component.css']
 })

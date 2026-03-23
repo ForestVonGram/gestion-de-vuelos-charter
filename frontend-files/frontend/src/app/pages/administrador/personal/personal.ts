@@ -8,6 +8,7 @@ import { PersonalService } from '../../../services/personal/personal-service';
 import { CargoPersonal } from '../../../models/personal/cargo';
 import { EstadoPersonal } from '../../../models/personal/estado-personal';
 import Swal from 'sweetalert2';
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 /**
  * Componente que muestra y gestiona la lista de personal.
@@ -15,7 +16,7 @@ import Swal from 'sweetalert2';
  */
 @Component({
   selector: 'app-personal',
-  imports: [FormsModule, AdminSidebarComponent, RouterModule],
+  imports: [FormsModule, AdminSidebarComponent, RouterModule, AccesibilidadComponent],
   templateUrl: './personal.html',
   styleUrl: './personal.css',
 })

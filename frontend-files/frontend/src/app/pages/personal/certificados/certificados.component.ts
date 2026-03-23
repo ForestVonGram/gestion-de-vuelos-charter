@@ -1,9 +1,10 @@
 import { Component, input } from '@angular/core';
 import { HeaderTripulante } from "../../../shared/header-tripulante/header-tripulante.component";
+import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
 @Component({
   selector: 'app-certificados',
-  imports: [HeaderTripulante],
+  imports: [HeaderTripulante, AccesibilidadComponent],
   templateUrl: './certificados.component.html',
   styleUrl: './certificados.component.css',
 })
