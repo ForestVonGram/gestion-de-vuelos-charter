@@ -73,7 +73,7 @@ export class AuthService {
    * Persiste el token y la info del usuario en LocalStorage
    * y actualiza el Stream de datos (BehaviorSubject).
    */
-  private handleAuthResponse(response: AuthResponse): void {
+  public handleAuthResponse(response: AuthResponse): void {
     if (response.token) {
       const user: User = {
         userId: response.userId,

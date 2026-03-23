@@ -39,7 +39,8 @@ import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 import { NewEmployed } from './pages/administrador/new-employed/new-employed';
 import { Personal } from './pages/administrador/personal/personal';
 import { DetallesPersonal } from './pages/administrador/detalles-personal/detalles-personal';
-import {MyProfile} from './shared/my-profile/my-profile';
+import { MyProfile } from './shared/my-profile/my-profile';
+import { VerificacionDosFactoresComponent } from './pages/auth/verificacionDos-factores/verificacion-dos-factores.component';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,10 @@ export const routes: Routes = [
       {
         path: 'recuperar/verificar',
         component: RecuperarContraseniaComponent
+      },
+      {
+        path: 'verificacion-2fa',
+        component: VerificacionDosFactoresComponent
       }
     ]
   },
