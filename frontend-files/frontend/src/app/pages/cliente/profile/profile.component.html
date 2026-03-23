@@ -97,19 +97,60 @@
       <!-- Cambio de contraseña (separado) -->
       <div class="password-section">
         <h3>Cambiar contraseña</h3>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="nuevaPassword">Nueva contraseña</label>
-            <input type="password" id="nuevaPassword" formControlName="nuevaPassword" placeholder="Mínimo 8 caracteres" />
-          </div>
-          <div class="form-group">
-            <label for="confirmarPassword">Confirmar contraseña</label>
-            <input type="password" id="confirmarPassword" formControlName="confirmarPassword" placeholder="Repite la contraseña" />
-            <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmarPassword')?.touched" class="error">
-              Las contraseñas no coinciden.
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="nuevaPassword">Nueva contraseña</label>
+              <input type="password" id="nuevaPassword" formControlName="nuevaPassword" placeholder="Mínimo 8 caracteres" />
+
+              <!-- Barra de fortaleza -->
+              <div class="strength-bar-wrapper" *ngIf="passwordStrength !== 'none'">
+                <div class="strength-bar">
+                  <div class="strength-bar-fill" [ngClass]="passwordStrength"></div>
+                </div>
+                <span class="strength-label" [ngClass]="passwordStrength">{{ passwordStrengthLabel }}</span>
+              </div>
+
+              <!-- Lista de requisitos -->
+              <ul class="password-requirements" *ngIf="passwordForm.get('nuevaPassword')?.dirty">
+                <li [class.met]="strengthChecks.minLength" [class.unmet]="!strengthChecks.minLength">
+                  <span class="req-icon">{{ strengthChecks.minLength ? '✓' : '✗' }}</span>
+                  Mínimo 8 caracteres
+                </li>
+                <li [class.met]="strengthChecks.hasUppercase" [class.unmet]="!strengthChecks.hasUppercase">
+                  <span class="req-icon">{{ strengthChecks.hasUppercase ? '✓' : '✗' }}</span>
+                  Al menos una letra mayúscula
+                </li>
+                <li [class.met]="strengthChecks.hasNumber" [class.unmet]="!strengthChecks.hasNumber">
+                  <span class="req-icon">{{ strengthChecks.hasNumber ? '✓' : '✗' }}</span>
+                  Al menos un número
+                </li>
+                <li [class.met]="strengthChecks.hasSpecial" [class.unmet]="!strengthChecks.hasSpecial">
+                  <span class="req-icon">{{ strengthChecks.hasSpecial ? '✓' : '✗' }}</span>
+                  Al menos un carácter especial (!@#$%...)
+                </li>
+              </ul>
+
+              <div *ngIf="passwordForm.get('nuevaPassword')?.touched && passwordForm.get('nuevaPassword')?.hasError('required')" class="error">
+                La contraseña es obligatoria
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmarPassword">Confirmar contraseña</label>
+              <input type="password" id="confirmarPassword" formControlName="confirmarPassword" placeholder="Repite la contraseña" />
+              <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmarPassword')?.touched" class="error">
+                Las contraseñas no coinciden.
+              </div>
             </div>
           </div>
-        </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-secondary" [disabled]="isLoading || passwordForm.invalid">
+              {{ isLoading ? 'Cambiando...' : 'Cambiar contraseña' }}
+            </button>
+          </div>
+        </form>
       </div>
 
       <div class="form-actions">

@@ -1,11 +1,28 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { UserService, Usuario } from '../../../services/user/user.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { finalize } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
+
+// Validador personalizado para fortaleza de contraseña
+function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+  const value: string = control.value || '';
+  const hasUppercase = /[A-Z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+
+  const errors: ValidationErrors = {};
+  if (!hasUppercase) errors['noUppercase'] = true;
+  if (!hasNumber) errors['noNumber'] = true;
+  if (!hasSpecial) errors['noSpecial'] = true;
+
+  return Object.keys(errors).length > 0 ? errors : null;
+}
 
 @Component({
   selector: 'app-profile',
@@ -16,11 +33,11 @@ import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibili
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule,          // <--- AÑADIDO
+    RouterModule,
     AccesibilidadComponent
   ]
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   passwordForm!: FormGroup;
   user: Usuario | null = null;
@@ -33,12 +50,24 @@ export class ProfileComponent implements OnInit {
   twoFactorEnabled = false;
   twoFactorMethod: 'EMAIL' | 'SMS' = 'EMAIL';
 
+  // Para la fortaleza de contraseña
+  passwordStrength: 'none' | 'weak' | 'medium' | 'strong' = 'none';
+  passwordStrengthLabel = '';
+  strengthChecks = {
+    minLength: false,
+    hasUppercase: false,
+    hasNumber: false,
+    hasSpecial: false
+  };
+
+  private destroy$ = new Subject<void>();
+
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef    // <--- AÑADIDO
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +77,14 @@ export class ProfileComponent implements OnInit {
     this.isDarkMode = localStorage.getItem('theme') === 'dark';
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    window.removeEventListener('scroll', this.onWindowScroll.bind(this));
+  }
+
   initForms(): void {
+    // Formulario de datos básicos
     this.profileForm = this.fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
@@ -56,10 +92,20 @@ export class ProfileComponent implements OnInit {
       telefono: ['']
     });
 
+    // Formulario de cambio de contraseña con validadores mejorados
     this.passwordForm = this.fb.group({
-      nuevaPassword: ['', [Validators.required, Validators.minLength(8)]],
+      nuevaPassword: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        passwordStrengthValidator
+      ]],
       confirmarPassword: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
+
+    // Escuchar cambios en nuevaPassword para actualizar la barra de fortaleza
+    this.passwordForm.get('nuevaPassword')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => this.evaluatePasswordStrength(value));
   }
 
   passwordMatchValidator(g: FormGroup): { [key: string]: boolean } | null {
@@ -68,11 +114,45 @@ export class ProfileComponent implements OnInit {
     return nueva === confirm ? null : { mismatch: true };
   }
 
+  private evaluatePasswordStrength(value: string): void {
+    if (!value) {
+      this.passwordStrength = 'none';
+      this.passwordStrengthLabel = '';
+      this.strengthChecks = {
+        minLength: false,
+        hasUppercase: false,
+        hasNumber: false,
+        hasSpecial: false
+      };
+      return;
+    }
+
+    this.strengthChecks = {
+      minLength: value.length >= 8,
+      hasUppercase: /[A-Z]/.test(value),
+      hasNumber: /[0-9]/.test(value),
+      hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value)
+    };
+
+    const passed = Object.values(this.strengthChecks).filter(Boolean).length;
+
+    if (passed <= 2) {
+      this.passwordStrength = 'weak';
+      this.passwordStrengthLabel = 'Débil';
+    } else if (passed === 3) {
+      this.passwordStrength = 'medium';
+      this.passwordStrengthLabel = 'Media';
+    } else {
+      this.passwordStrength = 'strong';
+      this.passwordStrengthLabel = 'Fuerte';
+    }
+  }
+
   loadUserData(): void {
     const currentUser = this.authService.currentUserValue;
     if (!currentUser || !currentUser.userId) {
       this.errorMessage = 'No se pudo identificar al usuario.';
-      this.cdr.detectChanges();   // Forzar actualización
+      this.cdr.detectChanges();
       return;
     }
     const userId = currentUser.userId;
@@ -144,11 +224,23 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
+    // Verificar errores del formulario de contraseña
     if (this.passwordForm.invalid) {
-      if (this.passwordForm.hasError('mismatch')) {
+      const passwordCtrl = this.passwordForm.get('nuevaPassword');
+      if (passwordCtrl?.errors) {
+        if (passwordCtrl.errors['required']) {
+          this.errorMessage = 'La contraseña es obligatoria.';
+        } else if (passwordCtrl.errors['minlength']) {
+          this.errorMessage = 'La contraseña debe tener al menos 8 caracteres.';
+        } else if (passwordCtrl.errors['noUppercase'] ||
+          passwordCtrl.errors['noNumber'] ||
+          passwordCtrl.errors['noSpecial']) {
+          this.errorMessage = 'La contraseña debe incluir mayúscula, número y carácter especial.';
+        }
+      } else if (this.passwordForm.hasError('mismatch')) {
         this.errorMessage = 'Las contraseñas no coinciden.';
       } else {
-        this.errorMessage = 'La contraseña debe tener al menos 8 caracteres.';
+        this.errorMessage = 'La contraseña no cumple los requisitos.';
       }
       this.cdr.detectChanges();
       return;
