@@ -8,7 +8,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * DTO para la creación de una nueva Aeronave.
+ * DTO para crear una nueva aeronave.
  */
 @Getter
 @Setter
@@ -18,28 +18,28 @@ import java.time.LocalDate;
 public class AeronaveCreateDTO {
 
     @NotBlank(message = "La matrícula es obligatoria")
-    private String matricula;
+    private String matricula; // Matrícula de la aeronave
 
     @NotBlank(message = "El modelo es obligatorio")
-    private String modelo;
+    private String modelo; // Modelo de la aeronave
 
-    private String fabricante;
+    private String fabricante; // Fabricante de la aeronave
 
     @Positive(message = "La capacidad de pasajeros debe ser positiva")
-    private Integer capacidadPasajeros;
+    private Integer capacidadPasajeros; // Número de pasajeros que puede transportar
 
     @Positive(message = "La capacidad de tripulación debe ser positiva")
-    private Integer capacidadTripulacion;
+    private Integer capacidadTripulacion; // Número de tripulantes necesarios
 
-    private Double autonomiaKm;
+    private Double autonomiaKm; // Autonomía en kilómetros
 
-    private Double velocidadCruceroKmh;
+    private Double velocidadCruceroKmh; // Velocidad de crucero en km/h
 
-    private LocalDate fechaFabricacion;
+    private LocalDate fechaFabricacion; // Fecha en que fue fabricada
 
-    private LocalDate fechaUltimaRevision;
+    private LocalDate fechaUltimaRevision; // Fecha de la última revisión
 
-    private EstadoAeronave estado;
+    private EstadoAeronave estado; // Estado actual de la aeronave
 
-    private String especificacionesTecnicas;
+    private String especificacionesTecnicas; // Especificaciones técnicas adicionales
 }

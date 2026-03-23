@@ -33,11 +33,11 @@ import java.util.Map;
 @Transactional
 public class DocumentoTecnicoServiceImpl implements DocumentoTecnicoService {
 
-    private final DocumentoTecnicoRepository documentoRepository;
-    private final AeronaveRepository aeronaveRepository;
-    private final PersonalRepository personalRepository;
-    private final DocumentoTecnicoMapper documentoMapper;
-    private final CloudinaryService cloudinaryService;
+    private final DocumentoTecnicoRepository documentoRepository; // Repositorio de documentos
+    private final AeronaveRepository aeronaveRepository; // Repositorio de aeronaves
+    private final PersonalRepository personalRepository; // Repositorio de personal
+    private final DocumentoTecnicoMapper documentoMapper; // Mapper de documentos
+    private final CloudinaryService cloudinaryService; // Servicio de Cloudinary para almacenar archivos
 
     @Override
     public DocumentoTecnicoDTO cargarDocumento(MultipartFile file, DocumentoTecnicoCreateDTO documentoCreateDTO) {

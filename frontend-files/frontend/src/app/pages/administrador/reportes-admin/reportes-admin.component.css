@@ -2,6 +2,10 @@
    ESTILOS ESPECÍFICOS: REPORTES
    ========================================= */
 
+/**
+ * Panel contenedor de la sección de reportes.
+ * Coherente con el estilo de cristal esmerilado del resto de la plataforma.
+ */
 .content-panel {
   background-color: rgba(20, 20, 40, 0.6);
   border-radius: 20px;
@@ -10,18 +14,59 @@
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.panel-header h3 { font-family: 'Jost', sans-serif; color: var(--color-white); font-size: 1.3rem; margin: 0; }
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
 
-/* Filtros */
-.filter-group { display: flex; gap: 0.5rem; background-color: rgba(0,0,0,0.2); padding: 5px; border-radius: 12px; }
-.filter-btn { background: transparent; color: var(--color-light-mid); border: none; padding: 8px 16px; border-radius: 8px; font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
-.filter-btn:hover { color: var(--color-white); }
-.filter-btn.active { background-color: var(--color-mid); color: var(--color-white); }
+.panel-header h3 {
+  font-family: 'Jost', sans-serif;
+  color: var(--color-white);
+  font-size: 1.3rem;
+  margin: 0;
+}
 
-/* Tabla de ReportesComponent */
-.table-responsive { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; }
+/* --- FILTROS DE REPORTE --- */
+.filter-group {
+  display: flex;
+  gap: 0.5rem;
+  background-color: rgba(0,0,0,0.2);
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.filter-btn {
+  background: transparent;
+  color: var(--color-light-mid);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  color: var(--color-white);
+}
+
+.filter-btn.active {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+}
+
+/* --- TABLA DE REPORTES --- */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
 .admin-table th {
   text-align: left;
@@ -43,10 +88,16 @@
   vertical-align: middle;
 }
 
-/* Celdas Específicas */
-.id-cell { font-weight: 700; color: var(--color-white); font-family: 'Libre Franklin', sans-serif; }
+.id-cell {
+  font-weight: 700;
+  color: var(--color-white);
+  font-family: 'Libre Franklin', sans-serif;
+}
 
-/* Badges de Tipos de Reporte */
+/* --- BADGES DE TIPOS DE REPORTE --- */
+/**
+ * Etiquetas de colores para identificar la naturaleza del reporte (Operativo, Flota, etc).
+ */
 .type-badge {
   padding: 5px 12px;
   border-radius: 8px;
@@ -56,25 +107,64 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+
 .type-operativo { background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); }
-.type-flota { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); }
-.type-horas { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+.type-flota     { background: rgba(155, 89, 182, 0.15); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.3); }
+.type-horas     { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
 
-/* Celda de Descripción */
-.desc-cell { display: flex; flex-direction: column; gap: 4px; }
-.desc-text { color: var(--color-white); font-weight: 500; }
-.records-info { font-size: 0.75rem; color: var(--color-light-mid); font-family: 'Libre Franklin', sans-serif; }
+/* --- CELDA DE DESCRIPCIÓN --- */
+.desc-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 
-/* Rango de Fechas */
-.date-range { display: flex; align-items: center; gap: 8px; font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; background-color: rgba(255,255,255,0.03); padding: 6px 10px; border-radius: 8px; }
-.arrow-divider { color: var(--color-mid); font-size: 0.7rem; }
+.desc-text {
+  color: var(--color-white);
+  font-weight: 500;
+}
 
-/* Fecha Generación */
-.date-block { display: flex; flex-direction: column; }
-.date-block .date { color: var(--color-white); font-weight: 500; }
-.date-block .time { color: var(--color-light-mid); font-size: 0.8rem; font-family: 'Libre Franklin', sans-serif; }
+.records-info {
+  font-size: 0.75rem;
+  color: var(--color-light-mid);
+  font-family: 'Libre Franklin', sans-serif;
+}
 
-/* Acciones */
+/* --- RANGO DE FECHAS ANALIZADO --- */
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  background-color: rgba(255,255,255,0.03);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.arrow-divider {
+  color: var(--color-mid);
+  font-size: 0.7rem;
+}
+
+/* --- FECHA DE GENERACIÓN --- */
+.date-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-block .date {
+  color: var(--color-white);
+  font-weight: 500;
+}
+
+.date-block .time {
+  color: var(--color-light-mid);
+  font-size: 0.8rem;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* --- ACCIONES DE DESCARGA --- */
 .text-right { text-align: right; }
 .action-cell { text-align: right; white-space: nowrap; }
 
@@ -93,8 +183,12 @@
   transition: all 0.2s;
 }
 
+/**
+ * Efecto hover para el botón de descarga.
+ * Utiliza una sombra resplandeciente (glow) para invitar a la acción.
+ */
 .icon-btn.download-btn:hover {
-  background: var(--color-mid); /* Puedes usar #e74c3c si quieres que sea rojo, o var(--color-mid) para mantener el azul/morado */
+  background: var(--color-mid);
   border-color: var(--color-mid);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(92, 92, 153, 0.3);
@@ -106,13 +200,15 @@
   object-fit: contain;
 }
 
+/* --- RESPONSIVIDAD --- */
 
-
-/* Responsividad */
+/* Pantallas de Laptop: Apilado vertical del rango de fechas */
 @media (max-width: 1100px) {
   .date-range { flex-direction: column; align-items: flex-start; gap: 2px; }
   .arrow-divider { display: none; }
 }
+
+/* Pantallas Móviles: Reordenamiento del layout general */
 @media (max-width: 900px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }

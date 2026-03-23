@@ -22,9 +22,9 @@ public interface IncidenciaMapper {
     @Mapping(target = "reportadoPorNombre", expression = "java(mapReportadoPorNombre(entity.getReportadoPor()))")
     @Mapping(target = "resueltoPorId", source = "resueltoPor.id")
     @Mapping(target = "resueltoPorNombre", expression = "java(mapUsuarioNombre(entity.getResueltoPor()))")
-    IncidenciaDTO toDTO(Incidencia entity);
+    IncidenciaDTO toDTO(Incidencia entity); // Convierte entidad a DTO
 
-    List<IncidenciaDTO> toDTOList(List<Incidencia> entities);
+    List<IncidenciaDTO> toDTOList(List<Incidencia> entities); // Convierte lista de entidades a lista de DTOs
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "vuelo", ignore = true)
@@ -34,15 +34,15 @@ public interface IncidenciaMapper {
     @Mapping(target = "resuelta", ignore = true)
     @Mapping(target = "accionesTomadas", ignore = true)
     @Mapping(target = "resueltoPor", ignore = true)
-    Incidencia toEntity(IncidenciaCreateDTO dto);
+    Incidencia toEntity(IncidenciaCreateDTO dto); // Convierte DTO de creación a entidad
 
     default String mapReportadoPorNombre(Tripulante tripulante) {
         if (tripulante == null || tripulante.getUsuario() == null) return null;
         return tripulante.getUsuario().getNombre() + " " + tripulante.getUsuario().getApellido();
-    }
+    } // Obtiene nombre completo del tripulante
 
     default String mapUsuarioNombre(Usuario usuario) {
         if (usuario == null) return null;
         return usuario.getNombre() + " " + usuario.getApellido();
-    }
+    } // Obtiene nombre completo del usuario
 }

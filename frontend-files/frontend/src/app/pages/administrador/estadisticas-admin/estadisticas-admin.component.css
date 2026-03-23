@@ -2,7 +2,10 @@
    ESTILOS ESPECÍFICOS: ESTADÍSTICAS
    ========================================= */
 
-/* KPIs Superiores */
+/**
+ * Rejilla para los Indicadores Clave de Desempeño (KPIs).
+ * Organiza los 3 valores más importantes en la parte superior del tablero.
+ */
 .kpi-top-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -21,6 +24,10 @@
   box-shadow: 0 8px 16px rgba(0,0,0,0.15);
 }
 
+/**
+ * Variante destacada para KPIs críticos.
+ * Cambia el fondo al color principal (mid) para llamar la atención del usuario.
+ */
 .kpi-card.highlight {
   background-color: var(--color-mid);
   border-color: rgba(255,255,255,0.1);
@@ -41,23 +48,45 @@
   color: var(--color-light);
 }
 
+/**
+ * Optimización de íconos vectoriales (SVG).
+ * El object-fit: contain evita distorsiones en diferentes proporciones.
+ */
 .svg-kpi-icon {
-  width: 60%;   /* Ocupará el 60% del ancho del cuadro gris/azul de fondo */
-  height: 60%;  /* Ocupará el 60% del alto */
-  object-fit: contain; /* Garantiza que el SVG nunca se deforme ni se recorte */
-  transition: transform 0.3s ease; /* Transición suave para el hover */
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-/* Efecto hover: El ícono crece un poco al pasar el mouse sobre toda la tarjeta */
+/* Micro-interacción: El ícono reacciona cuando el usuario se posiciona sobre la tarjeta */
 .kpi-card:hover .svg-kpi-icon {
   transform: scale(1.15);
 }
 
 .kpi-info { display: flex; flex-direction: column; }
-.kpi-label { font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; color: var(--color-light-mid); text-transform: uppercase; letter-spacing: 0.5px; }
-.kpi-value { font-family: 'Archivo Black', sans-serif; font-size: 1.8rem; color: var(--color-white); line-height: 1.2; }
 
-/* Paneles Detallados (Color Lavanda de la Flota) */
+/* Etiquetas en mayúsculas y con espaciado para un look de "monitor aeronáutico" */
+.kpi-label {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  color: var(--color-light-mid);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.kpi-value {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.8rem;
+  color: var(--color-white);
+  line-height: 1.2;
+}
+
+/* --- PANELES DETALLADOS (Color Lavanda de la Flota) --- */
+/**
+ * Seccion de análisis profundo.
+ * Rompe el esquema oscuro con un fondo claro (Lavanda) para mejorar la lectura de datos complejos.
+ */
 .detailed-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -65,7 +94,7 @@
 }
 
 .stats-panel {
-  background-color: var(--color-light); /* Lavanda */
+  background-color: var(--color-light);
   border-radius: 20px;
   padding: 1.5rem;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
@@ -93,9 +122,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  flex-grow: 1;
+  flex-grow: 1; /* Permite que el cuerpo creca para empujar el footer al final */
 }
 
+/* Filas de datos tipo "Label: Value" */
 .stat-row {
   display: flex;
   justify-content: space-between;
@@ -111,9 +141,9 @@
   font-size: 1.1rem;
 }
 
-/* Colores de texto para métricas */
+/* Clases de utilidad para estados semánticos en texto */
 .text-success { color: var(--color-success); font-weight: 600; }
-.text-warning { color: #d35400; font-weight: 600; } /* Un naranja más oscuro para que lea bien en lavanda */
+.text-warning { color: #d35400; font-weight: 600; } /* Contraste optimizado para fondo lavanda */
 .text-error { color: var(--color-error); font-weight: 600; }
 .text-info { color: var(--color-mid); font-weight: 600; }
 
@@ -123,9 +153,12 @@
   margin: 0.5rem 0;
 }
 
-/* Barras de Progreso */
+/* --- BARRAS DE PROGRESO --- */
+/**
+ * Visualización de capacidad o cumplimiento de metas.
+ */
 .progress-section {
-  margin-top: auto; /* Empuja la barra al final de la tarjeta */
+  margin-top: auto; /* Alineación perfecta al final del panel */
   padding-top: 1.5rem;
 }
 
@@ -151,17 +184,21 @@
   height: 100%;
   background-color: var(--color-success);
   border-radius: 10px;
-  transition: width 1s ease-in-out;
+  transition: width 1s ease-in-out; /* Animación de llenado suave al cargar */
 }
 
 .progress-bar-fill.info-fill {
   background-color: var(--color-mid);
 }
 
-/* Responsividad */
+/* --- RESPONSIVIDAD --- */
+
+/* Pantallas medianas (Laptops): Colapsa de 3 a 2 columnas */
 @media (max-width: 1200px) {
   .kpi-top-grid, .detailed-stats-grid { grid-template-columns: repeat(2, 1fr); }
 }
+
+/* Móviles: Todo a una sola columna y ajuste de Sidebar */
 @media (max-width: 768px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }

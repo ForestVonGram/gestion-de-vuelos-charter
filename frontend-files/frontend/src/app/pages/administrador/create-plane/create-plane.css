@@ -1,143 +1,163 @@
-.form-card{
-background: rgba(255,255,255,0.08);
-padding: 2rem;
-border-radius: var(--radius-lg);
-box-shadow: var(--shadow-lg);
-backdrop-filter: blur(8px);
+/**
+ * Contenedor principal del formulario.
+ * Mantiene el estilo de "cristal" con un desenfoque sutil y sombras suaves.
+ */
+.form-card {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
 }
 
-.form-grid{
-display: grid;
-grid-template-columns: repeat(2,1fr);
-gap: 1.5rem;
+/**
+ * Rejilla de disposición del formulario.
+ * Por defecto, organiza los campos en dos columnas iguales.
+ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
 }
 
-.form-group{
-display: flex;
-flex-direction: column;
+/* Estructura básica de cada campo (etiqueta + input) */
+.form-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.form-group.full{
-grid-column: 1 / -1;
+/**
+ * Clase de utilidad para campos que deben ocupar todo el ancho de la rejilla
+ * (ej. áreas de texto o descripciones largas).
+ */
+.form-group.full {
+  grid-column: 1 / -1;
 }
 
-.form-group label{
-font-family: 'Libre Franklin';
-color: var(--color-light);
-font-size: 0.9rem;
-margin-bottom: 6px;
+.form-group label {
+  font-family: 'Libre Franklin';
+  color: var(--color-light);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
 }
 
+/**
+ * Estilizado de los elementos de entrada.
+ * Se utiliza un fondo traslúcido para integrarse con el diseño oscuro.
+ */
 .form-group input,
 .form-group select,
-.form-group textarea{
-
-padding: 10px 12px;
-border-radius: var(--radius-md);
-border: 1px solid rgba(255,255,255,0.2);
-background: rgba(255,255,255,0.1);
-color: white;
-transition: var(--transition-fast);
-
+.form-group textarea {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transition: var(--transition-fast);
 }
 
+/**
+ * Estados de enfoque (focus).
+ * Mejora la accesibilidad y el feedback visual mediante un anillo de luz (glow).
+ */
 .form-group input:focus,
 .form-group textarea:focus,
-.form-group select:focus{
-
-border-color: var(--color-light);
-box-shadow: 0 0 0 2px rgba(204,204,255,0.3);
-
+.form-group select:focus {
+  border-color: var(--color-light);
+  box-shadow: 0 0 0 2px rgba(204, 204, 255, 0.3);
+  outline: none; /* Evita el borde por defecto del navegador */
 }
 
-.form-actions{
-
-margin-top: 2rem;
-display:flex;
-justify-content:flex-end;
-
-}
-.form-group select{
-
-background: rgba(255,255,255,0.1);
-color: white;
-
+/* Contenedor de los botones al final del formulario */
+.form-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
 }
 
-.form-group select option{
-
-background: white;
-color: black;
-
+/**
+ * Manejo específico para elementos select.
+ * Se asegura que las opciones sean legibles dependiendo del tema.
+ */
+.form-group select {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-.dark-theme .form-group select option{
-
-background: #2d2d2d;
-color: white;
-
+/* Opciones para tema claro (por defecto) */
+.form-group select option {
+  background: white;
+  color: black;
 }
 
-.error{
-
-color: var(--color-error);
-font-size: 0.8rem;
-margin-top: 5px;
-
+/* Opciones para tema oscuro (específicamente definido para .dark-theme) */
+.dark-theme .form-group select option {
+  background: #2d2d2d;
+  color: white;
 }
 
-/* Tablet */
-@media (max-width: 1024px){
-
-.form-grid{
-grid-template-columns: 1fr;
+/* Mensajes de validación de error */
+.error {
+  color: var(--color-error);
+  font-size: 0.8rem;
+  margin-top: 5px;
 }
 
-.form-card{
-padding: 1.5rem;
+/* --- RESPONSIVE DESIGN (Media Queries) --- */
+
+/**
+ * Tablet: Pasamos de 2 columnas a 1 para evitar que los campos se vean muy estrechos.
+ */
+@media (max-width: 1024px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 1.5rem;
+  }
 }
 
+/**
+ * Móvil: Optimizamos el espaciado y centramos las acciones.
+ * Los botones principales crecen al 100% para facilitar el toque táctil.
+ */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1.5rem;
+  }
+
+  .form-card {
+    padding: 1.2rem;
+    border-radius: var(--radius-md);
+  }
+
+  .form-actions {
+    justify-content: center;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-/* Móvil */
-@media (max-width: 768px){
+/**
+ * Móvil pequeño: Reducción de tamaños de fuente y padding para aprovechar el espacio.
+ */
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.5rem;
+  }
 
-.main-content{
-padding: 1.5rem;
-}
+  .form-group label {
+    font-size: 0.8rem;
+  }
 
-.form-card{
-padding: 1.2rem;
-border-radius: var(--radius-md);
-}
-
-.form-actions{
-justify-content: center;
-}
-
-.btn-primary{
-width: 100%;
-justify-content: center;
-}
-
-}
-
-/* Móvil pequeño */
-@media (max-width: 480px){
-
-.page-title{
-font-size: 1.5rem;
-}
-
-.form-group label{
-font-size: 0.8rem;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea{
-font-size: 0.85rem;
-padding: 8px 10px;
-}
-
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 0.85rem;
+    padding: 8px 10px;
+  }
 }

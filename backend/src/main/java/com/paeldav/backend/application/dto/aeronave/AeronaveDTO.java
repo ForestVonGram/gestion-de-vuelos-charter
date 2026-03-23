@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * DTO de respuesta para Aeronave.
+ * DTO con los datos de una aeronave para responder.
  */
 @Getter
 @Setter
@@ -15,18 +15,18 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AeronaveDTO {
-    private Long id;
-    private String matricula;
-    private String modelo;
-    private String fabricante;
-    private Integer capacidadPasajeros;
-    private Integer capacidadTripulacion;
-    private Double autonomiaKm;
-    private Double velocidadCruceroKmh;
-    private LocalDate fechaFabricacion;
-    private LocalDate fechaUltimaRevision;
-    private Double horasVueloTotales;
-    private EstadoAeronave estado;
-    private String especificacionesTecnicas;
-    private List<ImagenAeronaveDTO> imagenes;
+    private Long id; // Identificador único
+    private String matricula; // Matrícula de la aeronave
+    private String modelo; // Modelo de la aeronave
+    private String fabricante; // Fabricante
+    private Integer capacidadPasajeros; // Capacidad de pasajeros
+    private Integer capacidadTripulacion; // Capacidad de tripulación
+    private Double autonomiaKm; // Autonomía en km
+    private Double velocidadCruceroKmh; // Velocidad de crucero
+    private LocalDate fechaFabricacion; // Fecha de fabricación
+    private LocalDate fechaUltimaRevision; // Última revisión
+    private Double horasVueloTotales; // Total de horas de vuelo acumuladas
+    private EstadoAeronave estado; // Estado actual
+    private String especificacionesTecnicas; // Especificaciones técnicas
+    private List<ImagenAeronaveDTO> imagenes; // Imágenes de la aeronave
 }

@@ -5,29 +5,42 @@ import { AuthService, User } from '../../../services/auth/auth.service'; // Ajus
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 
 // --- ENUMS Y DTOs ---
+
+/**
+ * Enumeración de estados posibles para una aeronave.
+ * Coincide con el enum EstadoAeronave del backend.
+ */
 export enum EstadoAeronave {
   OPERATIVA = 'OPERATIVA',
   EN_MANTENIMIENTO = 'EN_MANTENIMIENTO',
   FUERA_DE_SERVICIO = 'FUERA_DE_SERVICIO'
 }
 
+/**
+ * DTO que representa una aeronave en el sistema.
+ * Coincide con el AeronaveDTO del backend.
+ */
 export interface AeronaveDTO {
-  id: number;
-  matricula: string;
-  modelo: string;
-  fabricante: string;
-  capacidadPasajeros: number;
-  capacidadTripulacion: number;
-  autonomiaKm: number;
-  velocidadCruceroKmh: number;
-  fechaFabricacion: string;
-  fechaUltimaRevision: string;
-  horasVueloTotales: number;
-  estado: EstadoAeronave;
-  especificacionesTecnicas?: string;
-  imagenes: any[];
+  id: number; // Identificador único
+  matricula: string; // Matrícula de la aeronave
+  modelo: string; // Modelo
+  fabricante: string; // Fabricante
+  capacidadPasajeros: number; // Capacidad de pasajeros
+  capacidadTripulacion: number; // Capacidad de tripulación
+  autonomiaKm: number; // Autonomía en kilómetros
+  velocidadCruceroKmh: number; // Velocidad de crucero
+  fechaFabricacion: string; // Fecha de fabricación
+  fechaUltimaRevision: string; // Fecha última revisión
+  horasVueloTotales: number; // Total de horas de vuelo acumuladas
+  estado: EstadoAeronave; // Estado actual
+  especificacionesTecnicas?: string; // Especificaciones técnicas (opcional)
+  imagenes: any[]; // Lista de imágenes de la aeronave
 }
 
+/**
+ * Componente que muestra y gestiona la flota aérea para administradores.
+ * Presenta una tabla con todas las aeronaves y su información relevante.
+ */
 @Component({
   selector: 'app-flota-aerea-admin',
   standalone: true,
@@ -37,21 +50,40 @@ export interface AeronaveDTO {
 })
 export class FlotaAereaAdminComponent implements OnInit {
 
+  // Usuario actualmente autenticado
   currentUser: User | null = null;
+
+  // Lista de aeronaves a mostrar en la tabla
   aeronaves: AeronaveDTO[] = [];
 
+  /**
+   * Constructor del componente
+   * @param authService servicio de autenticación
+   * @param router servicio de navegación
+   */
   constructor(private authService: AuthService, private router: Router) {}
 
+  /**
+   * Inicialización del componente.
+   * Obtiene el usuario actual y carga los datos simulados.
+   */
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
     this.cargarDatosSimulados();
   }
 
+  /**
+   * Cierra la sesión del usuario actual y redirige al login.
+   */
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
+  /**
+   * Simula la carga de datos de aeronaves desde el backend.
+   * TODO: Reemplazar con llamada real al servicio de aeronaves.
+   */
   cargarDatosSimulados(): void {
     this.aeronaves = [
       {
@@ -93,6 +125,11 @@ export class FlotaAereaAdminComponent implements OnInit {
     ];
   }
 
+  /**
+   * Obtiene la clase CSS correspondiente al estado de la aeronave.
+   * @param estado estado de la aeronave
+   * @returns clase CSS para aplicar estilos
+   */
   getEstadoClase(estado: EstadoAeronave): string {
     switch (estado) {
       case EstadoAeronave.OPERATIVA: return 'status-success';

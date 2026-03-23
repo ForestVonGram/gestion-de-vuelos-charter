@@ -72,6 +72,10 @@ dependencies {
 	implementation 'org.apache.poi:poi-ooxml:5.0.0'
 	implementation 'com.opencsv:opencsv:5.9'
 
+
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+
 	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.h2database:h2'

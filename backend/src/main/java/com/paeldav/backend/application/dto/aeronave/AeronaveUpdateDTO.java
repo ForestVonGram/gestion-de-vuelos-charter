@@ -7,8 +7,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 /**
- * DTO para la actualización de datos de una Aeronave existente.
- * Permite editar información técnica y operativa sin requerir todos los campos.
+ * DTO para actualizar una aeronave existente.
  */
 @Getter
 @Setter
@@ -17,23 +16,23 @@ import java.time.LocalDate;
 @Builder
 public class AeronaveUpdateDTO {
 
-    private String fabricante;
+    private String fabricante; // Fabricante
 
     @Positive(message = "La capacidad de pasajeros debe ser positiva")
-    private Integer capacidadPasajeros;
+    private Integer capacidadPasajeros; // Nueva capacidad de pasajeros
 
     @Positive(message = "La capacidad de tripulación debe ser positiva")
-    private Integer capacidadTripulacion;
+    private Integer capacidadTripulacion; // Nueva capacidad de tripulación
 
-    private Double autonomiaKm;
+    private Double autonomiaKm; // Nueva autonomía
 
-    private Double velocidadCruceroKmh;
+    private Double velocidadCruceroKmh; // Nueva velocidad de crucero
 
-    private LocalDate fechaFabricacion;
+    private LocalDate fechaFabricacion; // Nueva fecha de fabricación
 
-    private LocalDate fechaUltimaRevision;
+    private LocalDate fechaUltimaRevision; // Nueva fecha de última revisión
 
-    private EstadoAeronave estado;
+    private EstadoAeronave estado; // Nuevo estado
 
-    private String especificacionesTecnicas;
+    private String especificacionesTecnicas; // Nuevas especificaciones técnicas
 }

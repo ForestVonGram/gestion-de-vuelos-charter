@@ -1,0 +1,128 @@
+<div class="details-personal-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="main-content">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="welcome-box">
+        <h1>Detalle de Personal</h1>
+        <p>Consulta y actualiza la información del empleado</p>
+      </div>
+      <div class="avatar-circle">{{ currentUser?.nombreCompleto?.charAt(0) }}</div>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-header">
+      <h2 class="page-title">Ficha del Empleado</h2>
+      <button class="btn-back" (click)="volver()">
+        <span class="material-symbols-rounded">arrow_back</span> Volver
+      </button>
+    </div>
+
+    <!-- FORM -->
+    <form class="detalle-form" (ngSubmit)="guardar()">
+
+      <!-- BLOQUE: Identificación -->
+      <div class="form-section">
+        <h3 class="form-section-title">Identificación</h3>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label class="form-label">ID</label>
+            <input class="form-input readonly" type="number" [value]="persona.id" readonly />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">ID Usuario</label>
+            <input class="form-input readonly" type="number" [value]="persona.usuarioId" readonly />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Número de Empleado</label>
+            <input class="form-input" type="text" [(ngModel)]="persona.numeroEmpleado" name="numeroEmpleado" readonly />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nombre de Usuario</label>
+            <input class="form-input readonly" type="text" [value]="persona.usuarioNombre" readonly />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Email</label>
+            <input class="form-input readonly" type="email" [value]="persona.usuarioEmail" readonly />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BLOQUE: Información Laboral -->
+      <div class="form-section">
+        <h3 class="form-section-title">Información Laboral</h3>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label class="form-label">Cargo</label>
+            <select class="form-select" [(ngModel)]="persona.cargo" name="cargo">
+              @for (c of cargos; track c) {
+                <option [value]="c">{{ formatear(c) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Estado</label>
+            <select class="form-select" [(ngModel)]="persona.estado" name="estado">
+              @for (e of estados; track e) {
+                <option [value]="e">{{ formatear(e) }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Turno</label>
+            <input class="form-input" type="text" [(ngModel)]="persona.turno" name="turno" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Fecha de Contratación</label>
+            <input class="form-input" type="date" [(ngModel)]="persona.fechaContratacion" name="fechaContratacion" />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Área de Especialización</label>
+            <input class="form-input" type="text" [(ngModel)]="persona.areaEspecializacion" name="areaEspecializacion" />
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Certificaciones</label>
+            <input class="form-input" type="text" [(ngModel)]="persona.certificaciones" name="certificaciones" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- BLOQUE: Observaciones -->
+      <div class="form-section">
+        <h3 class="form-section-title">Observaciones</h3>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-textarea" [(ngModel)]="persona.observaciones" name="observaciones" rows="4"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACCIONES -->
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" (click)="volver()">Cancelar</button>
+        <button type="submit" class="btn-primary">
+          <span class="material-symbols-rounded">save</span> Guardar Cambios
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</div>

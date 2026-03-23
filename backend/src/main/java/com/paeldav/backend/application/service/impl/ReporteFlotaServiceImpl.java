@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ReporteFlotaServiceImpl implements ReporteFlotaService {
 
+    // Repositorios inyectados para consolidar datos de diferentes áreas del sistema
     private final ReporteRepository reporteRepository;
     private final AeronaveRepository aeronaveRepository;
     private final VueloRepository vueloRepository;
@@ -40,13 +41,14 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
     public ReporteDTO generarReporteUsoFlota(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long usuarioIdAutenticado) {
         log.info("Generando reporte de uso de flota desde {} hasta {}", fechaInicio, fechaFin);
 
+        // Validar la existencia del usuario que solicita la generación del reporte
         Usuario usuario = usuarioRepository.findById(usuarioIdAutenticado)
                 .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
 
-        // Calcular estadísticas
+        // Calcular métricas consolidadas de las aeronaves en el rango de fechas
         Map<String, Object> estadisticas = calcularEstadisticasPorAeronave(fechaInicio, fechaFin);
 
-        // Crear reporte
+        // Construir la entidad del reporte con los metadatos y las estadísticas generadas
         Reporte reporte = Reporte.builder()
                 .tipo(TipoReporte.FLOTA)
                 .descripcion("Reporte de uso de flota")
@@ -57,6 +59,7 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
                 .numeroRegistros(obtenerMantenimientosPorFlota(fechaInicio, fechaFin).size())
                 .build();
 
+        // Persistir el reporte en el historial y retornarlo como DTO
         Reporte reporteGuardado = reporteRepository.save(reporte);
         log.info("Reporte de flota creado con ID {}", reporteGuardado.getId());
 
@@ -69,8 +72,11 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
         log.info("Calculando estadísticas por aeronave");
 
         Map<String, Object> resultado = new HashMap<>();
+
+        // Obtener datos agrupados directamente desde la base de datos para mayor rendimiento
         List<Object[]> vuelosPorAeronave = vueloRepository.findEstadisticasPorAeronave(fechaInicio, fechaFin);
 
+        // Transformar los resultados crudos (Object[]) a una estructura de clave-valor legible
         List<Map<String, Object>> estadisticas = new ArrayList<>();
         vuelosPorAeronave.forEach(row -> {
             Map<String, Object> stat = new HashMap<>();
@@ -81,6 +87,7 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
             estadisticas.add(stat);
         });
 
+        // Ensamblar el resultado final combinando las métricas individuales con totales globales
         resultado.put("estadisticasPorAeronave", estadisticas);
         resultado.put("totalAeronaves", aeronaveRepository.count());
         resultado.put("disponibilidad", calcularDisponibilidadFlota());
@@ -93,6 +100,7 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
     public List<Map<String, Object>> obtenerMantenimientosPorFlota(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         log.info("Obteniendo mantenimientos de flota");
 
+        // Consultar los mantenimientos del periodo y mapearlos a una estructura simplificada para el reporte
         return mantenimientoRepository.findByFechaInicioBetween(fechaInicio, fechaFin)
                 .stream()
                 .map(mant -> {
@@ -116,16 +124,20 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
         log.info("Calculando estadísticas de combustible");
 
         Map<String, Object> resultado = new HashMap<>();
+
+        // Calcular la suma total de litros consumidos en el periodo
         Double totalLitros = repostajeRepository.findByFechaRepostajeBetween(fechaInicio, fechaFin)
                 .stream()
                 .mapToDouble(r -> r.getCantidadLitros() != null ? r.getCantidadLitros() : 0.0)
                 .sum();
 
+        // Calcular el gasto total en combustible en el periodo
         Double costoTotal = repostajeRepository.findByFechaRepostajeBetween(fechaInicio, fechaFin)
                 .stream()
                 .mapToDouble(r -> r.getCostoTotal() != null ? r.getCostoTotal() : 0.0)
                 .sum();
 
+        // Consolidar resultados y calcular el precio promedio por litro
         resultado.put("totalLitros", totalLitros);
         resultado.put("costoTotal", costoTotal);
         resultado.put("promedioPorLitro", costoTotal / (totalLitros > 0 ? totalLitros : 1));
@@ -139,9 +151,12 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
         log.info("Calculando disponibilidad de flota");
 
         Map<String, Object> resultado = new HashMap<>();
+
+        // Contar aeronaves operativas frente al inventario total
         long disponibles = aeronaveRepository.countByEstado(EstadoAeronave.DISPONIBLE);
         long total = aeronaveRepository.count();
 
+        // Calcular el ratio de disponibilidad devolviendo el porcentaje exacto
         resultado.put("disponibles", disponibles);
         resultado.put("total", total);
         resultado.put("porcentajeDisponibilidad", total > 0 ? (disponibles * 100.0) / total : 0.0);
@@ -154,13 +169,14 @@ public class ReporteFlotaServiceImpl implements ReporteFlotaService {
     public Double calcularHorasVueloAeronave(Long aeronaveId, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
         log.info("Calculando horas de vuelo para aeronave {}", aeronaveId);
 
+        // Filtrar los vuelos de una aeronave y sumar la duración exacta en base a sus horas reales de salida y llegada
         return vueloRepository.findByAeronaveIdAndFechaSalidaRealBetween(aeronaveId, fechaInicio, fechaFin)
                 .stream()
                 .mapToDouble(vuelo -> {
                     if (vuelo.getFechaSalidaReal() != null && vuelo.getFechaLlegadaReal() != null) {
                         return java.time.Duration.between(
-                                vuelo.getFechaSalidaReal(),
-                                vuelo.getFechaLlegadaReal())
+                                        vuelo.getFechaSalidaReal(),
+                                        vuelo.getFechaLlegadaReal())
                                 .toMinutes() / 60.0;
                     }
                     return 0.0;

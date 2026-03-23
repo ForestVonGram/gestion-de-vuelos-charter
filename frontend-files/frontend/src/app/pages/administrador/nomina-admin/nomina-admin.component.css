@@ -2,26 +2,76 @@
    ESTILOS ESPECÍFICOS: NÓMINA
    ========================================= */
 
+/**
+ * Panel contenedor principal para la gestión de nómina.
+ * Mantiene el diseño traslúcido y bordes sutiles para consistencia con el dashboard.
+ */
 .content-panel {
   background-color: rgba(20, 20, 40, 0.6);
   border-radius: 20px;
   padding: 2rem;
   border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.panel-header h3 { font-family: 'Jost', sans-serif; color: var(--color-white); font-size: 1.3rem; margin: 0; }
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
 
-/* Filtros */
-.filter-group { display: flex; gap: 0.5rem; background-color: rgba(0,0,0,0.2); padding: 5px; border-radius: 12px; }
-.filter-btn { background: transparent; color: var(--color-light-mid); border: none; padding: 8px 16px; border-radius: 8px; font-family: 'Libre Franklin', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
-.filter-btn:hover { color: var(--color-white); }
-.filter-btn.active { background-color: var(--color-mid); color: var(--color-white); }
+.panel-header h3 {
+  font-family: 'Jost', sans-serif;
+  color: var(--color-white);
+  font-size: 1.3rem;
+  margin: 0;
+}
 
-/* Tabla de Nómina */
-.table-responsive { overflow-x: auto; }
-.admin-table { width: 100%; border-collapse: collapse; }
+/* --- FILTROS --- */
+/**
+ * Grupo de botones para filtrar estados de pago.
+ * Estilo tipo "toggle" con fondo oscurecido para resaltar los botones activos.
+ */
+.filter-group {
+  display: flex;
+  gap: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border-radius: 12px;
+}
+
+.filter-btn {
+  background: transparent;
+  color: var(--color-light-mid);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  color: var(--color-white);
+}
+
+/* Estado activo: utiliza el color de marca (mid) para indicar el filtro seleccionado */
+.filter-btn.active {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+}
+
+/* --- TABLA DE NÓMINA --- */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
 .admin-table th {
   text-align: left;
@@ -43,15 +93,35 @@
   vertical-align: middle;
 }
 
-/* Celdas Específicas */
-.id-cell { font-weight: 700; color: var(--color-white); font-family: 'Libre Franklin', sans-serif; }
+/* --- CELDAS ESPECÍFICAS --- */
 
-.empleado-cell { display: flex; flex-direction: column; }
-.empleado-cell .nombre { font-weight: 600; color: var(--color-white); }
-.empleado-cell .id-ref { font-size: 0.75rem; color: var(--color-light-mid); font-family: 'Libre Franklin', sans-serif; }
+/* Resaltado del ID de la transacción */
+.id-cell {
+  font-weight: 700;
+  color: var(--color-white);
+  font-family: 'Libre Franklin', sans-serif;
+}
 
+/* Estructura para la información del empleado (Nombre + ID Referencia) */
+.empleado-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.empleado-cell .nombre {
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.empleado-cell .id-ref {
+  font-size: 0.75rem;
+  color: var(--color-light-mid);
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* Pequeña etiqueta para indicar el periodo contable (Mes/Año) */
 .periodo-badge {
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 4px 10px;
   border-radius: 8px;
   font-family: 'Libre Franklin', sans-serif;
@@ -59,15 +129,25 @@
   letter-spacing: 0.5px;
 }
 
-.dinero { font-family: 'Libre Franklin', sans-serif; font-weight: 500; }
-.total-neto { font-family: 'Archivo Black', sans-serif; color: var(--color-white); font-size: 1.1rem; }
+/* Estilo para montos financieros */
+.dinero {
+  font-family: 'Libre Franklin', sans-serif;
+  font-weight: 500;
+}
 
-/* Colores de texto (Ingresos/Egresos) */
-.text-success { color: #2ecc71; }
-.text-error { color: #e74c3c; }
+/* Monto total destacado con la tipografía más pesada de la app */
+.total-neto {
+  font-family: 'Archivo Black', sans-serif;
+  color: var(--color-white);
+  font-size: 1.1rem;
+}
+
+/* Colores semánticos para conceptos de pago */
+.text-success { color: #2ecc71; } /* Ingresos / Bonos */
+.text-error { color: #e74c3c; }   /* Egresos / Retenciones */
 .text-neutral { color: var(--color-light-mid); }
 
-/* Status Badges */
+/* --- STATUS BADGES --- */
 .status-badge {
   padding: 6px 12px;
   border-radius: 20px;
@@ -84,17 +164,18 @@
 }
 
 .header-actions {
-  margin-left: auto; /* Empuja los botones a la derecha */
+  margin-left: auto;
   display: flex;
-  gap: 10px; /* separación entre botones */
+  gap: 10px;
 }
 
+/* Variantes de color según el estado del pago */
 .status-draft { background: rgba(149, 165, 166, 0.15); color: #95a5a6; border: 1px solid rgba(149, 165, 166, 0.3); }
 .status-pending { background: rgba(243, 156, 18, 0.15); color: #f1c40f; border: 1px solid rgba(243, 156, 18, 0.3); }
 .status-success { background: rgba(39, 174, 96, 0.2); color: #27ae60; border: 1px solid rgba(39, 174, 96, 0.4); }
 .status-error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid rgba(231, 76, 60, 0.3); }
 
-/* Acciones (Igual que en vuelos y flota) */
+/* --- ACCIONES --- */
 .text-right { text-align: right; }
 .action-cell { text-align: right; white-space: nowrap; }
 
@@ -112,13 +193,27 @@
   transition: all 0.2s;
 }
 
-.icon-btn:hover { background: var(--color-mid); color: var(--color-white); border-color: var(--color-mid); transform: translateY(-2px); }
-.svg-icon { width: 55%; height: 55%; object-fit: contain; }
+.icon-btn:hover {
+  background: var(--color-mid);
+  color: var(--color-white);
+  border-color: var(--color-mid);
+  transform: translateY(-2px);
+}
 
-/* Responsividad */
+.svg-icon {
+  width: 55%;
+  height: 55%;
+  object-fit: contain;
+}
+
+/* --- RESPONSIVIDAD --- */
+
+/* Ajuste de relleno en pantallas medianas */
 @media (max-width: 1024px) {
   .admin-table th, .admin-table td { padding: 1rem 0.5rem; }
 }
+
+/* Layout vertical en móviles para evitar el desbordamiento del panel */
 @media (max-width: 900px) {
   .admin-container { flex-direction: column; overflow-y: auto; }
   .sidebar { width: 100%; height: auto; border-right: none; padding: 1.5rem; }

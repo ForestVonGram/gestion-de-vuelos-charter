@@ -6,13 +6,13 @@ import { TokenService } from '../token_service/token-service'; // Importamos Tok
 import { HttpHeaders } from '@angular/common/http'; // Importamos HttpHeaders para agregar el token en las solicitudes HTTP
 import { PersonalCreateDTO } from '../../models/personal/create-personal-dto';
 import { HttpParams } from '@angular/common/http'; // Importamos HttpParams para manejar los parámetros de consulta en las solicitudes HTTP
-
+import { PersonalUpdateDTO } from '../../models/personal/update-personal-dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PersonalService {
-  
+
   apiUrl = `${environment.apiUrl}/personal`;
 
   constructor(private http: HttpClient, private tokenService: TokenService) {
@@ -40,21 +40,53 @@ export class PersonalService {
     return this.http.get(`${this.apiUrl}`, { headers });
   }
 
-filtroPersonal(nombre: string, estado: string, cargo: string): Observable<any> {
-  const token = this.tokenService.getToken();
-  const headers = new HttpHeaders({
+  filtroPersonal(nombre: string, estado: string, cargo: string): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
-  });
+    });
 
-  let params = new HttpParams();
-  if (nombre) params = params.set('nombre', nombre);
-  if (estado) params = params.set('estado', estado);
-  if (cargo)  params = params.set('cargo', cargo);
+    let params = new HttpParams();
+    if (nombre) params = params.set('nombre', nombre);
+    if (estado) params = params.set('estado', estado);
+    if (cargo)  params = params.set('cargo', cargo);
 
-  console.log('URL final:', `${this.apiUrl}/filtros`);
-  console.log('Params:', params.toString());
 
-  return this.http.get(`${this.apiUrl}/filtros`, { headers, params });
-}
+    return this.http.get(`${this.apiUrl}/filtros`, { headers, params });
+  }
+
+  eliminarPersonal(id: number): Observable<any>   {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.put(`${this.apiUrl}/${id}/desactiva`, {}, { headers, responseType: 'text' });
+  }
+
+  activarPersonal(id: number): Observable<any>   {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.put(`${this.apiUrl}/${id}/activa`, {}, { headers, responseType: 'text' });
+  }
+
+  obtenerPersonalPorId(id: number): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get(`${this.apiUrl}/${id}`, { headers });
+  }
+
+  actualizarPersonal(id: number, data: PersonalUpdateDTO): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.put(`${this.apiUrl}/${id}`, data, { headers });
+  }
+
 }

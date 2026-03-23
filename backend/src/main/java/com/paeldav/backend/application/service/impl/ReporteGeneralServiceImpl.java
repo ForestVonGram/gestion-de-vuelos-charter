@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implementación del servicio de reportes operativos generales.
- * Gestiona la creación, consulta y eliminación de reportes.
+ * Servicio encargado de gestionar los reportes del sistema.
  */
 @Service
 @RequiredArgsConstructor
@@ -37,6 +36,9 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
     private final UsuarioRepository usuarioRepository;
     private final ReporteMapper reporteMapper;
 
+    /**
+     * Genera un nuevo reporte operativo.
+     */
     @Override
     public ReporteDTO generarReporteOperativo(ReporteCreateDTO createDTO, Long usuarioIdAutenticado) {
         log.info("Generando reporte operativo tipo {} para usuario {}", createDTO.getTipo(), usuarioIdAutenticado);
@@ -54,7 +56,7 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
         // Crear entidad Reporte
         Reporte reporte = Reporte.builder()
                 .tipo(createDTO.getTipo())
-                .descripcion(createDTO.getDescripcion() != null ? 
+                .descripcion(createDTO.getDescripcion() != null ?
                         createDTO.getDescripcion() : "Reporte " + createDTO.getTipo())
                 .fechaInicioRango(createDTO.getFechaInicioRango())
                 .fechaFinRango(createDTO.getFechaFinRango())
@@ -70,6 +72,9 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
         return reporteMapper.toDTO(reporteGuardado);
     }
 
+    /**
+     * Obtiene un reporte por su ID.
+     */
     @Override
     @Transactional(readOnly = true)
     public ReporteDTO obtenerReportePorId(Long id) {
@@ -79,10 +84,13 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
         return reporteMapper.toDTO(reporte);
     }
 
+    /**
+     * Lista reportes aplicando filtros opcionales.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReporteDTO> listarReportes(ReporteFiltroDTO filtro) {
-        log.info("Listando reportes con filtros: tipo={}, fechaDesde={}, fechaHasta={}", 
+        log.info("Listando reportes con filtros: tipo={}, fechaDesde={}, fechaHasta={}",
                 filtro.getTipo(), filtro.getFechaDesde(), filtro.getFechaHasta());
 
         List<Reporte> reportes;
@@ -104,6 +112,9 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Obtiene todos los reportes registrados.
+     */
     @Override
     @Transactional(readOnly = true)
     public List<ReporteDTO> obtenerTodosReportes() {
@@ -113,6 +124,9 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Elimina un reporte por su ID.
+     */
     @Override
     public void eliminarReporte(Long id) {
         log.info("Eliminando reporte con ID {}", id);
@@ -123,6 +137,9 @@ public class ReporteGeneralServiceImpl implements ReporteGeneralService {
         log.info("Reporte eliminado exitosamente");
     }
 
+    /**
+     * Valida que el rango de fechas sea correcto.
+     */
     @Override
     public boolean validarRangoFechas(Long fechaInicio, Long fechaFin) {
         if (fechaInicio == null || fechaFin == null) {

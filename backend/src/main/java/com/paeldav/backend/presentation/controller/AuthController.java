@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controlador REST para la gestión de autenticación y seguridad de cuentas.
+ * Expone endpoints para login, registro, logout y configuración de doble factor (2FA).
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -24,6 +28,10 @@ public class AuthController {
     private final AuthService authService;
     private final DosFactoresService dosFactoresService;
 
+    /**
+     * Procesa el inicio de sesión de un usuario.
+     * Captura metadatos del dispositivo e IP para auditoría y seguridad.
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody LoginRequest request,
@@ -32,6 +40,7 @@ public class AuthController {
         log.debug("Recibida petición de login para email: {}", request.getEmail());
 
         try {
+            // Extracción de metadatos de la cabecera HTTP para trazabilidad
             String dispositivo = extraerDispositivo(httpRequest);
             String direccionIp = extraerDireccionIp(httpRequest);
             String userAgent = httpRequest.getHeader("User-Agent");
@@ -56,6 +65,10 @@ public class AuthController {
         }
     }
 
+    /**
+     * Registra un nuevo usuario en el sistema.
+     * Incluye validación de seguridad (reCAPTCHA) y captura de contexto de red.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @Valid @RequestBody RegisterRequest request,
@@ -80,6 +93,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 
         } catch (BadCredentialsException e) {
+            // Maneja fallos en la validación de reCAPTCHA o tokens de seguridad
             log.warn("Error en validación reCAPTCHA para registro: {}", request.getEmail());
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Validación de seguridad fallida");
@@ -95,6 +109,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Cierra la sesión activa invalidando el token JWT proporcionado.
+     */
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest httpRequest) {
         try {
@@ -111,6 +128,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Valida el código de segundo factor (2FA) para completar el acceso.
+     */
     @PostMapping("/verify-2fa")
     public ResponseEntity<?> verify2FA(
             @Valid @RequestBody VerificarCodigoRequest request,
@@ -141,6 +161,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Activa la protección 2FA para el usuario autenticado.
+     */
     @PostMapping("/enable-2fa")
     public ResponseEntity<?> habilitarDosFactores(
             @Valid @RequestBody ConfiguracionDosFactoresDTO config,
@@ -167,6 +190,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Desactiva la protección 2FA de la cuenta.
+     */
     @PostMapping("/disable-2fa")
     public ResponseEntity<?> deshabilitarDosFactores() {
 
@@ -185,6 +211,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Consulta si el usuario actual tiene el 2FA activo y qué método utiliza.
+     */
     @GetMapping("/2fa-status")
     public ResponseEntity<?> obtenerEstadoDosFactores() {
 
@@ -202,6 +231,9 @@ public class AuthController {
         }
     }
 
+    /**
+     * Identifica el tipo de dispositivo basándose en el User-Agent.
+     */
     private String extraerDispositivo(HttpServletRequest request) {
         String userAgent = request.getHeader("User-Agent");
         if (userAgent == null) return "Desconocido";
@@ -211,6 +243,9 @@ public class AuthController {
         return "Escritorio";
     }
 
+    /**
+     * Obtiene la dirección IP real, considerando posibles proxies o balanceadores (cabecera X-Forwarded-For).
+     */
     private String extraerDireccionIp(HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");
         if (xForwardedFor != null && !xForwardedFor.isEmpty()) {

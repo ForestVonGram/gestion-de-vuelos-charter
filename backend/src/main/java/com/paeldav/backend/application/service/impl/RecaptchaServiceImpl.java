@@ -16,14 +16,21 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
+/**
+ * Implementación del servicio de verificación de reCAPTCHA.
+ * Se encarga de validar los tokens de los clientes contra la API de Google
+ * para prevenir abusos y accesos automatizados (bots).
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RecaptchaServiceImpl implements RecaptchaService {
 
+    // Dependencias inyectadas para peticiones HTTP y manejo de JSON
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
+    // Valores de configuración inyectados desde el archivo properties/yml
     @Value("${recaptcha.enabled:false}")
     private boolean recaptchaEnabled;
 
@@ -38,16 +45,19 @@ public class RecaptchaServiceImpl implements RecaptchaService {
 
     @Override
     public boolean validarToken(String token) {
+        // Si el servicio está apagado, se asume como válido por defecto
         if (!estaHabilitado()) {
             log.debug("reCAPTCHA esta deshabilitado");
             return true;
         }
 
+        // Rechazar inmediatamente si el token viene vacío
         if (token == null || token.isBlank()) {
             log.warn("Token de reCAPTCHA vacio o nulo");
             return false;
         }
 
+        // Intentar validar el token con Google y capturar posibles excepciones de red/parseo
         try {
             return validarConGoogle(token);
         } catch (Exception e) {
@@ -58,11 +68,13 @@ public class RecaptchaServiceImpl implements RecaptchaService {
 
     @Override
     public double obtenerPuntuacion(String token) {
+        // Retornar 0.0 si la validación está deshabilitada o el token es inválido
         if (!estaHabilitado() || token == null || token.isBlank()) {
             return 0.0;
         }
 
         try {
+            // Construir el cuerpo de la petición y consultar la API de Google
             String requestBody = "secret=" + recaptchaSecretKey + "&response=" + token;
             String response = restTemplate.postForObject(verifyUrl, requestBody, String.class);
 
@@ -70,6 +82,7 @@ public class RecaptchaServiceImpl implements RecaptchaService {
                 return 0.0;
             }
 
+            // Extraer y devolver únicamente el puntaje (score) asignado por Google
             JsonNode jsonNode = objectMapper.readTree(response);
             return jsonNode.get("score").asDouble(0.0);
         } catch (IOException e) {
@@ -80,20 +93,24 @@ public class RecaptchaServiceImpl implements RecaptchaService {
 
     @Override
     public boolean estaHabilitado() {
+        // Verifica que la bandera esté activa y la clave secreta exista
         return recaptchaEnabled && recaptchaSecretKey != null && !recaptchaSecretKey.isBlank();
     }
 
     private boolean validarConGoogle(String token) throws IOException {
 
+        // Configurar los encabezados para enviar datos en formato formulario
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
+        // Preparar los parámetros requeridos por la API de validación de Google
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("secret", recaptchaSecretKey);
         map.add("response", token);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
+        // Ejecutar la petición POST hacia el servidor de reCAPTCHA
         String response = restTemplate.postForObject(verifyUrl, request, String.class);
 
         if (response == null) {
@@ -101,6 +118,7 @@ public class RecaptchaServiceImpl implements RecaptchaService {
             return false;
         }
 
+        // Parsear la respuesta JSON para su evaluación
         JsonNode jsonNode = objectMapper.readTree(response);
 
         // Loguear error si Google rechaza la petición (útil para debug)
@@ -108,6 +126,7 @@ public class RecaptchaServiceImpl implements RecaptchaService {
             log.error("Google rechazó el token. Errores: {}", jsonNode.get("error-codes"));
         }
 
+        // Verificar el estado general de éxito devuelto
         boolean success = jsonNode.get("success").asBoolean(false);
 
         if (!success) {
@@ -115,6 +134,7 @@ public class RecaptchaServiceImpl implements RecaptchaService {
             return false;
         }
 
+        // Si es reCAPTCHA v3, validar que el puntaje obtenido supere el umbral mínimo configurado
         if (jsonNode.has("score")) {
             double score = jsonNode.get("score").asDouble(0.0);
             boolean scorePassed = score >= scoreThreshold;

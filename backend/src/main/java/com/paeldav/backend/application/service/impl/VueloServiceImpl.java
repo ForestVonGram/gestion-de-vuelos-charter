@@ -28,14 +28,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class VueloServiceImpl implements VueloService {
 
-    private final VueloRepository vueloRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final AeronaveRepository aeronaveRepository;
-    private final TripulanteRepository tripulanteRepository;
-    private final HistorialVueloRepository historialVueloRepository;
-    private final PagoService pagoService;
-    private final VueloMapper vueloMapper;
-    private final HistorialVueloMapper historialVueloMapper;
+    private final VueloRepository vueloRepository; // Repositorio de vuelos
+    private final UsuarioRepository usuarioRepository; // Repositorio de usuarios
+    private final AeronaveRepository aeronaveRepository; // Repositorio de aeronaves
+    private final TripulanteRepository tripulanteRepository; // Repositorio de tripulantes
+    private final HistorialVueloRepository historialVueloRepository; // Repositorio de historial de vuelos
+    private final PagoService pagoService; // Servicio de pagos
+    private final VueloMapper vueloMapper; // Mapper de vuelos
+    private final HistorialVueloMapper historialVueloMapper; // Mapper de historial de vuelos
 
     private static final List<EstadoVuelo> ESTADOS_ACTIVOS = List.of(
             EstadoVuelo.SOLICITADO, EstadoVuelo.CONFIRMADO, EstadoVuelo.EN_CURSO
@@ -44,6 +44,8 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO crearVuelo(VueloCreateDTO vueloCreateDTO) {
+        // Crea una nueva solicitud de vuelo
+
         // Validar que el usuario solicitante existe
         Usuario usuario = usuarioRepository.findById(vueloCreateDTO.getUsuarioId())
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -66,6 +68,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional(readOnly = true)
     public VueloDTO obtenerVueloPorId(Long id) {
+        // Obtiene un vuelo por su ID
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -77,6 +80,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional(readOnly = true)
     public List<VueloDTO> obtenerTodosVuelos() {
+        // Obtiene todos los vuelos registrados
         List<Vuelo> vuelos = vueloRepository.findAll();
         return vueloMapper.toDTOList(vuelos);
     }
@@ -84,6 +88,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO actualizarVuelo(Long id, VueloUpdateDTO vueloUpdateDTO) {
+        // Actualiza los datos de un vuelo existente
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -100,6 +105,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public void cancelarVuelo(Long id) {
+        // Cancela un vuelo existente
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -126,6 +132,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO cambiarEstadoVuelo(Long id, EstadoVuelo nuevoEstado) {
+        // Cambia el estado de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -139,8 +146,8 @@ public class VueloServiceImpl implements VueloService {
             if (!pagoService.tienePagoConfirmado(vuelo.getId(), vuelo.getCostoEstimado())) {
                 throw new IllegalStateException(
                         "No se puede iniciar un vuelo sin pagos confirmados. " +
-                        "Costo estimado: " + vuelo.getCostoEstimado() + 
-                        ", Pagos confirmados: " + pagoService.obtenerTotalPagosConfirmados(vuelo.getId())
+                                "Costo estimado: " + vuelo.getCostoEstimado() +
+                                ", Pagos confirmados: " + pagoService.obtenerTotalPagosConfirmados(vuelo.getId())
                 );
             }
         }
@@ -155,6 +162,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional(readOnly = true)
     public List<VueloDTO> obtenerVuelosPorEstado(EstadoVuelo estado) {
+        // Obtiene todos los vuelos con un estado específico
         List<Vuelo> vuelos = vueloRepository.findByEstado(estado);
         return vueloMapper.toDTOList(vuelos);
     }
@@ -173,6 +181,8 @@ public class VueloServiceImpl implements VueloService {
      * @throws VueloEstadoInvalidoException si la transición no es válida
      */
     private void validarTransicionEstado(EstadoVuelo estadoActual, EstadoVuelo nuevoEstado) {
+        // Valida si es posible pasar de un estado a otro
+
         // Estados finales no pueden cambiar
         if (estadoActual == EstadoVuelo.COMPLETADO || estadoActual == EstadoVuelo.CANCELADO) {
             throw new VueloEstadoInvalidoException(
@@ -207,6 +217,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO aprobarSolicitud(Long vueloId, SolicitudAprobacionDTO dto) {
+        // Aprueba una solicitud de vuelo pendiente
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + vueloId
@@ -241,6 +252,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO rechazarSolicitud(Long vueloId, SolicitudRechazoDTO dto) {
+        // Rechaza una solicitud de vuelo pendiente
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + vueloId
@@ -270,6 +282,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO asignarAeronave(Long vueloId, AsignacionAeronaveDTO dto) {
+        // Asigna una aeronave a un vuelo
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + vueloId
@@ -295,8 +308,8 @@ public class VueloServiceImpl implements VueloService {
         }
 
         // Validar capacidad de pasajeros
-        if (vuelo.getNumeroPasajeros() != null && 
-            aeronave.getCapacidadPasajeros() < vuelo.getNumeroPasajeros()) {
+        if (vuelo.getNumeroPasajeros() != null &&
+                aeronave.getCapacidadPasajeros() < vuelo.getNumeroPasajeros()) {
             throw new AsignacionInvalidaException(
                     String.format("La aeronave tiene capacidad para %d pasajeros, pero el vuelo requiere %d",
                             aeronave.getCapacidadPasajeros(), vuelo.getNumeroPasajeros())
@@ -343,6 +356,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO asignarTripulacion(Long vueloId, AsignacionTripulacionDTO dto) {
+        // Asigna la tripulación a un vuelo
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + vueloId
@@ -374,7 +388,7 @@ public class VueloServiceImpl implements VueloService {
 
             // Validar licencia vigente
             if (tripulante.getFechaVencimientoLicencia() != null &&
-                tripulante.getFechaVencimientoLicencia().isBefore(LocalDate.now())) {
+                    tripulante.getFechaVencimientoLicencia().isBefore(LocalDate.now())) {
                 throw new AsignacionInvalidaException(
                         String.format("El tripulante %s tiene la licencia vencida",
                                 tripulante.getNumeroLicencia())
@@ -437,6 +451,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional(readOnly = true)
     public List<HistorialVueloDTO> obtenerHistorialVuelo(Long vueloId) {
+        // Obtiene el historial de cambios de estado de un vuelo
         // Verificar que el vuelo existe
         if (!vueloRepository.existsById(vueloId)) {
             throw new VueloNoEncontradoException("Vuelo no encontrado con ID: " + vueloId);
@@ -449,6 +464,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional(readOnly = true)
     public List<VueloDTO> obtenerVuelosPorUsuario(Long usuarioId) {
+        // Obtiene todos los vuelos solicitados por un usuario específico
         List<Vuelo> vuelos = vueloRepository.findByUsuarioId(usuarioId);
         return vueloMapper.toDTOList(vuelos);
     }
@@ -460,6 +476,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO registrarSalidaVuelo(Long id) {
+        // Registra la salida real de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -491,6 +508,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO registrarLlegadaVuelo(Long id) {
+        // Registra la llegada real de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
                         "Vuelo no encontrado con ID: " + id
@@ -531,6 +549,7 @@ public class VueloServiceImpl implements VueloService {
      */
     private void registrarHistorial(Vuelo vuelo, EstadoVuelo estadoAnterior,
                                     EstadoVuelo estadoNuevo, String tipoAccion, String motivo) {
+        // Guarda un registro de cambio de estado en el historial del vuelo
         HistorialVuelo historial = HistorialVuelo.builder()
                 .vuelo(vuelo)
                 .estadoAnterior(estadoAnterior)

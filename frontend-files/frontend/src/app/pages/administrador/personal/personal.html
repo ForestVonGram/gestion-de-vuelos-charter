@@ -50,6 +50,7 @@
             <th>Cargo</th>
             <th>Estado</th>
             <th>Contratación</th>
+            <th scope="col" class="text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -69,7 +70,21 @@
                 </span>
               </td>
               <td><span class="date-text">{{ formatDate(emp.fechaContratacion) }}</span></td>
+              <td>
+                <div class="action-btns">
+                <button class="btn-action btn-view" [routerLink]="['/admin/persona', emp.id]"  title="Ver">
+                <span class="material-symbols-rounded">visibility</span>
+                </button>
+                <button class="btn-action btn-delete" title="Eliminar" (click)="onDelete(emp.id)">
+                <span class="material-symbols-rounded">delete</span>
+                </button>
+                <button class="btn-action btn-edit" title="activar" (click)="onActivate(emp.id)">
+                <span class="material-symbols-rounded">toggle_on</span>
+                </button>
+                </div>
+                </td>
             </tr>
+
           } @empty {
             <tr>
               <td colspan="5" class="empty-state">

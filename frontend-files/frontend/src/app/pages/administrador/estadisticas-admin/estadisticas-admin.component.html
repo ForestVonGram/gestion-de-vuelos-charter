@@ -1,59 +1,67 @@
-<div class="admin-container">
+<div class="admin-container"> <!-- Contenedor principal del panel admin -->
 
-  <app-admin-sidebar></app-admin-sidebar>
+  <app-admin-sidebar></app-admin-sidebar> <!-- Sidebar de navegación del panel -->
 
-  <main class="main-content">
+  <main class="main-content"> <!-- Área principal del contenido -->
 
-    <header class="topbar">
+    <header class="topbar"> <!-- Barra superior -->
       <div class="welcome-box">
         <h1>Análisis y Rendimiento</h1>
+        <!-- Fecha de última actualización de métricas -->
         <p>Actualizado: {{ metricas.fechaActualizacion | date:'medium' }}</p>
       </div>
       <div class="user-profile">
         <div class="avatar-circle">
+          <!-- Inicial del usuario logueado -->
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
         </div>
       </div>
     </header>
 
-    <div class="section-header">
+    <div class="section-header"> <!-- Encabezado de sección -->
       <h2 class="page-title">Métricas Generales</h2>
+      <!-- Botón para descargar reporte -->
       <button class="btn-primary"><i class="fas fa-download"></i> Descargar Reporte</button>
     </div>
 
-    <div class="kpi-top-grid">
+    <div class="kpi-top-grid"> <!-- Tarjetas KPI principales -->
       <div class="kpi-card highlight">
         <div class="kpi-icon">
           <img src="assets/icons/income.svg" alt="Ingresos" class="svg-kpi-icon">
         </div>
         <div class="kpi-info">
           <span class="kpi-label">Ingresos Totales</span>
+          <!-- Ingreso total generado por vuelos -->
           <span class="kpi-value">{{ metricas.metricasVuelos.ingresoTotalVuelos | currency:'USD':'symbol':'1.0-0' }}</span>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon">
           <img src="assets/icons/profitability.svg" alt="Rentabilidad" class="svg-kpi-icon">
         </div>
         <div class="kpi-info">
           <span class="kpi-label">Rentabilidad Promedio</span>
+          <!-- Porcentaje promedio de rentabilidad -->
           <span class="kpi-value">{{ metricas.rentabilidadPromedio }}%</span>
         </div>
       </div>
+
       <div class="kpi-card">
         <div class="kpi-icon">
           <img src="assets/icons/occupation.svg" alt="Ocupación" class="svg-kpi-icon">
         </div>
         <div class="kpi-info">
           <span class="kpi-label">Ocupación Promedio</span>
+          <!-- Porcentaje promedio de ocupación -->
           <span class="kpi-value">{{ metricas.ocupacionPromedio }}%</span>
         </div>
       </div>
     </div>
 
-    <div class="detailed-stats-grid">
+    <div class="detailed-stats-grid"> <!-- Grid de paneles detallados -->
 
-      <div class="stats-panel">
+      <div class="stats-panel"> <!-- Panel de métricas de vuelos -->
         <div class="panel-header">
           <h3><i class="fas fa-route"></i> Operativa de VuelosComponent</h3>
         </div>
@@ -62,19 +70,24 @@
             <span>Totales Históricos</span>
             <span class="stat-num">{{ metricas.metricasVuelos.vuelosTotales | number }}</span>
           </div>
+
           <div class="stat-row text-success">
             <span>Completados</span>
             <span class="stat-num">{{ metricas.metricasVuelos.vuelosCompletados | number }}</span>
           </div>
+
           <div class="stat-row text-warning">
             <span>En Proceso / Programados</span>
+            <!-- Suma vuelos en proceso y programados -->
             <span class="stat-num">{{ metricas.metricasVuelos.vuelosEnProceso + metricas.metricasVuelos.vuelosProgramados }}</span>
           </div>
+
           <div class="stat-row text-error">
             <span>Cancelados</span>
             <span class="stat-num">{{ metricas.metricasVuelos.vuelosCancelados }}</span>
           </div>
 
+          <!-- Barra de progreso de completación -->
           <div class="progress-section">
             <div class="progress-labels">
               <span>Tasa de Compleción</span>
@@ -87,28 +100,34 @@
         </div>
       </div>
 
-      <div class="stats-panel">
+      <div class="stats-panel"> <!-- Panel de estado de la flota -->
         <div class="panel-header">
           <h3><i class="fas fa-plane"></i> Estado de la Flota</h3>
         </div>
         <div class="panel-body">
+
           <div class="stat-row">
             <span>Aeronaves Totales</span>
             <span class="stat-num">{{ metricas.metricasFlota.aeronavesTotales }}</span>
           </div>
+
           <div class="stat-row text-info">
             <span>Activas / Disponibles</span>
+            <!-- Aeronaves activas vs disponibles -->
             <span class="stat-num">{{ metricas.metricasFlota.aeronavesActivas }} / {{ metricas.metricasFlota.aeronavesDisponibles }}</span>
           </div>
+
           <div class="stat-row text-warning">
             <span>En Mantenimiento</span>
             <span class="stat-num">{{ metricas.metricasFlota.aeronavesEnMantenimiento }}</span>
           </div>
+
           <div class="stat-row">
             <span>Total Horas Vuelo</span>
             <span class="stat-num">{{ metricas.metricasFlota.horasTotalVuelo | number:'1.0-0' }}h</span>
           </div>
 
+          <!-- Barra de progreso de disponibilidad -->
           <div class="progress-section">
             <div class="progress-labels">
               <span>Disponibilidad de Flota</span>
@@ -121,32 +140,39 @@
         </div>
       </div>
 
-      <div class="stats-panel">
+      <div class="stats-panel"> <!-- Panel de recursos humanos -->
         <div class="panel-header">
           <h3><i class="fas fa-user-tie"></i> Recursos Humanos</h3>
         </div>
         <div class="panel-body">
+
           <div class="stat-row">
             <span>Personal Total</span>
             <span class="stat-num">{{ metricas.metricasPersonal.personalTotal }}</span>
           </div>
+
           <div class="stat-row">
             <span>Personal en Licencia</span>
             <span class="stat-num text-warning">{{ metricas.metricasPersonal.personalEnLicencia }}</span>
           </div>
-          <hr class="divider">
+
+          <hr class="divider"> <!-- Separador visual -->
+
           <div class="stat-row">
             <span>Tripulación Total</span>
             <span class="stat-num">{{ metricas.metricasPersonal.tripulantesTotal }}</span>
           </div>
+
           <div class="stat-row text-success">
             <span>Tripulantes Disponibles</span>
             <span class="stat-num">{{ metricas.metricasPersonal.tripulantesDisponibles }}</span>
           </div>
+
           <div class="stat-row text-info">
             <span>Tripulantes en Vuelo</span>
             <span class="stat-num">{{ metricas.metricasPersonal.tripulantesEnVuelo }}</span>
           </div>
+
         </div>
       </div>
 

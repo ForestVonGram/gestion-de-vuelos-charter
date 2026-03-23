@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
+// Interfaz interna para definir la estructura de los servicios ofrecidos
 interface TipoMantenimiento {
   value: string;
   label: string;
   icon: string;
   desc: string;
-  features: string[];
+  features: string[]; // Lista de características específicas de cada servicio
 }
 
 @Component({
@@ -19,13 +20,13 @@ interface TipoMantenimiento {
   imports: [CommonModule, RouterModule]
 })
 export class MantenimientoOfrecidoComponent implements OnInit {
-  // Propiedades para el dropdown de usuario
+  // --- Propiedades de Usuario y Estado ---
   userName: string = 'Operador';
   userEmail: string = '';
   isDropdownOpen: boolean = false;
   loading: boolean = false;
 
-  // Tipos de mantenimiento según el enum del backend
+  // Catálogo de servicios basado en los Enums del backend para mantener la consistencia
   tiposMantenimiento: TipoMantenimiento[] = [
     {
       value: 'PREVENTIVO',
@@ -63,9 +64,10 @@ export class MantenimientoOfrecidoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarDatosUsuario();
+    this.cargarDatosUsuario(); // Al iniciar, recuperamos los datos de la sesión activa
   }
 
+  // Extrae la información del usuario desde el servicio de autenticación
   cargarDatosUsuario(): void {
     const currentUser = this.authService.currentUserValue;
     if (currentUser) {
@@ -74,28 +76,29 @@ export class MantenimientoOfrecidoComponent implements OnInit {
     }
   }
 
+  // Maneja la apertura del menú de perfil en el header
   toggleDropdown(): void {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
+  // Finaliza la sesión y limpia el almacenamiento local
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
 
+  // Inicia el flujo de solicitud enviando el tipo de mantenimiento como parámetro de consulta
   solicitarMantenimiento(tipo: string): void {
     console.log('Solicitando mantenimiento:', tipo);
-    // Aquí iría la lógica para solicitar el mantenimiento
-    // Por ahora solo redirigimos al formulario de nuevo mantenimiento con el tipo preseleccionado
+    // Redirige al formulario de creación pasando el tipo seleccionado mediante QueryParams
     this.router.navigate(['/operador/mantenimiento/nuevo'], {
       queryParams: { tipo: tipo }
     });
   }
 
+  // Proporciona una vía de contacto alternativa para casos no estándar
   contactar(): void {
     console.log('Contactando para mantenimiento personalizado');
-    // Aquí iría la lógica para contactar
-    // Por ejemplo, abrir un modal o redirigir a una página de contacto
     alert('Por favor, contáctenos al correo: servicios@astranimbus.com');
   }
 }

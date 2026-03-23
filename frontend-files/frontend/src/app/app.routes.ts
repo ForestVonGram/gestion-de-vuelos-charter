@@ -38,6 +38,7 @@ import { ReportesAdminComponent } from './pages/administrador/reportes-admin/rep
 import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 import { NewEmployed } from './pages/administrador/new-employed/new-employed';
 import { Personal } from './pages/administrador/personal/personal';
+import { DetallesPersonal } from './pages/administrador/detalles-personal/detalles-personal';
 
 export const routes: Routes = [
   {
@@ -161,6 +162,10 @@ export const routes: Routes = [
       {
         path: 'personal',
         component: Personal
+      },
+      {
+        path: 'persona/:id',
+        component: DetallesPersonal
       }
     ]
   },

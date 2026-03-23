@@ -29,17 +29,18 @@ import java.util.stream.Collectors;
 @Transactional
 public class ReporteHorasServiceImpl implements ReporteHorasService {
 
-    private final ReporteRepository reporteRepository;
-    private final RegistroHorasVueloRepository registroHorasVueloRepository;
-    private final VueloRepository vueloRepository;
-    private final TripulanteRepository tripulanteRepository;
-    private final UsuarioRepository usuarioRepository;
-    private final ReporteMapper reporteMapper;
+    private final ReporteRepository reporteRepository; // Repositorio de reportes
+    private final RegistroHorasVueloRepository registroHorasVueloRepository; // Repositorio de registros de horas
+    private final VueloRepository vueloRepository; // Repositorio de vuelos
+    private final TripulanteRepository tripulanteRepository; // Repositorio de tripulantes
+    private final UsuarioRepository usuarioRepository; // Repositorio de usuarios
+    private final ReporteMapper reporteMapper; // Mapper de reportes
 
     @Override
     public ReporteDTO generarReporteHorasTrabajadas(LocalDateTime fechaInicio, LocalDateTime fechaFin, Long usuarioIdAutenticado) {
         log.info("Generando reporte de horas trabajadas desde {} hasta {}", fechaInicio, fechaFin);
 
+        // Obtener usuario que genera el reporte
         Usuario usuario = usuarioRepository.findById(usuarioIdAutenticado)
                 .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
 
@@ -75,6 +76,7 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
         Map<String, Object> resultado = new HashMap<>();
         List<RegistroHorasVuelo> registros = registroHorasVueloRepository.findByFechaRegistroBetween(fechaInicio, fechaFin);
 
+        // Agrupar y sumar horas por cada tripulante
         Map<String, Double> horasPorTripulante = new HashMap<>();
         registros.forEach(reg -> {
             String nombre = reg.getTripulante().getUsuario().getNombre();
@@ -97,6 +99,7 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
         Map<String, Object> resultado = new HashMap<>();
         List<RegistroHorasVuelo> registros = registroHorasVueloRepository.findByFechaRegistroBetween(fechaInicio, fechaFin);
 
+        // Agrupar y sumar horas por función desempeñada
         Map<String, Double> horasPorFuncion = new HashMap<>();
         registros.forEach(reg -> {
             String funcion = reg.getFuncionDesempenada() != null ? reg.getFuncionDesempenada() : "Sin especificar";
@@ -117,18 +120,18 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
 
         // Detectar anomalías
         List<String> anomalias = new ArrayList<>();
-        
+
         registros.forEach(reg -> {
             // Validar horas positivas
             if (reg.getHorasVoladas() <= 0) {
                 anomalias.add("Registro " + reg.getId() + ": horas negativas o cero");
             }
-            
+
             // Validar aprobación
             if (!Boolean.TRUE.equals(reg.getAprobado())) {
                 anomalias.add("Registro " + reg.getId() + ": pendiente de aprobación");
             }
-            
+
             // Validar consistencia con vuelo
             if (!validarConsistenciaVuelo(reg.getVuelo())) {
                 anomalias.add("Registro " + reg.getId() + ": inconsistencia con datos del vuelo");
@@ -146,6 +149,7 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
     @Override
     @Transactional(readOnly = true)
     public boolean validarConsistenciaVuelo(Vuelo vuelo) {
+        // Valida que los datos del vuelo sean consistentes
         if (vuelo == null) {
             return false;
         }
@@ -172,6 +176,7 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
     public List<Map<String, Object>> obtenerRegistrosPendientesAprobacion() {
         log.info("Obteniendo registros pendientes de aprobación");
 
+        // Obtener todos los registros no aprobados y mapearlos a un formato simplificado
         return registroHorasVueloRepository.findByAprobadoFalse()
                 .stream()
                 .map(reg -> {
@@ -195,6 +200,7 @@ public class ReporteHorasServiceImpl implements ReporteHorasService {
         Map<String, Object> resultado = new HashMap<>();
         List<RegistroHorasVuelo> registros = registroHorasVueloRepository.findByFechaRegistroBetween(fechaInicio, fechaFin);
 
+        // Agrupar y sumar horas por tipo de vuelo
         Map<String, Double> horasPorTipoVuelo = new HashMap<>();
         registros.forEach(reg -> {
             String tipoVuelo = reg.getTipoVuelo() != null ? reg.getTipoVuelo() : "Sin especificar";

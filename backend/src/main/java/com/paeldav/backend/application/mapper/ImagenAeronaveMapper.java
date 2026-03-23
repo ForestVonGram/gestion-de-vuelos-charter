@@ -14,7 +14,7 @@ import java.util.List;
 public interface ImagenAeronaveMapper {
 
     @Mapping(target = "cargadoPorNombre", source = "cargadoPor.usuario.nombre")
-    ImagenAeronaveDTO toDTO(ImagenAeronave entity);
+    ImagenAeronaveDTO toDTO(ImagenAeronave entity); // Convierte entidad a DTO
 
-    List<ImagenAeronaveDTO> toDTOList(List<ImagenAeronave> entities);
+    List<ImagenAeronaveDTO> toDTOList(List<ImagenAeronave> entities); // Convierte lista de entidades a lista de DTOs
 }

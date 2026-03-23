@@ -4,7 +4,7 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
-// Importamos los modelos
+// Modelos de autenticación
 import {
   LoginRequest,
   RegisterRequest,
@@ -24,11 +24,13 @@ export interface User {
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
+
+  // Manejo del estado del usuario de forma reactiva
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser$: Observable<User | null>;
 
   constructor(private http: HttpClient) {
-    // Recuperar usuario al recargar página
+    // Al recargar la página, intentamos restaurar la sesión desde el LocalStorage
     const storedUser = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<User | null>(
       storedUser ? JSON.parse(storedUser) : null
@@ -36,10 +38,15 @@ export class AuthService {
     this.currentUser$ = this.currentUserSubject.asObservable();
   }
 
+  // Retorna el valor actual del usuario sin necesidad de suscripción
   public get currentUserValue(): User | null {
     return this.currentUserSubject.value;
   }
 
+  /**
+   * Envía las credenciales al backend.
+   * Si es exitoso, guarda el token y los datos del usuario.
+   */
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => this.handleAuthResponse(response)),
@@ -47,6 +54,10 @@ export class AuthService {
     );
   }
 
+  /**
+   * Registra un nuevo usuario y, si el backend lo permite,
+   * inicia sesión automáticamente tras el registro.
+   */
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
       tap(response => {
@@ -58,6 +69,10 @@ export class AuthService {
     );
   }
 
+  /**
+   * Persiste el token y la info del usuario en LocalStorage
+   * y actualiza el Stream de datos (BehaviorSubject).
+   */
   private handleAuthResponse(response: AuthResponse): void {
     if (response.token) {
       const user: User = {
@@ -70,16 +85,23 @@ export class AuthService {
       localStorage.setItem('token', response.token);
       localStorage.setItem('tokenType', response.tokenType || 'Bearer');
       localStorage.setItem('currentUser', JSON.stringify(user));
+
+      // Notifica a todos los componentes suscritos que el usuario cambió
       this.currentUserSubject.next(user);
     }
   }
 
+  /**
+   * Centraliza el manejo de errores de red o de credenciales.
+   */
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Error desconocido';
 
     if (error.error instanceof ErrorEvent) {
+      // Errores del lado del cliente o red
       errorMessage = `Error: ${error.error.message}`;
     } else {
+      // Errores retornados por el API (401, 500, etc.)
       if (error.status === 401) {
         errorMessage = 'Credenciales inválidas';
       } else if (error.status === 0) {
@@ -93,6 +115,9 @@ export class AuthService {
     return throwError(() => error);
   }
 
+  /**
+   * Limpia el almacenamiento y notifica el cierre de sesión (null).
+   */
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('tokenType');
@@ -100,6 +125,7 @@ export class AuthService {
     this.currentUserSubject.next(null);
   }
 
+  // Helper rápido para verificar si existe un token guardado
   isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
     return !!token;

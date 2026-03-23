@@ -294,6 +294,31 @@
   font-style: normal;
 }
 
+.action-btns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn-action {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--dark-border);
+  background:color(from color srgb r g b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-action .material-symbols-rounded {
+  font-size: 16px;
+}
+
+.btn-view:hover  { background: rgba(18, 138, 218, 0.482); border-color: rgba(52,152,219,0.5); color: #189bdc94; }
+.btn-delete:hover{ background: rgba(18, 138, 218, 0.482);  border-color: rgba(231,76,60,0.5);  color: #189bdc94; }
+
 /* =========================================
    RESPONSIVE
    ========================================= */
