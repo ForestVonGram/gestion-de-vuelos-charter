@@ -14,6 +14,9 @@ public interface EmailService {
     @Async
     void enviarEmailRecuperacionConCodigo(String to, String codigo, String nombreCompleto);
 
+    @Async
+    void sendEmailLogin(String to, String nombreCompleto, String ip, String dispositivo);
+
     String buildMensajeRecuperacion(String nombre, String resetUrl);
 
     String buildMensajeConfirmacion(String nombre);
