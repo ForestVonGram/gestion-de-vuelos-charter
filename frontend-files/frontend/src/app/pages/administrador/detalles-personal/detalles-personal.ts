@@ -9,16 +9,18 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { RouterModule } from '@angular/router';
+import { PersonalDTO } from '../../../models/personal/personal-dto';
 
 @Component({
   selector: 'app-detalles-personal',
-  imports: [AdminSidebarComponent, CommonModule, FormsModule],
+  imports: [AdminSidebarComponent, CommonModule, FormsModule, RouterModule],
   templateUrl: './detalles-personal.html',
   styleUrl: './detalles-personal.css',
 })
 export class DetallesPersonal implements OnInit {
 
-  persona:any
+  persona:PersonalDTO | any = null;
   cargos: any[] = Object.values(CargoPersonal);
   estados: any[] = Object.values(EstadoPersonal);
   currentUser: any
