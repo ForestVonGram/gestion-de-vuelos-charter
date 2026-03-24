@@ -90,3 +90,7 @@ export interface SesionActivaDTO {
   ultimaActividad: string;
   sesionActual: boolean;
 }
+
+export interface GoogleAuthRequest {
+  credential: string; // ID Token emitido por Google Identity Services
+}

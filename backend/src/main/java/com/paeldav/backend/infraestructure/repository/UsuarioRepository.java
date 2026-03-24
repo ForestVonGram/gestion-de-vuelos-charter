@@ -42,4 +42,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
      * @return lista de usuarios con ese estado
      */
     List<Usuario> findByActivo(Boolean activo);
+
+    /**
+     * Busca un usuario por su identificador de cuenta de Google.
+     * Utilizado en el flujo de autenticación OAuth2 con Google.
+     * @param googleId identificador único de la cuenta de Google (sub del token)
+     * @return Optional con el usuario encontrado o vacío si no existe
+     */
+    Optional<Usuario> findByGoogleId(String googleId);
 }

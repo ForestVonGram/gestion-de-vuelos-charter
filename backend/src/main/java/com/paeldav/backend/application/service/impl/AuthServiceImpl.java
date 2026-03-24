@@ -1,8 +1,14 @@
 package com.paeldav.backend.application.service.impl;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.paeldav.backend.application.dto.auth.AuthResponse;
 import com.paeldav.backend.application.dto.auth.ConfiguracionDosFactoresDTO;
 import com.paeldav.backend.application.dto.auth.EstadoDosFactoresDTO;
+import com.paeldav.backend.application.dto.auth.GoogleAuthRequest;
 import com.paeldav.backend.application.dto.auth.LoginRequest;
 import com.paeldav.backend.application.dto.auth.RegisterRequest;
 import com.paeldav.backend.application.dto.auth.VerificarCodigoRequest;
@@ -17,6 +23,7 @@ import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
 import com.paeldav.backend.infraestructure.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -33,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -43,6 +51,9 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
+
+    @Value("${google.client-id}")
+    private String googleClientId;
 
     // Repositorio para operaciones con usuarios en la base de datos
     private final UsuarioRepository usuarioRepository;
@@ -81,6 +92,16 @@ public class AuthServiceImpl implements AuthService {
                 log.warn("reCAPTCHA validation failed for email: {}", request.getEmail());
                 throw new BadCredentialsException("Validación reCAPTCHA fallida");
             }
+
+            usuarioRepository.findByEmail(request.getEmail()).ifPresent(u -> {
+                if (u.getGoogleId() != null && u.getPassword() == null) {
+                    log.warn("Usuario {} intentó login con contraseña pero solo tiene cuenta Google", u.getEmail());
+                    throw new BadCredentialsException(
+                            "Esta cuenta fue creada con Google. Por favor inicia sesión con Google. " +
+                                    "Si deseas usar contraseña, configúrala desde tu perfil."
+                    );
+                }
+            });
 
             // Autenticar usuario con email y contraseña
             try {
@@ -220,6 +241,92 @@ public class AuthServiceImpl implements AuthService {
         } catch (Exception e) {
             log.error("Error en registro: {}", e.getMessage(), e);
             throw new RuntimeException("Error al registrar usuario");
+        }
+    }
+
+    /**
+     * Autentica (o registra) un usuario usando el ID Token de Google.
+     * Valida el token con los servidores de Google, obtiene los claims del usuario
+     * y emite un JWT propio del sistema.
+     */
+    @Override
+    @Transactional
+    public AuthResponse loginConGoogle(GoogleAuthRequest request, String dispositivo, String direccionIp, String userAgent) {
+        try {
+            // Verificar el ID Token con los servidores de Google
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(), GsonFactory.getDefaultInstance())
+                    .setAudience(List.of(googleClientId))
+                    .build();
+
+            GoogleIdToken idToken = verifier.verify(request.getCredential());
+            if (idToken == null) {
+                log.warn("ID Token de Google inválido");
+                throw new BadCredentialsException("Token de Google inválido");
+            }
+
+            Payload payload = idToken.getPayload();
+            String googleId = payload.getSubject();
+            String email = payload.getEmail();
+            String nombre = (String) payload.get("given_name");
+            String apellido = (String) payload.get("family_name");
+
+            if (nombre == null) nombre = email.split("@")[0];
+            if (apellido == null) apellido = "";
+
+            // Buscar usuario existente por googleId o email
+            final String emailFinal = email;
+            final String nombreFinal = nombre;
+            final String apellidoFinal = apellido;
+            final String googleIdFinal = googleId;
+
+            Usuario usuario = usuarioRepository.findByGoogleId(googleId)
+                    .orElseGet(() -> usuarioRepository.findByEmail(emailFinal)
+                            .map(u -> {
+                                if (u.getPassword() != null && u.getGoogleId() == null) {
+                                    log.info("Vinculando cuenta existente con contraseña con Google para: {}", u.getEmail());
+                                }
+                                // Vincular cuenta existente con Google
+                                u.setGoogleId(googleIdFinal);
+                                return usuarioRepository.save(u);
+                            })
+                            .orElseGet(() -> {
+                                // Registrar nuevo usuario desde Google
+                                Usuario nuevo = Usuario.builder()
+                                        .nombre(nombreFinal)
+                                        .apellido(apellidoFinal)
+                                        .email(emailFinal)
+                                        .googleId(googleIdFinal)
+                                        .rol(RolUsuario.USUARIO)
+                                        .activo(true)
+                                        .dosFactoresHabilitado(false)
+                                        .build();
+                                return usuarioRepository.save(nuevo);
+                            })
+                    );
+
+            if (!usuario.getActivo()) {
+                throw new BadCredentialsException("Usuario inactivo");
+            }
+
+            // Generar JWT propio del sistema
+            UserDetails userDetails = new User(
+                    usuario.getEmail(),
+                    usuario.getPassword() != null ? usuario.getPassword() : "",
+                    Collections.emptyList()
+            );
+
+            String token = jwtService.generateToken(userDetails);
+            sesionService.crearSesion(usuario, token, dispositivo, direccionIp, userAgent);
+
+            log.info("Login con Google exitoso para: {}", usuario.getEmail());
+            return buildAuthResponse(usuario, token);
+
+        } catch (BadCredentialsException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error en login con Google: {}", e.getMessage(), e);
+            throw new BadCredentialsException("Error en la autenticación con Google");
         }
     }
 

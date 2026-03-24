@@ -7,6 +7,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { RecaptchaV3Module, ReCaptchaV3Service } from 'ng-recaptcha';
 import { RolUsuario } from '../../../models/users/auth.models';
+import { environment } from '../../../../environments/environment';
+import { GoogleAuthService } from '../../../services/auth/google-oauth.service';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   submitted = false;
   error: string | null = null;
   showPassword = false;
+  googleLoading = false;
 
   // Sujeto para gestionar la desuscripción automática de Observables
   private destroy$ = new Subject<void>();
@@ -31,7 +34,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private recaptchaV3Service: ReCaptchaV3Service,
-    private cdr: ChangeDetectorRef // Inyección para control manual de renderizado
+    private cdr: ChangeDetectorRef, // Inyección para control manual de renderizado
+    private googleAuthService: GoogleAuthService,
+
   ) {
     // Redirección automática si el usuario ya tiene una sesión activa
     if (this.authService.isAuthenticated()) {
@@ -46,6 +51,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm(); // Configuración inicial del formulario
+    this.initializeGoogleSignIn();
   }
 
   ngOnDestroy(): void {
@@ -132,14 +138,19 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   // Centraliza la lógica de mensajes de error para el usuario final
   private getErrorMessage(error: any): string {
+
+    if (error.error instanceof ErrorEvent) {
+      return `Error: ${error.error.message}`;
+    }
+
     if (error.status === 401) {
-      return 'Email o contraseña inválidos';
+      return error.error?.message || 'Email o contraseña inválidos';
     } else if (error.status === 0) {
       return 'Error de conexión con el servidor';
     } else if (error.error?.message?.includes('reCAPTCHA')) {
       return 'Validación reCAPTCHA fallida. Por favor intente nuevamente';
     } else {
-      return error.error?.message || 'Error en el login';
+      return error.error?.message || `Error ${error.status}: ${error.message || 'Error en el login'}`;
     }
   }
 
@@ -147,5 +158,68 @@ export class LoginComponent implements OnInit, OnDestroy {
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
     this.cdr.detectChanges();
+  }
+
+  // Inicializa el botón de Google Identity Services
+  private initializeGoogleSignIn(): void {
+    if (typeof (window as any).google === 'undefined') return;
+
+    (window as any).google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: (response: any) => this.handleGoogleCallback(response),
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+
+    (window as any).google.accounts.id.renderButton(
+      document.getElementById('google-signin-button'),
+      {
+        theme: 'outline',
+        size: 'large',
+        width: '100%',
+        text: 'signin_with',
+        locale: 'es'
+      }
+    );
+  }
+
+// Callback invocado por Google con el ID Token
+  private handleGoogleCallback(googleResponse: any): void {
+    if (!googleResponse?.credential) {
+      this.error = 'Error al obtener credenciales de Google';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.googleLoading = true;
+    this.error = null;
+    this.cdr.detectChanges();
+
+    this.authService.loginConGoogle(googleResponse.credential)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.googleLoading = false;
+          this.cdr.detectChanges();
+
+          if (response.requires2FA) {
+            this.router.navigate(['/auth/verify-2fa'], {
+              queryParams: { sessionToken: response.sessionToken }
+            });
+          } else {
+            if (response.rol === RolUsuario.ADMINISTRADOR) {
+              this.router.navigate(['/admin/dashboard']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          }
+        },
+        error: (error) => {
+          this.googleLoading = false;
+          this.error = 'Error al autenticar con Google. Por favor intente nuevamente';
+          this.cdr.detectChanges();
+          console.error('Google login error:', error);
+        }
+      });
   }
 }
