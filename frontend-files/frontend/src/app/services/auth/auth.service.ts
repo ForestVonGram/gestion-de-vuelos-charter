@@ -9,7 +9,7 @@ import {
   LoginRequest,
   RegisterRequest,
   AuthResponse,
-  RolUsuario
+  RolUsuario, GoogleAuthRequest
 } from '../../models/users/auth.models';
 
 export interface User {
@@ -103,7 +103,7 @@ export class AuthService {
     } else {
       // Errores retornados por el API (401, 500, etc.)
       if (error.status === 401) {
-        errorMessage = 'Credenciales inválidas';
+        errorMessage = error.error?.message || 'Credenciales inválidas';
       } else if (error.status === 0) {
         errorMessage = 'Error de conexión con el servidor';
       } else {
@@ -133,5 +133,17 @@ export class AuthService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  /**
+   * Envía el ID Token de Google al backend para autenticación o registro automático.
+   * Reutiliza handleAuthResponse para persistir sesión igual que login/register.
+   */
+  loginConGoogle(credential: string): Observable<AuthResponse> {
+    const request: GoogleAuthRequest = { credential };
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, request).pipe(
+      tap(response => this.handleAuthResponse(response)),
+      catchError(this.handleError)
+    );
   }
 }

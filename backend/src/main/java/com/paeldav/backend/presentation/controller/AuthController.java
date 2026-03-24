@@ -54,7 +54,7 @@ public class AuthController {
         } catch (BadCredentialsException e) {
             log.warn("Credenciales inválidas para: {}", request.getEmail());
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Email o contraseña inválidos");
+            errorResponse.put("message", e.getMessage());
             errorResponse.put("error", "Bad Credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
 
@@ -127,6 +127,42 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Error al cerrar sesión: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Autentica o registra un usuario mediante Google OAuth2.
+     * Valida el ID Token emitido por Google y emite un JWT propio del sistema.
+     */
+    @PostMapping("/google")
+    public ResponseEntity<?> loginConGoogle(
+            @Valid @RequestBody GoogleAuthRequest request,
+            HttpServletRequest httpRequest) {
+
+        log.debug("Recibida petición de login con Google");
+
+        try {
+            String dispositivo = extraerDispositivo(httpRequest);
+            String direccionIp = extraerDireccionIp(httpRequest);
+            String userAgent = httpRequest.getHeader("User-Agent");
+
+            AuthResponse response = authService.loginConGoogle(request, dispositivo, direccionIp, userAgent);
+            log.info("Login con Google exitoso para: {}", response.getEmail());
+            return ResponseEntity.ok(response);
+
+        } catch (BadCredentialsException e) {
+            log.warn("Token de Google inválido o usuario inactivo: {}", e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Autenticación con Google fallida");
+            errorResponse.put("error", "Bad Credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+
+        } catch (Exception e) {
+            log.error("Error inesperado en login con Google: {}", e.getMessage(), e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Error en el servidor. Por favor intente más tarde.");
+            errorResponse.put("error", "Internal Server Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
