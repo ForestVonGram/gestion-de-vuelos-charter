@@ -1,0 +1,144 @@
+<div class="chatbot-wrapper" [class.is-open]="isOpen">
+
+  <!-- Botón flotante del chatbot -->
+  <button
+    class="chatbot-trigger"
+    (click)="toggleChat()"
+    [attr.aria-expanded]="isOpen"
+    aria-label="Abrir chat de asistencia"
+    title="Asistente virtual AstraBot"
+  >
+    <svg class="chatbot-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Cabeza de robot -->
+      <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+      <!-- Ojos -->
+      <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+      <circle cx="15" cy="10" r="1.5" fill="currentColor"/>
+      <!-- Boca (sonrisa) -->
+      <path d="M8 14 Q12 17 16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- Antenas -->
+      <line x1="12" y1="4" x2="12" y2="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="12" cy="1.5" r="1" fill="currentColor"/>
+      <!-- Orejas -->
+      <line x1="4" y1="8" x2="2" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="20" y1="8" x2="22" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="notification-dot" *ngIf="messages.length > 0 && !isOpen"></span>
+  </button>
+
+  <!-- Panel del chat -->
+  <div
+    class="chatbot-panel"
+    role="dialog"
+    aria-label="Chat de asistencia AstraBot"
+    [attr.aria-hidden]="!isOpen"
+  >
+    <!-- Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <svg class="header-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+          <circle cx="15" cy="10" r="1.5" fill="currentColor"/>
+          <path d="M8 14 Q12 17 16 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div>
+          <span class="chatbot-title">AstraBot</span>
+          <span class="chatbot-status">En línea</span>
+        </div>
+      </div>
+      <div class="chatbot-actions">
+        <button class="chatbot-clear" (click)="clearHistory()" title="Limpiar historial" aria-label="Limpiar conversación">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+        </button>
+        <button class="chatbot-close" (click)="toggleChat()" aria-label="Cerrar chat">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div class="chatbot-messages" #messagesContainer>
+      <!-- Mensaje de no autenticado -->
+      <div *ngIf="!isAuthenticated" class="chatbot-auth-message">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <p>Inicia sesión para usar el asistente virtual</p>
+        <a href="/auth/login" class="chatbot-login-btn">Iniciar sesión</a>
+      </div>
+
+      <!-- Mensajes -->
+      <div *ngIf="isAuthenticated">
+        <div *ngFor="let msg of messages" class="chatbot-message" [class.user]="msg.isUser" [class.bot]="!msg.isUser">
+          <div class="message-avatar" *ngIf="!msg.isUser">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="16" height="16" rx="4"/>
+              <circle cx="9" cy="10" r="1.5" fill="currentColor"/>
+              <circle cx="15" cy="10" r="1.5" fill="currentColor"/>
+              <path d="M8 14 Q12 17 16 14"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <div class="message-bubble">
+              {{ msg.text }}
+            </div>
+            <div class="message-time">{{ msg.timestamp | date:'shortTime' }}</div>
+          </div>
+          <div class="message-avatar" *ngIf="msg.isUser">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M5 20v-2a7 7 0 0 1 14 0v2"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div *ngIf="isLoading" class="chatbot-message bot">
+          <div class="message-avatar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="4" y="4" width="16" height="16" rx="4"/>
+              <circle cx="9" cy="10" r="1.5"/>
+              <circle cx="15" cy="10" r="1.5"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <div class="typing-indicator">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="chatbot-input-area" *ngIf="isAuthenticated">
+      <input
+        type="text"
+        class="chatbot-input"
+        [(ngModel)]="userInput"
+        (keyup.enter)="sendMessage()"
+        placeholder="Escribe tu mensaje..."
+        [disabled]="isLoading"
+        aria-label="Mensaje para el asistente"
+      />
+      <button
+        class="chatbot-send"
+        (click)="sendMessage()"
+        [disabled]="!userInput.trim() || isLoading"
+        aria-label="Enviar mensaje"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

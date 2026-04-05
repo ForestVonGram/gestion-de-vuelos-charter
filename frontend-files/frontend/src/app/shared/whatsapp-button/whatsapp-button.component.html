@@ -1,0 +1,23 @@
+<a [href]="getWhatsAppUrl()"
+   target="_blank"
+   class="whatsapp-button"
+   [class.has-notification]="showNotification"
+   aria-label="Contactar por WhatsApp"
+   title="WhatsApp - Atención al cliente">
+
+  <!-- Icono de WhatsApp -->
+  <svg class="whatsapp-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M12 2C6.48 2 2 6.48 2 12C2 14.76 3.39 17.2 5.54 18.69L3.28 21.59C3.1 21.83 3.14 22.17 3.38 22.35C3.49 22.43 3.62 22.47 3.75 22.47C3.84 22.47 3.93 22.44 4.01 22.39L7.56 20.39C8.91 20.89 10.39 21.16 12 21.16C17.52 21.16 22 16.68 22 12C22 7.32 17.52 2 12 2Z" fill="currentColor"/>
+    <path d="M16.5 13.5L14 12L16.5 10.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 9H13.5C14.33 9 15 9.67 15 10.5V13.5C15 14.33 14.33 15 13.5 15H10" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Anillo de destello principal -->
+  <span class="pulse-ring"></span>
+
+  <!-- Anillo de destello secundario (con delay) -->
+  <span class="pulse-ring-delayed"></span>
+
+  <!-- Tooltip flotante (aparece al hacer hover) -->
+  <span class="whatsapp-tooltip">¡Contáctanos por WhatsApp!</span>
+</a>

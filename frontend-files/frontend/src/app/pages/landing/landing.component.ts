@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy, HostListener, Renderer2, ElementRef } fro
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AccesibilidadComponent } from '../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterModule, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css']
 })

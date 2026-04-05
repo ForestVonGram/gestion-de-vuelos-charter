@@ -20,15 +20,29 @@
   position: fixed;
   bottom: 80px;
   right: 28px;
-  z-index: 9999;
+  z-index: 10000;
   display: flex;
-  flex-direction: column;       /* panel arriba, botón abajo */
+  flex-direction: column;
   align-items: flex-end;
   gap: 12px;
   font-family: 'Segoe UI', system-ui, sans-serif;
+  /* Permite que los clics pasen a través del contenedor */
+  pointer-events: none;
 }
 
-/* ── Trigger button: siempre en la esquina ── */
+/* Los elementos interactivos deben recibir clics */
+.a11y-trigger,
+.a11y-panel {
+  pointer-events: auto;
+}
+
+/* Cuando el wrapper está abierto */
+.a11y-wrapper.is-open {
+  z-index: 10003;
+  pointer-events: auto;
+}
+
+/* ── Trigger button ── */
 .a11y-trigger {
   width: var(--a11y-trigger-size);
   height: var(--a11y-trigger-size);
@@ -43,8 +57,9 @@
   transition: background var(--a11y-transition), transform var(--a11y-transition), box-shadow var(--a11y-transition);
   outline: none;
   flex-shrink: 0;
-  /* Forzar que el botón quede siempre último (abajo) en el flex */
   order: 2;
+  position: relative;
+  z-index: 10001;
 }
 
 .a11y-trigger:hover {
@@ -70,9 +85,11 @@
   stroke: var(--a11y-white);
 }
 
-/* ── Panel: se abre hacia arriba, sobre el botón ── */
+/* ── Panel: se abre hacia arriba ── */
 .a11y-panel {
-  order: 1;                     /* panel antes que el botón en el flex */
+  position: absolute;
+  bottom: 70px;
+  right: 0;
   width: var(--a11y-panel-width);
   background: var(--a11y-white);
   border: 1.5px solid var(--a11y-border);
@@ -85,9 +102,8 @@
   pointer-events: none;
   transform: translateY(12px) scale(0.97);
   transform-origin: bottom right;
-  transition:
-    opacity var(--a11y-transition),
-    transform var(--a11y-transition);
+  transition: opacity var(--a11y-transition), transform var(--a11y-transition);
+  z-index: 10002;
 }
 
 .a11y-wrapper.is-open .a11y-panel {
@@ -175,11 +191,7 @@
   border: none;
   border-radius: 10px;
   font-family: inherit;
-  transition:
-    background var(--a11y-transition),
-    color var(--a11y-transition),
-    transform var(--a11y-transition),
-    box-shadow var(--a11y-transition);
+  transition: background var(--a11y-transition), color var(--a11y-transition), transform var(--a11y-transition), box-shadow var(--a11y-transition);
   outline: none;
 }
 
@@ -276,5 +288,6 @@
   .a11y-panel {
     width: calc(100vw - 32px);
     max-width: var(--a11y-panel-width);
+    right: 0;
   }
 }
