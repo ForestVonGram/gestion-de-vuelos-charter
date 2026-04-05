@@ -19,7 +19,7 @@
 /* Wrapper - posición arriba de accesibilidad */
 .chatbot-wrapper {
   position: fixed;
-  bottom: 160px;
+  bottom: 150px;
   right: 28px;
   z-index: 10001;  /* Más alto que accesibilidad cerrado */
   display: flex;
