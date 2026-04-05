@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/password/forgot").permitAll()
+                        .requestMatchers("/api/chatbot/health").permitAll()
                         .requestMatchers("/api/password/reset").permitAll()
                         .requestMatchers("/api/password/validate-token").permitAll()
                         .requestMatchers("/api/password/verify-code").permitAll()
