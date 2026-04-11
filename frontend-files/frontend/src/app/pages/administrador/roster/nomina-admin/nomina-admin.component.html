@@ -1,0 +1,154 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión Financiera</h1>
+        <p>Administración de nóminas, pagos y retenciones del personal</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Directorio de Nóminas</h2>
+      <div class="header-actions">
+        <button class="btn-primary" routerLink="/admin/create-roster">
+          <i class="fas fa-plus"></i> Generar Nómina
+        </button>
+        <button class="btn-primary" routerLink="/admin/nuevo-empleado">
+          <i class="fas fa-plus"></i> Nuevo Empleado
+        </button>
+      </div>
+    </div>
+
+    <section class="content-panel">
+
+      <div class="panel-header">
+        <h3>Historial de Pagos</h3>
+        <div class="filter-group">
+     <!-- Filtro por estado -->
+      <select class="filter-select" (change)="filtroEstado = $any($event.target).value; obtenerNominas()">
+      <option value="">Todos los estados</option>
+        @for (estado of estados; track estado) {
+        <option [value]="estado">{{ estado | titlecase }}</option>
+      }
+      </select>
+      <select class="filter-select" (change)="filtroMes = $any($event.target).value; obtenerNominas()">
+      <option >Todos los meses</option>
+      @for (mes of meses; track $index) {
+        <option [value]="$index + 1">{{ mes }}</option>
+      }
+      </select>
+      
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Empleado</th>
+              <th>Período</th>
+              <th>Salario Base</th>
+              <th>Adicionales</th>
+              <th>Retenciones</th>
+              <th>Total Neto</th>
+              <th>Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (nomina of nominas; track nomina.id) {
+              <tr>
+                <td class="id-cell">#{{ nomina.id }}</td>
+
+                <td class="empleado-cell">
+                  <span class="nombre">{{ nomina.personalNombre }} {{ nomina.personalApellido }}</span>
+                  <span class="id-ref">Cod: {{ nomina.personalId }}</span>
+                </td>
+
+                <td>
+                  <span class="periodo-badge">{{ getNombreMes(nomina.mes) }} {{ nomina.ano }}</span>
+                </td>
+
+                <td class="dinero">
+                  {{ nomina.salarioBase | currency:'USD':'symbol':'1.0-0' }}
+                </td>
+
+                @if (nomina.bonificaciones > nomina.deducciones) {
+                  <td class="dinero text-success">
+                    +{{ (nomina.bonificaciones - nomina.deducciones) | currency:'USD':'symbol':'1.0-0' }}
+                  </td>
+                } @else if (nomina.bonificaciones < nomina.deducciones) {
+                  <td class="dinero text-error">
+                    -{{ (nomina.deducciones - nomina.bonificaciones) | currency:'USD':'symbol':'1.0-0' }}
+                  </td>
+                } @else {
+                  <td class="dinero text-neutral">$0</td>
+                }
+
+                <td class="dinero text-error">
+                  -{{ (nomina.descuentoImpuesto + nomina.descuentoAfiliacion) | currency:'USD':'symbol':'1.0-0' }}
+                </td>
+
+                <td class="dinero total-neto">
+                  {{ nomina.totalNeto | currency:'USD':'symbol':'1.0-0' }}
+                </td>
+
+                <td>
+                  <span class="status-badge" [ngClass]="getEstadoClase(nomina.estado)">
+                    {{ nomina.estado | titlecase }}
+                  </span>
+                </td>
+
+                <td class="action-cell">
+                  <button class="icon-btn edit-btn" title="Editar Nómina">
+                    <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+                  </button>
+                </td>
+
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="9" class="text-center">No hay nóminas registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination">
+        <button class="page-btn" (click)="paginaAnterior()" [disabled]="paginaActual === 0">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        @for (pagina of [].constructor(totalPaginas); track $index) {
+          <button class="page-btn" [class.active]="$index === paginaActual" (click)="irAPagina($index)">
+            {{ $index + 1 }}
+          </button>
+        }
+
+        <button class="page-btn" (click)="paginaSiguiente()" [disabled]="paginaActual === totalPaginas - 1">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <span class="page-info">
+          Página {{ paginaActual + 1 }} de {{ totalPaginas }} — {{ totalElementos }} registros
+        </span>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<app-accesibilidad></app-accesibilidad>

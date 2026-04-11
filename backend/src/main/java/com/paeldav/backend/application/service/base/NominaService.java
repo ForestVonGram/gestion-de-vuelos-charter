@@ -5,6 +5,7 @@ import com.paeldav.backend.application.dto.nomina.NominaDTO;
 import com.paeldav.backend.application.dto.nomina.NominaFiltroDTO;
 import com.paeldav.backend.application.dto.nomina.NominaUpdateDTO;
 import com.paeldav.backend.domain.enums.EstadoNomina;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -139,4 +140,9 @@ public interface NominaService {
      * @return lista de nóminas del personal ordenadas por período
      */
     List<NominaDTO> obtenerHistorialNominas(Long personalId);
+
+    /**
+     *Obtiene todas las nominas y la filtra según la pagina, estado, fecha, persona
+     */
+    Page<NominaDTO> obtenerNominas(Integer page, EstadoNomina estadoNomina, Integer mes, Integer año, Integer personaId );
 }

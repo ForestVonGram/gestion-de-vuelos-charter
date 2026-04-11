@@ -56,6 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Validar que la sesión asociada al token esté activa en base de datos
                 if (!sesionService.validarSesion(jwt)) {
                     filterChain.doFilter(request, response);
+                    System.out.println("❌ Sesión no válida en BD para token: " + jwt.substring(0, 20) + "...");
                     return;
                 }
 

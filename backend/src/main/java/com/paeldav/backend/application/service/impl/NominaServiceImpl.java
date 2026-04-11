@@ -12,9 +12,13 @@ import com.paeldav.backend.domain.enums.EstadoNomina;
 import com.paeldav.backend.infraestructure.repository.NominaRepository;
 import com.paeldav.backend.infraestructure.repository.PersonalRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -201,5 +205,12 @@ public class NominaServiceImpl implements NominaService {
     @Transactional(readOnly = true)
     public List<NominaDTO> obtenerHistorialNominas(Long personalId) {
         return obtenerNominasPorPersonal(personalId);
+    }
+
+    @Override
+    public Page<NominaDTO> obtenerNominas(Integer page, EstadoNomina estadoNomina, Integer  mes, Integer anio, Integer personaId) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return nominaRepository.findByFiltros(estadoNomina,mes, anio, personaId, pageable)
+                .map(nominaMapper::toDTO);
     }
 }

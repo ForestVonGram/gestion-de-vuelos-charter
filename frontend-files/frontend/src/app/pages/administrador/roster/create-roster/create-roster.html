@@ -1,0 +1,162 @@
+<div class="nomina-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de nómina</h1>
+        <p>Registro y administración de la nómina</p>
+      </div>
+      <div class="avatar-circle">
+        {{ currentUser?.nombreCompleto?.charAt(0) }}
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Generar nómina</h2>
+    </div>
+
+    <div class="form-card">
+      <form [formGroup]="nominaForm"  (ngSubmit)="generateRoster()" >
+        <div class="form-grid">
+
+          <!-- 1. SELECTOR DE PERSONAL -->
+          <div class="form-group full-width">
+            <label>Seleccionar personal</label>
+            <select formControlName="personalId" (change)="onPersonalChange($event)">
+              <option value="">-- Selecciona un empleado --</option>
+              @for (persona of personal; track persona.id) {
+                <option [value]="persona.id">
+                  {{ persona.usuarioNombre }} — {{ persona.cargo }}
+                </option>
+              }
+            </select>
+            @if (f['personalId'].touched && f['personalId'].hasError('required')) {
+              <span class="error">Debes seleccionar un empleado</span>
+            }
+          </div>
+
+          <!-- 2. PREVIEW DEL EMPLEADO -->
+          @if (personalSeleccionado) {
+            <div class="personal-preview full-width">
+              <div class="avatar-mini">
+                {{ personalSeleccionado.nombre.charAt(0) }}{{ personalSeleccionado.apellido.charAt(0) }}
+              </div>
+              <div class="personal-info">
+                <span class="personal-nombre">{{ personalSeleccionado.usuarioNombre }} {{ personalSeleccionado.usuarioApellido }}</span>
+                <span class="personal-cargo">{{ personalSeleccionado.cargo }}</span>
+              </div>
+            </div>
+          }
+
+          <!-- 3. PERIODO -->
+          <div class="form-group">
+            <label>Mes</label>
+            <select formControlName="mes">
+              @for (mes of meses; track mes.value) {
+                <option [value]="mes.value">{{ mes.label }}</option>
+              }
+            </select>
+            @if (f['mes'].touched && f['mes'].hasError('required')) {
+              <span class="error">El mes es requerido</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Año</label>
+            <input type="number" formControlName="ano" placeholder="2025" />
+            @if (f['ano'].touched && f['ano'].hasError('required')) {
+              <span class="error">El año es requerido</span>
+            }
+            @if (f['ano'].touched && f['ano'].hasError('min')) {
+              <span class="error">El año no puede ser menor a 2000</span>
+            }
+          </div>
+
+          <!-- 4. VALORES ECONÓMICOS -->
+          <div class="form-group">
+            <label>Salario base</label>
+            <input type="number" formControlName="salarioBase" placeholder="0.00" />
+            @if (f['salarioBase'].touched && f['salarioBase'].hasError('required')) {
+              <span class="error">El salario base es requerido</span>
+            }
+            @if (f['salarioBase'].touched && f['salarioBase'].hasError('min')) {
+              <span class="error">El salario no puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Bonificaciones</label>
+            <input type="number" formControlName="bonificaciones" placeholder="0.00" />
+            @if (f['bonificaciones'].touched && f['bonificaciones'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Deducciones</label>
+            <input type="number" formControlName="deducciones" placeholder="0.00" />
+            @if (f['deducciones'].touched && f['deducciones'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Descuento impuesto</label>
+            <input type="number" formControlName="descuentoImpuesto" placeholder="0.00" />
+            @if (f['descuentoImpuesto'].touched && f['descuentoImpuesto'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Descuento afiliación</label>
+            <input type="number" formControlName="descuentoAfiliacion" placeholder="0.00" />
+            @if (f['descuentoAfiliacion'].touched && f['descuentoAfiliacion'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <!-- 5. ESTADO -->
+          <div class="form-group">
+            <label>Estado</label>
+            <select formControlName="estado">
+              @for (estado of estados; track estado) {
+                <option [value]="estado">{{ estado }}</option>
+              }
+            </select>
+            @if (f['estado'].touched && f['estado'].hasError('required')) {
+              <span class="error">El estado es requerido</span>
+            }
+          </div>
+
+          <!-- 6. TOTAL NETO -->
+          <div class="form-group">
+            <label>Total neto</label>
+            <input type="number" formControlName="totalNeto" readonly />
+          </div>
+
+          <!-- 7. OBSERVACIONES -->
+          <div class="form-group full-width">
+            <label>Observaciones</label>
+            <textarea formControlName="observaciones" rows="3" placeholder="Observaciones opcionales..."></textarea>
+          </div>
+
+
+
+        </div>
+
+        <!-- 9. BOTONES -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="onReset()">Limpiar</button>
+          <button type="submit" class="btn-primary" [disabled]="nominaForm.invalid" (click)="generateRoster()">Generar nómina</button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<app-accesibilidad></app-accesibilidad>
