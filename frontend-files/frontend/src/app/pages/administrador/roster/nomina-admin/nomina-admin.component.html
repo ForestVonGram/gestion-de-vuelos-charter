@@ -46,7 +46,17 @@
         <option [value]="$index + 1">{{ mes }}</option>
       }
       </select>
-      
+          <!-- Filtro año -->
+    <input
+      class="filter-input"
+      type="number"
+      placeholder="Año"
+      #anioInput
+    />
+
+    <button class="filter-btn-apply" (click)="filtroAnio = anioInput.value ? +anioInput.value : undefined; obtenerNominas()">
+    <i class="fas fa-search"></i> Filtrar
+      </button>
         </div>
       </div>
 

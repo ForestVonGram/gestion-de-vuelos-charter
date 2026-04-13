@@ -30,6 +30,7 @@ export class NominaService {
 
 obtenerNominas(page: number = 0, estadoNomina?: string, mes?: number, anio?: number, personaId?: number): Observable<any> {
   const token = this.authService.getToken();
+  console.log('Obteniendo nóminas con token:', token);
   const headers = new HttpHeaders({
     'Authorization': `Bearer ${token}`,
     'Content-Type': 'application/json'
@@ -42,7 +43,7 @@ obtenerNominas(page: number = 0, estadoNomina?: string, mes?: number, anio?: num
     params = params.set('mes', mes.toString());
   }
   if (anio !== undefined && anio !== null) {
-    params = params.set('ano', anio.toString());
+    params = params.set('anio', anio.toString());
   }
   if (personaId !== undefined && personaId !== null) {
     params = params.set('personaId', personaId.toString());
