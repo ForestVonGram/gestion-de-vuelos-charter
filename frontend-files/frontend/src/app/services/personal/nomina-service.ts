@@ -8,8 +8,6 @@ import { HttpHeaders } from '@angular/common/http';
 import { NominaDTO } from '../../models/personal/nomina-dto';
 
 
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -54,5 +52,33 @@ obtenerNominas(page: number = 0, estadoNomina?: string, mes?: number, anio?: num
 
   console.log('URL params:', params.toString());
   return this.http.get(`${this.apiUrl}`, { headers, params });
-}
+  }
+
+  eliminarNomina(id: number): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers });
+  }
+
+  obtnerNominaPorPersonalId(id: number): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.get(`${this.apiUrl}/personal/${id}`, { headers });
+  }
+
+  calcularTotalNominas(id: number): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.get(`${this.apiUrl}/personal/${id}/total-pagado`, { headers });
+    
+  }
 }

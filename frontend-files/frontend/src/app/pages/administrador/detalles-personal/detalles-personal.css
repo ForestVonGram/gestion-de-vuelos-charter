@@ -256,6 +256,94 @@
 }
 
 /* =========================================
+   NÓMINAS
+   ========================================= */
+
+.nomina-section {
+  margin-top: 2rem;
+}
+
+.nomina-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CONTENEDOR SCROLL TABLA */
+.nomina-table-container {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+}
+
+/* TABLA */
+.nomina-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.85rem;
+}
+
+/* HEAD */
+.nomina-table thead {
+  background: var(--dark-bg-tertiary);
+}
+
+.nomina-table th {
+  text-align: left;
+  padding: 12px;
+  color: var(--dark-text-secondary);
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--dark-border);
+}
+
+/* BODY */
+.nomina-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--dark-border);
+  color: var(--dark-text-primary);
+}
+
+/* HOVER FILA */
+.nomina-table tbody tr:hover {
+  background: var(--dark-bg-hover);
+}
+
+/* NETO DESTACADO */
+.nomina-table .neto {
+  color: var(--color-light);
+  font-weight: bold;
+}
+
+/* ESTADOS */
+.estado {
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* COLORES ESTADOS */
+.estado.pagado {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+}
+
+.estado.pendiente {
+  background: rgba(241, 196, 15, 0.15);
+  color: #f1c40f;
+}
+
+.estado.cancelado {
+  background: rgba(231, 76, 60, 0.15);
+  color: #e74c3c;
+}
+
+/* =========================================
    RESPONSIVE
    ========================================= */
 @media (max-width: 900px) {
@@ -270,6 +358,75 @@
   .form-group.full-width { grid-column: 1; }
   .form-actions     { flex-direction: column-reverse; align-items: stretch; }
   .btn-primary, .btn-cancel { justify-content: center; }
+}
+
+/* =========================================
+   NOMINA ACTIONS (CALCULAR + TOTAL)
+   ========================================= */
+
+.nomina-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* BOTÓN CALCULAR (usa tu btn-primary pero lo refinamos un poco aquí) */
+.nomina-actions .btn-primary {
+  padding: 10px 20px;
+  gap: 6px;
+}
+
+/* EFECTO MÁS FLUIDO */
+.nomina-actions .btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+/* CAJA DEL TOTAL */
+.total-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 16px;
+  border-radius: var(--radius-lg);
+
+  background: var(--dark-bg-tertiary);
+  border: 1px solid var(--dark-border);
+
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 0.9rem;
+  color: var(--color-light);
+
+  box-shadow: var(--dark-shadow-sm);
+  animation: fadeInUp 0.25s ease;
+}
+
+/* ICONO DEL TOTAL */
+.total-box::before {
+  content: "payments";
+  font-family: 'Material Symbols Rounded';
+  font-size: 18px;
+  color: #2ecc71;
+}
+
+/* VALOR DESTACADO */
+.total-box strong {
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+/* ANIMACIÓN SUAVE */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 600px) {

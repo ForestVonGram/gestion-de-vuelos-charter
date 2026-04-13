@@ -42,6 +42,7 @@ import { DetallesPersonal } from './pages/administrador/detalles-personal/detall
 import { MyProfile } from './shared/my-profile/my-profile';
 import { VerificacionDosFactoresComponent } from './pages/auth/verificacionDos-factores/verificacion-dos-factores.component';
 import { CreateRoster } from './pages/administrador/roster/create-roster/create-roster';
+import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detalles-aeronave';
 
 export const routes: Routes = [
   {
@@ -152,7 +153,11 @@ export const routes: Routes = [
       },
       {
         path: 'flota',
-        component: FlotaAereaAdminComponent
+        component: FlotaAereaAdminComponent,
+      },
+      {
+        path: 'flota/:id',
+        component: DetallesAeronave
       },
       {
         path: 'create-plane',

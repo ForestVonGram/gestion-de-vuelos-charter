@@ -73,7 +73,7 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
      * @param personalId ID del personal
      * @return suma total de nóminas pagadas
      */
-    @Query("SELECT COALESCE(SUM(n.totalNeto), 0) FROM Nomina n WHERE n.personal.id = :personalId AND n.estado = 'PAGADA'")
+    @Query("SELECT COALESCE(SUM(n.totalNeto), 0) FROM Nomina n WHERE n.personal.id = :personalId ")
     Double sumTotalNetoByPersonalIdAndEstadoPagada(@Param("personalId") Long personalId);
 
     /**

@@ -8,11 +8,12 @@ import { NominaService } from '../../../../services/personal/nomina-service';
 import { EstadoNomina } from '../../../../models/personal/estado-nomina';
 import { NominaDTO } from '../../../../models/personal/nomina-dto';
 import { ChangeDetectorRef } from '@angular/core';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-nomina-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent],
   templateUrl: './nomina-admin.component.html',
   styleUrls: ['./nomina-admin.component.css']
 })
@@ -73,6 +74,31 @@ export class NominaAdminComponent implements OnInit {
       error: (error) => console.error('Error al obtener las nóminas:', error)
     });
   }
+
+  eliminarNomina(id: number): void {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.nominaService.eliminarNomina(id).subscribe({
+          next: () => {
+            Swal.fire('¡Eliminada!', 'La nómina ha sido eliminada exitosamente.', 'success');
+            this.obtenerNominas(); // Refrescar la lista después de eliminar
+          },
+          error: (error) => {
+            console.error('Error al eliminar la nómina:', error);
+            Swal.fire('Error', 'Ocurrió un error al eliminar la nómina. Por favor, inténtelo de nuevo.', 'error');
+          }
+        });
+      }
+    });
+  }
+
 
   irAPagina(pagina: number): void {
     if (pagina >= 0 && pagina < this.totalPaginas) {

@@ -380,3 +380,83 @@
   font-size: 0.8rem;
   margin-left: 0.5rem;
 }
+
+/* =========================================
+   ACTION BUTTONS TABLE (NÓMINA)
+   ========================================= */
+
+.action-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* BOTÓN BASE */
+.btn-action {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--dark-border);
+  background: var(--dark-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--dark-text-secondary);
+}
+
+/* ICONO */
+.btn-action .material-symbols-rounded {
+  font-size: 18px;
+  transition: transform var(--transition-fast);
+}
+
+/* HOVER GENERAL */
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--dark-shadow-md);
+}
+
+/* =========================================
+   VARIANTES
+   ========================================= */
+
+/* EDITAR */
+.btn-edit:hover {
+  background: rgba(52, 152, 219, 0.15);
+  border-color: #3498db;
+  color: #3498db;
+}
+
+/* VER */
+.btn-view:hover {
+  background: rgba(155, 89, 182, 0.15);
+  border-color: #9b59b6;
+  color: #9b59b6;
+}
+
+/* ELIMINAR */
+.btn-delete:hover {
+  background: rgba(231, 76, 60, 0.15);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+/* RECIBO */
+.btn-action[title="Generar Recibo"]:hover {
+  background: rgba(46, 204, 113, 0.15);
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+/* EFECTO ICONO */
+.btn-action:hover .material-symbols-rounded {
+  transform: scale(1.15);
+}
+
+/* CLICK */
+.btn-action:active {
+  transform: scale(0.92);
+  box-shadow: none;
+}

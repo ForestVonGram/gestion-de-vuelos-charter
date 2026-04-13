@@ -120,8 +120,14 @@
                 </td>
 
                 <td class="action-cell">
-                  <button class="icon-btn edit-btn" title="Editar Nómina">
-                    <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
+                  <button class="btn-action btn-edit" [routerLink]="['/admin/persona', nomina.personalId]"  title="Editar">
+                    <span class="material-symbols-rounded">edit</span>
+                  </button>
+                  <button class="btn-action btn-view" [routerLink]="['/admin/persona', nomina.personalId]"  title="Ver">
+                  <span class="material-symbols-rounded">visibility</span>
+                  </button>
+                  <button class="btn-action btn-delete" title="Eliminar" (click)="eliminarNomina(nomina.id)">
+                    <span class="material-symbols-rounded">delete</span>
                   </button>
                 </td>
 
@@ -161,4 +167,3 @@
   </main>
 </div>
 
-<app-accesibilidad></app-accesibilidad>

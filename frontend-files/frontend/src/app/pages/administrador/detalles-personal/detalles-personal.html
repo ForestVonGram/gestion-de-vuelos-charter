@@ -24,7 +24,7 @@
     <!-- FORM -->
     <form class="detalle-form" (ngSubmit)="guardar()">
 
-      <!-- BLOQUE: Identificación -->
+      <!-- IDENTIFICACIÓN -->
       <div class="form-section">
         <h3 class="form-section-title">Identificación</h3>
         <div class="form-grid">
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <!-- BLOQUE: Información Laboral -->
+      <!-- INFORMACIÓN LABORAL -->
       <div class="form-section">
         <h3 class="form-section-title">Información Laboral</h3>
         <div class="form-grid">
@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <!-- BLOQUE: Observaciones -->
+      <!-- OBSERVACIONES -->
       <div class="form-section">
         <h3 class="form-section-title">Observaciones</h3>
         <div class="form-grid">
@@ -124,6 +124,66 @@
 
     </form>
 
+    <!-- =========================
+         SECCIÓN NÓMINAS
+    ========================= -->
+    <div class="form-section nomina-section">
+
+      <div class="nomina-header">
+        <h3 class="form-section-title">Historial de Nóminas</h3>
+      </div>
+
+      <div class="nomina-table-container">
+
+        <table class="nomina-table">
+
+          <thead>
+            <tr>
+              <th>Periodo</th>
+              <th>Salario</th>
+              <th>Deducciones</th>
+              <th>Bonificaciones</th>
+              <th>Neto</th>
+              <th>Estado</th>
+              <th>Pago</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (n of nominas; track n.id) {
+              <tr>
+                <td>{{ n.mes }}/{{ n.ano }}</td>
+                <td>{{ n.salarioBase | currency }}</td>
+                <td>{{ n.deducciones | currency }}</td>
+                <td>{{ n.bonificaciones | currency }}</td>
+                <td class="neto">{{ n.totalNeto | currency }}</td>
+                <td>
+                  <span class="estado" [ngClass]="n.estado.toLowerCase()">
+                    {{ formatear(n.estado) }}
+                  </span>
+                </td>
+                <td>{{ n.fechaPago | date:'shortDate' }}</td>
+              </tr>
+            }
+          </tbody>
+
+        </table>
+
+      <div class="nomina-actions">
+          <button class="btn-primary" (click)="calcularTotalNominas()">
+        <span class="material-symbols-rounded">calculate</span>
+        Calcular Total Nóminas
+       </button>
+    @if (totalNominas !== null) {
+      <div class="total-box">
+      Total: {{ totalNominas | currency:'COP':'symbol':'1.0-0' }}
+      </div>
+      }
+      </div>
+
+    </div>
+
   </div>
 </div>
+
 <app-accesibilidad></app-accesibilidad>
