@@ -1,0 +1,462 @@
+<!-- ══════════════════════════════════════════════════════════════
+     BOLETA COMPONENT — AstraNimbus Aviation
+     Estados: 'formulario' | 'recibo'
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- ────────────────────────────────────────────
+     PANTALLA 1: FORMULARIO DE SOLICITUD
+     ──────────────────────────────────────────── -->
+<div class="boleta-wrapper" *ngIf="vistaActual === 'formulario'">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="breadcrumb">
+        <a routerLink="/">Inicio</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Reservar vuelo</span>
+      </div>
+      <h1 class="page-title">Reserva tu vuelo</h1>
+      <p class="page-subtitle">Completa los datos para solicitar tu vuelo ejecutivo con AstraNimbus</p>
+    </div>
+  </div>
+
+  <!-- Form card -->
+  <div class="form-container">
+    <form [formGroup]="form" (ngSubmit)="procesarSolicitud()" novalidate>
+
+      <!-- ── Sección: Datos del vuelo ── -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 2 17 0 15 0 13.5 1.5L10 5 1.8 6.2c-.5.1-.9.6-.6 1.1l1.5 2.5c.3.5.9.6 1.3.3l4-2.5 2 2-4.5 4.5c-.4.4-.4 1 0 1.4L7 22c.4.4 1 .4 1.4 0L17 13.4l2.5 4c.3.5.9.6 1.3.3l2.5-1.5c.5-.3.6-.8.5-1.3z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Datos del vuelo</h2>
+            <p class="section-desc">Origen, destino y fechas del itinerario</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="origen">Ciudad de origen *</label>
+            <input id="origen" type="text" class="form-input" formControlName="origen"
+                   placeholder="Ej: Bogotá (BOG)" [class.is-invalid]="campoInvalido('origen')" />
+            <span class="error-msg" *ngIf="campoInvalido('origen')">El origen es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="destino">Ciudad de destino *</label>
+            <input id="destino" type="text" class="form-input" formControlName="destino"
+                   placeholder="Ej: Medellín (MDE)" [class.is-invalid]="campoInvalido('destino')" />
+            <span class="error-msg" *ngIf="campoInvalido('destino')">El destino es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="fechaSalida">Fecha y hora de salida *</label>
+            <input id="fechaSalida" type="datetime-local" class="form-input" formControlName="fechaSalida"
+                   [class.is-invalid]="campoInvalido('fechaSalida')" />
+            <span class="error-msg" *ngIf="campoInvalido('fechaSalida')">La fecha de salida es obligatoria</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fechaLlegada">Fecha y hora de llegada *</label>
+            <input id="fechaLlegada" type="datetime-local" class="form-input" formControlName="fechaLlegada"
+                   [class.is-invalid]="campoInvalido('fechaLlegada')" />
+            <span class="error-msg" *ngIf="campoInvalido('fechaLlegada')">La fecha de llegada es obligatoria</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="numeroPasajeros">N.º de pasajeros *</label>
+            <input id="numeroPasajeros" type="number" class="form-input" formControlName="numeroPasajeros"
+                   min="1" max="500" [class.is-invalid]="campoInvalido('numeroPasajeros')" />
+            <span class="error-msg" *ngIf="campoInvalido('numeroPasajeros')">Número de pasajeros inválido</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="claseServicio">Clase de servicio *</label>
+            <select id="claseServicio" class="form-input form-select" formControlName="claseServicio">
+              <option *ngFor="let clase of clasesServicio" [value]="clase">{{ clase }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="proposito">Propósito del vuelo</label>
+            <input id="proposito" type="text" class="form-input" formControlName="proposito"
+                   placeholder="Ej: Viaje de negocios" />
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Sección: Datos del pasajero ── -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Datos del pasajero</h2>
+            <p class="section-desc">Información personal del viajero principal</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre *</label>
+            <input id="nombre" type="text" class="form-input" formControlName="nombre"
+                   placeholder="Nombre" [class.is-invalid]="campoInvalido('nombre')" />
+            <span class="error-msg" *ngIf="campoInvalido('nombre')">El nombre es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="apellido">Apellido *</label>
+            <input id="apellido" type="text" class="form-input" formControlName="apellido"
+                   placeholder="Apellido" [class.is-invalid]="campoInvalido('apellido')" />
+            <span class="error-msg" *ngIf="campoInvalido('apellido')">El apellido es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="tipoDocumento">Tipo de documento *</label>
+            <select id="tipoDocumento" class="form-input form-select" formControlName="tipoDocumento">
+              <option value="CC">Cédula de ciudadanía</option>
+              <option value="CE">Cédula de extranjería</option>
+              <option value="PP">Pasaporte</option>
+              <option value="TI">Tarjeta de identidad</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="documentoIdentidad">Número de documento *</label>
+            <input id="documentoIdentidad" type="text" class="form-input" formControlName="documentoIdentidad"
+                   placeholder="Número de documento" [class.is-invalid]="campoInvalido('documentoIdentidad')" />
+            <span class="error-msg" *ngIf="campoInvalido('documentoIdentidad')">El documento es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nacionalidad">Nacionalidad</label>
+            <input id="nacionalidad" type="text" class="form-input" formControlName="nacionalidad"
+                   placeholder="Nacionalidad" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="email">Correo electrónico *</label>
+            <input id="email" type="email" class="form-input" formControlName="email"
+                   placeholder="correo@ejemplo.com" [class.is-invalid]="campoInvalido('email')" />
+            <span class="error-msg" *ngIf="campoInvalido('email')">Ingresa un correo válido</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="telefono">Teléfono</label>
+            <input id="telefono" type="tel" class="form-input" formControlName="telefono"
+                   placeholder="+57 300 0000000" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="asientoPreferido">Asiento preferido</label>
+            <input id="asientoPreferido" type="text" class="form-input" formControlName="asientoPreferido"
+                   placeholder="Ej: 4A" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="restriccionesAlimentarias">Restricciones alimentarias</label>
+            <input id="restriccionesAlimentarias" type="text" class="form-input" formControlName="restriccionesAlimentarias"
+                   placeholder="Ej: Sin gluten, vegetariano" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="contactoEmergencia">Contacto de emergencia</label>
+            <input id="contactoEmergencia" type="text" class="form-input" formControlName="contactoEmergencia"
+                   placeholder="Nombre del contacto" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="telefonoEmergencia">Teléfono de emergencia</label>
+            <input id="telefonoEmergencia" type="tel" class="form-input" formControlName="telefonoEmergencia"
+                   placeholder="+57 300 0000000" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="restriccionesMedicas">Restricciones médicas</label>
+          <textarea id="restriccionesMedicas" class="form-input form-textarea" formControlName="restriccionesMedicas"
+                    placeholder="Indica cualquier condición médica relevante para el vuelo..." rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="observaciones">Observaciones adicionales</label>
+          <textarea id="observaciones" class="form-input form-textarea" formControlName="observaciones"
+                    placeholder="Cualquier requerimiento especial o nota adicional..." rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Sección: Pago ── -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Método de pago</h2>
+            <p class="section-desc">Selecciona cómo deseas realizar el pago</p>
+          </div>
+        </div>
+
+        <div class="payment-options">
+          <label class="payment-option" *ngFor="let metodo of ['Transferencia bancaria', 'Tarjeta de crédito', 'Tarjeta débito', 'PSE']">
+            <input type="radio" formControlName="metodoPago" [value]="metodo" class="payment-radio" />
+            <span class="payment-option-label">{{ metodo }}</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- ── Resumen y botón de envío ── -->
+      <div class="form-summary">
+        <div class="summary-disclaimer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Al continuar aceptas nuestros <a href="/terminos-condiciones" target="_blank">Términos y Condiciones</a> y la
+          <a href="/politica-privacidad" target="_blank">Política de Privacidad</a> de AstraNimbus Aviation.
+        </div>
+        <button type="submit" class="btn-submit" [disabled]="cargando">
+          <span class="btn-submit-content" *ngIf="!cargando">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Confirmar y pagar
+          </span>
+          <span class="btn-submit-loading" *ngIf="cargando">
+            <span class="spinner"></span>
+            Procesando solicitud...
+          </span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+<!-- ────────────────────────────────────────────
+     PANTALLA 2: RECIBO / BOLETA
+     ──────────────────────────────────────────── -->
+<div class="boleta-wrapper recibo-wrapper" *ngIf="vistaActual === 'recibo' && boletaData">
+
+  <!-- Confirmation banner -->
+  <div class="confirmation-banner">
+    <div class="confirmation-inner">
+      <div class="confirmation-check">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="confirmation-text">
+        <h1 class="confirmation-title">¡Reserva confirmada!</h1>
+        <p class="confirmation-sub">Tu vuelo ha sido procesado exitosamente. Guarda tu boleta de embarque.</p>
+      </div>
+      <div class="confirmation-actions">
+        <button class="btn-download" (click)="descargarPDF()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar PDF
+        </button>
+        <button class="btn-new" (click)="volverAlFormulario()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Nueva reserva
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       BOLETA DE EMBARQUE — Diseño ticket real
+       ════════════════════════════════════════════ -->
+  <div class="ticket-outer" #boletaRef>
+
+    <!-- TICKET PRINCIPAL -->
+    <div class="ticket">
+
+      <!-- CABECERA del ticket -->
+      <div class="ticket-header">
+        <div class="ticket-airline">
+          <img src="assets/logo/logo_astranimbus_svg.svg" alt="AstraNimbus" class="ticket-logo" />
+          <div class="ticket-airline-text">
+            <span class="ticket-airline-name">AstraNimbus</span>
+            <span class="ticket-airline-sub">Aviation · PAELDAV Corp.</span>
+          </div>
+        </div>
+        <div class="ticket-meta-right">
+          <div class="ticket-class-badge">{{ boletaData.claseServicio }}</div>
+          <div class="ticket-flight-num">
+            Vuelo #<strong>{{ boletaData.vuelo.id }}</strong>
+          </div>
+          <div class="ticket-fecha-emision">
+            Emitido: {{ formatFecha(boletaData.fechaEmision) }}
+          </div>
+        </div>
+      </div>
+
+      <!-- RUTA PRINCIPAL -->
+      <div class="ticket-route">
+        <div class="route-city route-origin">
+          <span class="route-code">{{ extraerCodigo(boletaData.vuelo.origen) }}</span>
+          <span class="route-name">{{ extraerCiudad(boletaData.vuelo.origen) }}</span>
+          <span class="route-time">{{ formatHora(boletaData.vuelo.fechaSalidaProgramada) }}</span>
+          <span class="route-date">{{ formatFecha(boletaData.vuelo.fechaSalidaProgramada) }}</span>
+        </div>
+
+        <div class="route-middle">
+          <div class="route-duration">
+            <span class="duration-label">Duración</span>
+            <span class="duration-val">{{ calcularDuracion(boletaData.vuelo.fechaSalidaProgramada, boletaData.vuelo.fechaLlegadaProgramada) }}</span>
+          </div>
+          <div class="route-line">
+            <div class="route-dot"></div>
+            <div class="route-track"></div>
+            <svg class="route-plane" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+            </svg>
+            <div class="route-track"></div>
+            <div class="route-dot"></div>
+          </div>
+          <div class="route-direct">Vuelo directo</div>
+        </div>
+
+        <div class="route-city route-destination">
+          <span class="route-code">{{ extraerCodigo(boletaData.vuelo.destino) }}</span>
+          <span class="route-name">{{ extraerCiudad(boletaData.vuelo.destino) }}</span>
+          <span class="route-time">{{ formatHora(boletaData.vuelo.fechaLlegadaProgramada) }}</span>
+          <span class="route-date">{{ formatFecha(boletaData.vuelo.fechaLlegadaProgramada) }}</span>
+        </div>
+      </div>
+
+      <!-- DETALLES DEL VUELO -->
+      <div class="ticket-details">
+        <div class="detail-item">
+          <span class="detail-label">Pasajero</span>
+          <span class="detail-value">{{ boletaData.pasajero.nombreCompleto }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Documento</span>
+          <span class="detail-value">{{ boletaData.pasajero.tipoDocumento }} {{ boletaData.pasajero.documentoIdentidad }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Aeronave</span>
+          <span class="detail-value">{{ boletaData.vuelo.aeronaveMatricula }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Propósito</span>
+          <span class="detail-value">{{ boletaData.vuelo.proposito || 'No especificado' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Estado</span>
+          <span class="detail-value estado-badge">{{ boletaData.vuelo.estado }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Método de pago</span>
+          <span class="detail-value">{{ boletaData.metodoPago }}</span>
+        </div>
+      </div>
+
+      <!-- SEPARADOR PERFORADO -->
+      <div class="ticket-perforated">
+        <div class="perf-circle perf-left"></div>
+        <div class="perf-line"></div>
+        <div class="perf-circle perf-right"></div>
+      </div>
+
+      <!-- STUB / CUPÓN DE EMBARQUE -->
+      <div class="ticket-stub">
+        <div class="stub-info">
+          <div class="stub-item stub-item-large">
+            <span class="stub-label">Asiento</span>
+            <span class="stub-value stub-value-xl">{{ boletaData.numeroAsiento }}</span>
+          </div>
+          <div class="stub-divider"></div>
+          <div class="stub-item">
+            <span class="stub-label">Puerta</span>
+            <span class="stub-value">{{ boletaData.puertaEmbarque }}</span>
+          </div>
+          <div class="stub-divider"></div>
+          <div class="stub-item">
+            <span class="stub-label">Embarque</span>
+            <span class="stub-value">{{ formatHora(boletaData.vuelo.fechaSalidaProgramada) }}</span>
+          </div>
+          <div class="stub-divider"></div>
+          <div class="stub-item">
+            <span class="stub-label">Reserva</span>
+            <span class="stub-value stub-value-code">{{ boletaData.codigoReserva }}</span>
+          </div>
+        </div>
+
+        <!-- QR placeholder — TODO: reemplazar con librería qrcode.js -->
+        <div class="stub-qr">
+          <div class="qr-placeholder">
+            <div class="qr-inner">
+              <div class="qr-corner qr-tl"></div>
+              <div class="qr-corner qr-tr"></div>
+              <div class="qr-corner qr-bl"></div>
+              <div class="qr-corner qr-br"></div>
+              <div class="qr-dots">
+                <span *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"
+                      [class]="'qr-dot qr-dot-' + i"></span>
+              </div>
+              <span class="qr-text">{{ boletaData.codigoReserva }}</span>
+            </div>
+          </div>
+          <span class="qr-caption">Escanear en embarque</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- /TICKET PRINCIPAL -->
+
+    <!-- TARJETA DE TRANSACCIÓN -->
+    <div class="transaction-card">
+      <div class="transaction-row">
+        <div class="transaction-item">
+          <span class="txn-label">ID de transacción</span>
+          <span class="txn-value">{{ boletaData.transaccionId }}</span>
+        </div>
+        <div class="transaction-item">
+          <span class="txn-label">Fecha de emisión</span>
+          <span class="txn-value">{{ formatFecha(boletaData.fechaEmision) }}</span>
+        </div>
+        <div class="transaction-item">
+          <span class="txn-label">Pasajeros</span>
+          <span class="txn-value">{{ boletaData.vuelo.numeroPasajeros }}</span>
+        </div>
+        <div class="transaction-total">
+          <span class="txn-label">Total pagado</span>
+          <span class="txn-value txn-value-total">{{ formatMoneda(boletaData.montoTotal) }}</span>
+        </div>
+      </div>
+      <div class="transaction-notice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Vuelo asegurado bajo certificaciones ISO/IEC 27001 e IATA Compliance · AstraNimbus Aviation © 2026
+      </div>
+    </div>
+
+  </div>
+  <!-- /ticket-outer -->
+
+</div>

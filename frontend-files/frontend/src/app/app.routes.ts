@@ -41,6 +41,7 @@ import { Personal } from './pages/administrador/personal/personal';
 import { DetallesPersonal } from './pages/administrador/detalles-personal/detalles-personal';
 import { MyProfile } from './shared/my-profile/my-profile';
 import { VerificacionDosFactoresComponent } from './pages/auth/verificacionDos-factores/verificacion-dos-factores.component';
+import {BoletaComponent} from './pages/boleta/boleta.component';
 
 export const routes: Routes = [
   {
@@ -217,5 +218,9 @@ export const routes: Routes = [
   {
     path: 'flota',
     component: NuestraFlotaComponent
+  },
+  {
+    path: 'boleta',
+    component: BoletaComponent
   }
 ];
