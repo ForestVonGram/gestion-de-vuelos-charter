@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<body>
+
+<div th:replace="~{emails/base :: layout(titulo='Código de verificación 2FA', contenido=~{::contenido})}">
+
+    <th:block th:fragment="contenido">
+
+        <p style="margin:0 0 16px 0;">
+            Hola <strong th:text="${nombre}">Usuario</strong>,
+        </p>
+
+        <p style="margin:0 0 24px 0;color:#6b7280;">
+            Tu código de autenticación de dos factores es:
+        </p>
+
+        <div style="text-align:center;margin-bottom:12px;">
+      <span th:text="${codigo}"
+            style="display:inline-block;background:#f8fafc;border:2px dashed #cbd5e1;
+                   border-radius:12px;padding:20px 48px;font-size:36px;font-weight:700;
+                   letter-spacing:12px;color:#0f172a;font-family:'Courier New',monospace;">
+        000000
+      </span>
+        </div>
+
+        <p style="margin:0 0 28px 0;font-size:13px;color:#9ca3af;text-align:center;">
+            Expira en <strong style="color:#374151;">5 minutos</strong>
+        </p>
+
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:0 0 24px 0;"/>
+
+        <div style="background:#fef9c3;border-left:4px solid #ca8a04;padding:14px 18px;">
+            <p style="margin:0;color:#92400e;font-size:13px;line-height:1.6;">
+                <strong>⚠ Importante:</strong> Nunca compartas este código con nadie.
+                El equipo de AstraNimbus Aviation <strong>jamás</strong> te lo solicitará
+                por email, teléfono u otro medio.
+            </p>
+        </div>
+
+    </th:block>
+
+</div>
+</body>
+</html>
