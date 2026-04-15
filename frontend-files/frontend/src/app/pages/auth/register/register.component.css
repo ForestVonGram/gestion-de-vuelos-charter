@@ -273,30 +273,30 @@ input.is-invalid {
 }
 
 /* Google Register Button */
-.google-button {
+.google-button-wrapper {
   width: 100%;
-  padding: 14px;
-  background-color: var(--color-white);
-  border: 2px solid #E0E0E0;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-dark);
-  cursor: pointer;
-  transition: all var(--transition-base);
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-md);
-  min-height: 48px;
   margin-top: var(--spacing-md);
 }
 
-.google-button:hover:not(:disabled) {
-  border-color: #BDBDBD;
-  background-color: #F5F5F5;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
+.google-button-wrapper #google-signin-button {
+  width: 100%;
+}
+
+.google-button {
+  width: 100%;
+  background-color: var(--color-white);
+  border: 2px solid #E0E0E0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 .google-button:disabled {
@@ -304,16 +304,11 @@ input.is-invalid {
   cursor: not-allowed;
 }
 
-.google-logo {
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.coming-soon {
-  font-style: italic;
-  opacity: 0.7;
-  font-weight: 500;
+/* Botón */
+.btn-block {
+  width: 100%;
+  margin-top: var(--spacing-md);
+  padding: 14px;
 }
 
 /* Footer del form */
@@ -433,5 +428,4 @@ input.is-invalid {
     font-size: 0.95rem;
     min-height: 44px;
   }
-
 }

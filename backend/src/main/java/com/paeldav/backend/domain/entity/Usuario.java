@@ -32,8 +32,7 @@ public class Usuario {
     @Column(nullable = false)
     private String nombre;
 
-    @NotBlank(message = "El apellido es obligatorio")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String apellido;
 
     @Email(message = "El email debe ser válido")
@@ -41,8 +40,7 @@ public class Usuario {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "La contraseña es obligatoria")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(length = 20)
@@ -67,6 +65,9 @@ public class Usuario {
     @Column(name = "metodo_dos_factores")
     @Enumerated(EnumType.STRING)
     private com.paeldav.backend.domain.enums.MetodoDosFactores metodoDosFactores;
+
+    @Column(name = "google_id", unique = true)
+    private String googleId;
 
     @Column(name="vuelo_actual")
     @ManyToMany(cascade = CascadeType.ALL)

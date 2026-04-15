@@ -36,9 +36,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()));
 
+        // Los usuarios de Google no tienen password; se usa placeholder que no puede ser adivinado
+        String password = usuario.getPassword() != null ? usuario.getPassword() : "";
+
         return new User(
                 usuario.getEmail(),
-                usuario.getPassword(),
+                password,
                 authorities
         );
     }

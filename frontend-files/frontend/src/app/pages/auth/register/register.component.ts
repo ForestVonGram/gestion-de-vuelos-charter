@@ -7,11 +7,9 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
-
-export enum RolUsuario {
-  USUARIO = 'USUARIO',
-  ADMINISTRADOR = 'ADMINISTRADOR'
-}
+import { environment } from '../../../../environments/environment';
+import { RolUsuario } from '../../../models/users/auth.models';
+import { GoogleAuthService } from '../../../services/auth/google-oauth.service';
 
 function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
   const value: string = control.value || '';
@@ -38,6 +36,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
   isLoading = false;
   errorMessage: string | null = null;
+  googleLoading = false;
 
   passwordStrength: 'none' | 'weak' | 'medium' | 'strong' = 'none';
   passwordStrengthLabel = '';
@@ -55,10 +54,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private router: Router,
     private authService: AuthService,
     private recaptchaV3Service: ReCaptchaV3Service,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private googleAuthService: GoogleAuthService,
   ) {}
 
   ngOnInit(): void {
+    this.initForm(); // Inicializa la estructura del formulario al cargar
+    this.initializeGoogleSignIn();
     this.initForm();
     this.registerForm.get('password')?.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -198,4 +200,54 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   get f() { return this.registerForm.controls; }
+
+  private initializeGoogleSignIn(): void {
+    if (typeof (window as any).google === 'undefined') return;
+
+    (window as any).google.accounts.id.initialize({
+      client_id: environment.googleClientId,
+      callback: (response: any) => this.handleGoogleCallback(response),
+      auto_select: false,
+      cancel_on_tap_outside: true
+    });
+
+    (window as any).google.accounts.id.renderButton(
+      document.getElementById('google-signin-button'),
+      {
+        theme: 'outline',
+        size: 'large',
+        width: '100%',
+        text: 'signup_with', // Texto diferente al del login
+        locale: 'es'
+      }
+    );
+  }
+
+  private handleGoogleCallback(googleResponse: any): void {
+    if (!googleResponse?.credential) {
+      this.errorMessage = 'Error al obtener credenciales de Google';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.googleLoading = true;
+    this.errorMessage = null;
+    this.cdr.detectChanges();
+
+    this.authService.loginConGoogle(googleResponse.credential)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.googleLoading = false;
+          this.cdr.detectChanges();
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.googleLoading = false;
+          this.errorMessage = 'Error al registrarse con Google. Por favor intente nuevamente';
+          this.cdr.detectChanges();
+          console.error('Google register error:', error);
+        }
+      });
+  }
 }
