@@ -1,0 +1,264 @@
+/* --- LAYOUT GENERAL --- */
+.nomina-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #1a1a3e;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.welcome-box h1 {
+  font-family: 'Jost', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.welcome-box p {
+  font-family: 'Libre Franklin', sans-serif;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- SECTION HEADER --- */
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+/* --- FORM CARD --- */
+.form-card {
+  background-color: rgba(20, 20, 40, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* --- GRID --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* --- GRUPOS --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-family: 'Libre Franklin', sans-serif;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+/* --- INPUTS / SELECT / TEXTAREA --- */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: white;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #7b8cff;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* --- READONLY (totalNeto) --- */
+.form-group input[readonly] {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+}
+
+/* --- SELECT OPCIONES --- */
+.form-group select {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-group select option {
+  background: #1a1a3e;
+  color: white;
+}
+
+/* --- FULL WIDTH --- */
+.full-width {
+  grid-column: span 2;
+}
+
+/* --- ERRORES --- */
+.error {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* --- RESUMEN --- */
+.resumen-card {
+  grid-column: span 2;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+  margin-top: 0.5rem;
+}
+
+.resumen-card h3 {
+  font-family: 'Jost', sans-serif;
+  color: white;
+  font-size: 1rem;
+  margin: 0 0 0.8rem 0;
+}
+
+.resumen-card p {
+  font-family: 'Libre Franklin', sans-serif;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin: 4px 0;
+}
+
+.resumen-card p strong {
+  color: white;
+}
+
+.resumen-card hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0.8rem 0;
+}
+
+.resumen-card .total {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.resumen-card .total strong {
+  color: #7b8cff;
+}
+
+/* --- BOTONES --- */
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 0.8rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f5fcf, #7b8cff);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(123, 140, 255, 0.35);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width,
+  .resumen-card,
+  .form-actions {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    justify-content: center;
+  }
+
+  .welcome-box h1 {
+    font-size: 1.4rem;
+  }
+}

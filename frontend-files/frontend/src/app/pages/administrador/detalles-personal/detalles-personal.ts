@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 import { OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NominaService } from '../../../services/personal/nomina-service';
 import Swal from 'sweetalert2';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
 
@@ -22,12 +23,16 @@ export class DetallesPersonal implements OnInit {
   persona:any
   cargos: any[] = Object.values(CargoPersonal);
   estados: any[] = Object.values(EstadoPersonal);
+  nominas: any[] = [];
   currentUser: any
+  totalNominas: number = 0;
 
 
   constructor(private personalService: PersonalService, private authService: AuthService,
-    private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef) {
+    private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef, 
+    private nominaService: NominaService) {
     this.currentUser = this.authService.currentUserValue;
+    this.ngOnInit();
   }
 
   ngOnInit(): void {
@@ -42,8 +47,32 @@ export class DetallesPersonal implements OnInit {
           Swal.fire('Error', 'No se pudo cargar la información del personal.', 'error');
         }
       });
+      this.nominaService.obtnerNominaPorPersonalId(+id).subscribe({
+        next: (response) => {
+          this.nominas = response; 
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          Swal.fire('Error', 'No se pudo cargar la nómina del personal.', 'error');
+        }
+      });
     }
   }
+
+  calcularTotalNominas(): void {
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    this.nominaService.calcularTotalNominas(+id!).subscribe({
+      next: (response) => {
+        this.totalNominas = response
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        Swal.fire('Error', 'No se pudo calcular el total de nóminas.', 'error');
+        return 0;
+      }
+      });
+   }
+
 
     formatear(valor: string): string {
   return valor.replace(/_/g, ' ');

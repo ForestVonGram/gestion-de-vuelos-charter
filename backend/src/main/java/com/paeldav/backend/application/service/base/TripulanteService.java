@@ -3,6 +3,7 @@ package com.paeldav.backend.application.service.base;
 import com.paeldav.backend.application.dto.tripulante.TripulanteCreateDTO;
 import com.paeldav.backend.application.dto.tripulante.TripulanteDTO;
 import com.paeldav.backend.application.dto.tripulante.TripulanteUpdateDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -54,7 +55,7 @@ public interface TripulanteService {
      *
      * @return lista de auxiliares
      */
-    List<TripulanteDTO> obtenerAuxiliares();
+    Page<TripulanteDTO> obtenerAuxiliares(int page);
 
     /**
      * Edita la información de un tripulante existente.

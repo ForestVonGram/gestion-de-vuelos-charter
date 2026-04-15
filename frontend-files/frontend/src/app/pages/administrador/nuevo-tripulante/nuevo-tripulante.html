@@ -1,0 +1,110 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de Tripulación</h1>
+        <p>Registro y administración de tripulantes</p>
+      </div>
+
+      <div class="avatar-circle">
+        {{ currentUser?.nombreCompleto?.charAt(0) }}
+      </div>
+    </header>
+
+    <!-- HEADER -->
+    <div class="section-header">
+      <h2 class="page-title">Nuevo Tripulante</h2>
+    </div>
+
+    <!-- FORM -->
+    <section class="content-panel">
+
+      <form [formGroup]="form" (ngSubmit)="guardarTripulante()" class="form-grid">
+
+        <!-- Usuario -->
+        <div class="form-group">
+          <label>Usuario ID *</label>
+          <input type="number" formControlName="usuarioId" min="0">
+
+          @if(submitted && form.controls['usuarioId'].invalid){
+            <span class="error">El usuario es obligatorio</span>
+          }
+        </div>
+
+        <!-- Licencia -->
+        <div class="form-group">
+          <label>Número de Licencia *</label>
+          <input type="text" formControlName="numeroLicencia">
+
+          @if(submitted && form.controls['numeroLicencia'].invalid){
+            <span class="error">La licencia es obligatoria</span>
+          }
+        </div>
+
+        <!-- Tipo Licencia -->
+        <div class="form-group">
+          <label>Tipo de Licencia</label>
+          <input type="text" formControlName="tipoLicencia">
+        </div>
+
+        <!-- Es Piloto -->
+        <div class="form-group">
+          <label>¿Es Piloto?</label>
+          <select formControlName="esPiloto">
+            <option [ngValue]="true">Sí</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+
+        <!-- Fecha Expedición -->
+        <div class="form-group">
+          <label>Fecha Expedición</label>
+          <input type="date" formControlName="fechaExpedicionLicencia">
+        </div>
+
+        <!-- Fecha Vencimiento -->
+        <div class="form-group">
+          <label>Fecha Vencimiento</label>
+          <input type="date" formControlName="fechaVencimientoLicencia">
+        </div>
+
+        <!-- Certificaciones -->
+        <div class="form-group full-width">
+          <label>Certificaciones</label>
+          <textarea rows="3" formControlName="certificaciones"></textarea>
+        </div>
+
+        <!-- Observaciones -->
+        <div class="form-group full-width">
+          <label>Observaciones</label>
+          <textarea rows="4" formControlName="observaciones"></textarea>
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions">
+
+          <button type="button" class="btn-cancel" (click)="cancelar()">
+            Cancelar
+          </button>
+
+          <button class="btn-primary" type="submit">
+            <span class="material-symbols-rounded">save</span>
+            Guardar Tripulante
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+
+</div>
+
+<app-accesibilidad></app-accesibilidad>

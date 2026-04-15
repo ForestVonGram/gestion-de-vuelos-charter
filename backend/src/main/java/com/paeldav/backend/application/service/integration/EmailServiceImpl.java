@@ -33,10 +33,6 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
-    // ─────────────────────────────────────────────────────────────
-    // Métodos públicos
-    // ─────────────────────────────────────────────────────────────
-
     @Override
     @Async
     public void enviarEmailRecuperacion(String destinatario, String token, String nombreUsuario) {

@@ -1,0 +1,196 @@
+/* =========================================
+   PANEL CONTENEDOR
+   ========================================= */
+.content-panel {
+  background-color: rgba(20, 20, 40, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+}
+
+/* =========================================
+   GRID FORMULARIO
+   ========================================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* =========================================
+   GRUPOS DE FORMULARIO
+   ========================================= */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* LABELS */
+.form-group label {
+  font-family: 'Libre Franklin', sans-serif;
+  color: var(--color-light-mid);
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+/* =========================================
+   INPUTS / SELECT / TEXTAREA
+   ========================================= */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: var(--color-white);
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+/* FOCUS */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--color-mid);
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* TEXTAREA */
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* FULL WIDTH */
+.full-width {
+  grid-column: span 2;
+}
+
+/* =========================================
+   ERRORES
+   ========================================= */
+.error {
+  color: var(--color-error);
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* =========================================
+   SELECT PERSONALIZADO
+   ========================================= */
+.form-group select {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  cursor: pointer;
+}
+
+.form-group select option {
+  background: white;
+  color: black;
+}
+
+.dark-theme .form-group select option {
+  background: #2d2d2d;
+  color: white;
+}
+
+/* =========================================
+   BOTONES / ACCIONES
+   ========================================= */
+.form-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-primary {
+  background-color: var(--color-mid);
+  color: var(--color-white);
+  padding: 10px 24px;
+  border-radius: var(--radius-lg);
+  font-family: 'Jost', sans-serif;
+  font-style: italic;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color var(--transition-base),
+              box-shadow var(--transition-base),
+              transform var(--transition-fast);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-light-mid);
+  box-shadow: 0 6px 16px rgba(92,92,153,0.5);
+  transform: translateY(-1px);
+}
+
+/* BOTÓN CANCELAR */
+.btn-cancel {
+  background: transparent;
+  border: 1px solid var(--dark-border);
+  color: var(--dark-text-secondary);
+  padding: 10px 20px;
+  border-radius: var(--radius-lg);
+  font-family: 'Jost', sans-serif;
+  font-style: italic;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.btn-cancel:hover {
+  background: var(--dark-bg-hover);
+  color: var(--color-white);
+  border-color: var(--color-light-mid);
+}
+
+/* =========================================
+   VALIDACIÓN VISUAL (BONUS 🔥)
+   ========================================= */
+.form-group input.ng-invalid.ng-touched,
+.form-group select.ng-invalid.ng-touched,
+.form-group textarea.ng-invalid.ng-touched {
+  border-color: rgba(231, 76, 60, 0.7);
+  box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.15);
+}
+
+.form-group input.ng-valid.ng-touched,
+.form-group select.ng-valid.ng-touched,
+.form-group textarea.ng-valid.ng-touched {
+  border-color: rgba(46, 204, 113, 0.6);
+}
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    justify-content: center;
+  }
+}

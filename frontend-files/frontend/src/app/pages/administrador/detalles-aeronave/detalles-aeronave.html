@@ -1,0 +1,200 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Flota Aérea</h1>
+        <p>Edición y configuración de aeronave</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">{{ currentUser?.nombreCompleto?.charAt(0) }}</div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <div class="section-title-block">
+        <span class="section-eyebrow">Edición de aeronave</span>
+        <h2 class="page-title">{{ aeronave?.matricula  || 'Cargando...' }}</h2>
+      </div>
+      <!-- Botón eliminar -->
+      <button class="btn-danger" (click)="confirmarEliminar()">
+        <i class="fas fa-trash-alt"></i> Eliminar Aeronave
+      </button>
+    </div>
+
+    @if (aeronave) {
+      <form [formGroup]="editForm" (ngSubmit)="guardarCambios()">
+
+        <section class="form-card">
+
+          <!-- BLOQUE: Imágenes -->
+          <div class="form-block">
+            <div class="form-block-label">
+              <span class="block-number">01</span>
+              <span class="block-title">Imágenes</span>
+            </div>
+            <div class="form-grid single">
+
+              <!-- Galería de imágenes -->
+            <div class="image-gallery">
+                @for (img of aeronave.imagenes; track img.id) {
+                    <div class="image-item">
+                    <img [src]="img.urlImagen" [alt]="aeronave.matricula"> 
+                         <button type="button" class="img-delete-btn" (click)="eliminarImagen(img.id)" title="Eliminar imagen">
+                     <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                } @empty {
+                     <div class="no-images">
+                    <i class="fas fa-image"></i>
+                        <span>Sin imágenes</span>
+                        </div>
+                    }
+                </div>
+
+              <!-- Subir imagen -->
+              <div class="upload-zone" (click)="fileInput.click()" (dragover)="$event.preventDefault()" (drop)="onDrop($event)">
+                <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFileSelected($event)">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Haz clic o arrastra imágenes aquí</p>
+                <span>PNG, JPG, WEBP — máx. 5MB</span>
+              </div>
+
+              <!-- Preview de imágenes a subir -->
+              @if (imagenesPreview.length > 0) {
+                <div class="preview-list">
+                  @for (prev of imagenesPreview; track $index) {
+                    <div class="preview-item">
+                      <img [src]="prev.url" alt="Preview">
+                      <span class="preview-name">{{ prev.nombre }}</span>
+                      <button type="button" class="img-delete-btn" (click)="quitarPreview($index)">
+                        <i class="fas fa-times"></i>
+                      </button>
+                    </div>
+                  }
+                  <button type="button" class="btn-upload" (click)="subirImagenes()">
+                    <i class="fas fa-upload"></i> Subir {{ imagenesPreview.length }} imagen(es)
+                  </button>
+                </div>
+              }
+
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- BLOQUE: Estado y horas -->
+          <div class="form-block">
+            <div class="form-block-label">
+              <span class="block-number">02</span>
+              <span class="block-title">Operación</span>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label>Estado</label>
+                <select formControlName="estado">
+                  @for (estado of estados; track estado) {
+                    <option [value]="estado">{{ estado }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Horas de Vuelo Totales</label>
+                <div class="input-with-unit">
+                  <input type="number" formControlName="horasVueloTotales" min="0" placeholder="0">
+                  <span class="unit">hrs</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- BLOQUE: Historial -->
+          <div class="form-block">
+            <div class="form-block-label">
+              <span class="block-number">03</span>
+              <span class="block-title">Historial</span>
+            </div>
+            <div class="form-grid">
+
+              <div class="form-group">
+                <label>Última Revisión</label>
+                <input type="date" formControlName="fechaUltimaRevision">
+              </div>
+
+              <!-- Info readonly -->
+              <div class="form-group">
+                <label>Fecha de Fabricación</label>
+                <input type="text" [value]="aeronave.fechaFabricacion" disabled class="input-readonly">
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-divider"></div>
+
+          <!-- BLOQUE: Especificaciones -->
+          <div class="form-block">
+            <div class="form-block-label">
+              <span class="block-number">04</span>
+              <span class="block-title">Notas Técnicas</span>
+            </div>
+            <div class="form-grid single">
+              <div class="form-group full">
+                <label>Especificaciones Técnicas</label>
+                <textarea rows="4" formControlName="especificacionesTecnicas"
+                  placeholder="Describe las características técnicas relevantes..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCIONES -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" routerLink="/admin/flota">
+              <i class="fas fa-arrow-left"></i> Cancelar
+            </button>
+            <button type="submit" class="btn-primary">
+              <i class="fas fa-save"></i> Guardar Cambios
+            </button>
+          </div>
+
+        </section>
+
+      </form>
+    } @else {
+      <div class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Cargando aeronave...</p>
+      </div>
+    }
+
+    <!-- Modal de confirmación de eliminación -->
+    @if (mostrarModalEliminar) {
+      <div class="modal-overlay" (click)="mostrarModalEliminar = false">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+          <div class="modal-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+          <h3>¿Eliminar aeronave?</h3>
+          <p>Esta acción no se puede deshacer. La aeronave <strong>{{ aeronave?.matricula }}</strong> será eliminada permanentemente.</p>
+          <div class="modal-actions">
+            <button class="btn-secondary" (click)="mostrarModalEliminar = false">Cancelar</button>
+            <button class="btn-danger" (click)="eliminarAeronave()">
+              <i class="fas fa-trash-alt"></i> Sí, eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+  </main>
+</div>
+
+<app-accesibilidad></app-accesibilidad>

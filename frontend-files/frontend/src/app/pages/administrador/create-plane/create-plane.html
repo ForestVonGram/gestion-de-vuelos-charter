@@ -1,120 +1,180 @@
-<div class="section-header">
-  <h2 class="page-title">Nueva Aeronave</h2>
+<div class="admin-container">
 
-</div>
+  <app-admin-sidebar></app-admin-sidebar>
 
-<div class="form-card">
-    <app-admin-sidebar
-    ></app-admin-sidebar>
-<form [formGroup]="avionForm" (ngSubmit)="crearAvion()">
+  <main class="main-content">
 
-<div class="form-grid">
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Flota Aérea</h1>
+        <p>Registro y configuración de aeronaves</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">{{ currentUser?.nombreCompleto?.charAt(0) }}</div>
+      </div>
+    </header>
 
-<!-- MATRICULA -->
-<div class="form-group">
-<label>Matrícula *</label>
-<input type="text" formControlName="matricula">
+    <div class="section-header">
+      <div class="section-title-block">
+        <span class="section-eyebrow">Formulario de registro</span>
+        <h2 class="page-title">Nueva Aeronave</h2>
+      </div>
+    </div>
 
-    @if(submitted && avionForm.controls['matricula'].invalid){
-<div class="error" >
-    La matrícula es obligatoria
+    <section class="form-card">
+
+      <form [formGroup]="avionForm" (ngSubmit)="crearAvion()">
+
+        <!-- BLOQUE: Identificación -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="block-number">01</span>
+            <span class="block-title">Identificación</span>
+          </div>
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Matrícula <span class="required">*</span></label>
+              <input type="text" formControlName="matricula" placeholder="Ej. HK-1234">
+              @if(submitted && avionForm.controls['matricula'].invalid){
+                <div class="error"><i class="fas fa-exclamation-circle"></i> La matrícula es obligatoria</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Modelo <span class="required">*</span></label>
+              <input type="text" formControlName="modelo" placeholder="Ej. Cessna 172">
+              @if(submitted && avionForm.controls['modelo'].invalid){
+                <div class="error"><i class="fas fa-exclamation-circle"></i> El modelo es obligatorio</div>
+              }
+            </div>
+
+            <div class="form-group">
+              <label>Fabricante</label>
+              <input type="text" formControlName="fabricante" placeholder="Ej. Boeing, Airbus">
+            </div>
+
+            <div class="form-group">
+              <label>Estado</label>
+              <select formControlName="estado">
+                @for(estado of estados; track estado) {
+                  <option [value]="estado">{{ estado }}</option>
+                }
+              </select>
+            </div>
+
+          </div>
         </div>
-    }
-    </div>
 
-<!-- MODELO -->
-<div class="form-group">
-    <label>Modelo *</label>
-    <input type="text" formControlName="modelo">
+        <div class="form-divider"></div>
 
+        <!-- BLOQUE: Capacidades -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="block-number">02</span>
+            <span class="block-title">Capacidades</span>
+          </div>
+          <div class="form-grid">
 
-    @if(submitted && avionForm.controls['modelo'].invalid){
-    <div class="error" >
-    El modelo es obligatorio
+            <div class="form-group">
+              <label>Pasajeros</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="capacidadPasajeros" min="0"
+                  (keydown)="blockNegative($event)"
+                  (input)="sanitizeNumber('capacidadPasajeros')"
+                  placeholder="0">
+                <span class="unit">pax</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Tripulación</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="capacidadTripulacion" placeholder="0">
+                <span class="unit">crew</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Autonomía</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="autonomiaKm" min="0"
+                  (keydown)="blockNegative($event)"
+                  (input)="sanitizeNumber('autonomiaKm')"
+                  placeholder="0">
+                <span class="unit">km</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Velocidad Crucero</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="velocidadCruceroKmh" min="0"
+                  (keydown)="blockNegative($event)"
+                  (input)="sanitizeNumber('velocidadCruceroKmh')"
+                  placeholder="0">
+                <span class="unit">km/h</span>
+              </div>
+            </div>
+
+          </div>
         </div>
-    }
-    </div>
 
-<!-- FABRICANTE -->
-<div class="form-group">
-<label>Fabricante</label>
-<input type="text" formControlName="fabricante">
+        <div class="form-divider"></div>
+
+        <!-- BLOQUE: Fechas -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="block-number">03</span>
+            <span class="block-title">Historial</span>
+          </div>
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Fecha de Fabricación</label>
+              <input type="date" formControlName="fechaFabricacion">
+            </div>
+
+            <div class="form-group">
+              <label>Última Revisión</label>
+              <input type="date" formControlName="fechaUltimaRevision">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- BLOQUE: Especificaciones -->
+        <div class="form-block">
+          <div class="form-block-label">
+            <span class="block-number">04</span>
+            <span class="block-title">Notas Técnicas</span>
+          </div>
+          <div class="form-grid single">
+            <div class="form-group full">
+              <label>Especificaciones Técnicas</label>
+              <textarea rows="4" formControlName="especificacionesTecnicas"
+                placeholder="Describe las características técnicas relevantes..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCIONES -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Cancelar
+          </button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-plane"></i> Crear Aeronave
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
 </div>
 
-<!-- CAPACIDAD PASAJEROS -->
-<div class="form-group">
-<label>Capacidad Pasajeros</label>
-<input type="number"
-    formControlName="capacidadPasajeros"
-    min="0"
-    (step)="1"
-    (keydown)="blockNegative($event)"
-    (input)="sanitizeNumber('capacidadPasajeros')">
-</div>
-
-<!-- CAPACIDAD TRIPULACION -->
-<div class="form-group">
-<label>Capacidad Tripulación</label>
-<input type="number" formControlName="capacidadTripulacion">
-</div>
-
-<!-- AUTONOMIA -->
-<div class="form-group">
-<label>Autonomía (km)</label>
-<input type="number"
-    formControlName="autonomiaKm"
-    min="0"
-    (step)="1"
-    (keydown)="blockNegative($event)"
-    (input)="sanitizeNumber('autonomiaKm')">
-</div>
-
-<!-- VELOCIDAD -->
-<div class="form-group">
-<label>Velocidad Crucero (km/h)</label>
-<input type="number"
-    formControlName="velocidadCruceroKmh"
-    min="0"
-    (step)="1"
-    (keydown)="blockNegative($event)"
-    (input)="sanitizeNumber('velocidadCruceroKmh')">
-</div>
-
-<!-- FECHA FABRICACION -->
-<div class="form-group">
-<label>Fecha Fabricación</label>
-<input type="date" formControlName="fechaFabricacion">
-</div>
-
-<!-- REVISION -->
-<div class="form-group">
-<label>Última Revisión</label>
-<input type="date" formControlName="fechaUltimaRevision">
-</div>
-
-<!-- ESTADO -->
-<div class="form-group">
-    <label>Estado</label>
-    <select formControlName="estado">
-    @for(estado of estados; track estado) {
-    <option [value]="estado">{{estado}}</option>}
-    </select>
-    </div>
-</div>
-
-<!-- ESPECIFICACIONES -->
-<div class="form-group full">
-<label>Especificaciones Técnicas</label>
-<textarea rows="4" formControlName="especificacionesTecnicas"></textarea>
-</div>
-
-<div class="form-actions">
-<button class="btn-primary">
-Crear Aeronave
-</button>
-</div>
-
-</form>
-
-</div>
 <app-accesibilidad></app-accesibilidad>

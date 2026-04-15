@@ -33,7 +33,7 @@ import { AdminDashboardComponent } from './pages/administrador/admin-dashboard/a
 import { VuelosAdminComponent } from './pages/administrador/vuelos-admin/vuelos-admin.component';
 import { EstadisticasAdminComponent } from './pages/administrador/estadisticas-admin/estadisticas-admin.component';
 import { FlotaAereaAdminComponent } from './pages/administrador/flota-aerea-admin/flota-aerea-admin.component';
-import { NominaAdminComponent } from './pages/administrador/nomina-admin/nomina-admin.component';
+import { NominaAdminComponent } from './pages/administrador/roster/nomina-admin/nomina-admin.component';
 import { ReportesAdminComponent } from './pages/administrador/reportes-admin/reportes-admin.component';
 import { CreatePlane } from './pages/administrador/create-plane/create-plane';
 import { NewEmployed } from './pages/administrador/new-employed/new-employed';
@@ -41,6 +41,10 @@ import { Personal } from './pages/administrador/personal/personal';
 import { DetallesPersonal } from './pages/administrador/detalles-personal/detalles-personal';
 import { MyProfile } from './shared/my-profile/my-profile';
 import { VerificacionDosFactoresComponent } from './pages/auth/verificacionDos-factores/verificacion-dos-factores.component';
+import { CreateRoster } from './pages/administrador/roster/create-roster/create-roster';
+import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detalles-aeronave';
+import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tripulante';
+import { Usuarios } from './pages/administrador/usuarios/usuarios';
 
 export const routes: Routes = [
   {
@@ -151,7 +155,11 @@ export const routes: Routes = [
       },
       {
         path: 'flota',
-        component: FlotaAereaAdminComponent
+        component: FlotaAereaAdminComponent,
+      },
+      {
+        path: 'flota/:id',
+        component: DetallesAeronave
       },
       {
         path: 'create-plane',
@@ -166,6 +174,10 @@ export const routes: Routes = [
        component: NewEmployed,
       },
       {
+        path: 'nuevo-tripulante',
+        component: NuevoTripulante  
+      },
+      {
         path: 'reportes',
         component: ReportesAdminComponent
       },
@@ -176,6 +188,14 @@ export const routes: Routes = [
       {
         path: 'persona/:id',
         component: DetallesPersonal
+      },
+      {
+        path: 'create-roster',
+        component: CreateRoster
+      },
+      {
+        path: 'usuarios',
+        component: Usuarios
       }
     ]
   },
