@@ -33,10 +33,6 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.frontend.url:http://localhost:4200}")
     private String frontendUrl;
 
-    // ─────────────────────────────────────────────────────────────
-    // Métodos públicos
-    // ─────────────────────────────────────────────────────────────
-
     @Override
     @Async
     public void enviarEmailRecuperacion(String destinatario, String token, String nombreUsuario) {
@@ -61,7 +57,7 @@ public class EmailServiceImpl implements EmailService {
             ctx.setVariable("nombre", nombreUsuario);
             ctx.setVariable("fechaCambio", LocalDateTime.now());
 
-            String html = templateEngine.process("emails/changeConfirmed", ctx);
+            String html = templateEngine.process("emails/change-confirmed", ctx);
             enviarHtml(destinatario, "Contraseña actualizada - AstraNimbus Aviation", html);
             log.info("Email de confirmación enviado a: {}", destinatario);
         } catch (Exception e) {
@@ -77,7 +73,7 @@ public class EmailServiceImpl implements EmailService {
             ctx.setVariable("nombre", nombreUsuario);
             ctx.setVariable("codigo", codigo);
 
-            String html = templateEngine.process("emails/2FA", ctx);
+            String html = templateEngine.process("emails/2fa", ctx);
             enviarHtml(destinatario, "Tu código de autenticación - AstraNimbus Aviation", html);
             log.info("Código 2FA enviado a: {}", destinatario);
         } catch (Exception e) {
@@ -93,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
             ctx.setVariable("nombre", nombreCompleto);
             ctx.setVariable("codigo", codigo);
 
-            String html = templateEngine.process("emails/ResetCodePassword", ctx);
+            String html = templateEngine.process("emails/reset-code-password", ctx);
             enviarHtml(to, "Código de recuperación - AstraNimbus Aviation", html);
             log.info("Email de recuperación con código enviado a: {}", to);
         } catch (Exception e) {
@@ -111,7 +107,7 @@ public class EmailServiceImpl implements EmailService {
             ctx.setVariable("ip", ip);
             ctx.setVariable("dispositivo", dispositivo);
 
-            String html = templateEngine.process("emails/Login", ctx);
+            String html = templateEngine.process("emails/login", ctx);
             enviarHtml(to, "Nuevo inicio de sesión - AstraNimbus Aviation", html);
             log.info("Email de inicio de sesión enviado a: {}", to);
         } catch (Exception e) {

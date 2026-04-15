@@ -6,6 +6,7 @@ import com.paeldav.backend.application.dto.tripulante.TripulanteUpdateDTO;
 import com.paeldav.backend.application.service.base.TripulanteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,8 +74,8 @@ public class TripulanteController {
      * Obtiene todos los auxiliares.
      */
     @GetMapping("/auxiliares")
-    public ResponseEntity<List<TripulanteDTO>> obtenerAuxiliares() {
-        List<TripulanteDTO> auxiliares = tripulanteService.obtenerAuxiliares();
+    public ResponseEntity<Page<TripulanteDTO>> obtenerAuxiliares(@RequestParam int page) {
+        Page<TripulanteDTO> auxiliares = tripulanteService.obtenerAuxiliares(page);
         return ResponseEntity.ok(auxiliares);
     }
 

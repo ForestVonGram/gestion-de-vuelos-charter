@@ -8,6 +8,9 @@ import com.paeldav.backend.application.service.base.NominaService;
 import com.paeldav.backend.domain.enums.EstadoNomina;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -217,6 +220,17 @@ public class NominaController {
             @PathVariable Long personalId) {
         Double total = nominaService.calcularTotalNominasPagadas(personalId);
         return ResponseEntity.ok(total);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Page<NominaDTO>> obtenerNominas(
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(required = false) EstadoNomina estadoNomina,
+            @RequestParam (required = false) Integer mes,
+            @RequestParam (required = false) Integer anio,
+            @RequestParam (required = false) Integer personaId) {
+        Page<NominaDTO> resultado = nominaService.obtenerNominas(page, estadoNomina, mes, anio, personaId);
+        return ResponseEntity.ok(resultado);
     }
 
     /**

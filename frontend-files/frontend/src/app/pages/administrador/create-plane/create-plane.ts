@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule} from '@angular/forms';
-import { EstadoAeronave } from '../flota-aerea-admin/flota-aerea-admin.component';
+import { EstadoAeronave } from '../../../models/avion/estado-avion';
 import { AdminSidebarComponent } from "../../../shared/admin-sidebar/admin-sidebar.component";
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import { Aeronave } from '../../../services/vuelos/aeronave_service';
+import { AuthService } from '../../../services/auth/auth.service';
+import Swal from 'sweetalert2';
 
 /**
  * Componente para la creación de nuevas aeronaves.
@@ -25,11 +28,12 @@ export class CreatePlane implements OnInit {
   // Lista de estados posibles para la aeronave (para el select)
   estados = Object.values(EstadoAeronave);
 
-  /**
-   * Constructor del componente
-   * @param fb FormBuilder para crear el formulario reactivo
-   */
-  constructor(private fb: FormBuilder) {}
+  currentUser!: any
+
+
+  constructor(private fb: FormBuilder, private avionService: Aeronave, private authService: AuthService) {
+    this.currentUser = this.authService.currentUserValue;
+  }
 
   /**
    * Inicialización del componente.
@@ -60,16 +64,29 @@ export class CreatePlane implements OnInit {
    * Valida los datos y si son correctos, envía la información al backend.
    */
   crearAvion(){
+     console.log('Datos enviados:', JSON.stringify(this.avionForm.value));
+    this.avionService.createAeronave(this.avionForm.value).subscribe({
+      next: (response) => {
+        console.log('Aeronave creada exitosamente:', response);
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: 'La aeronave ha sido creada correctamente.',
+          confirmButtonText: 'Aceptar'
+        });
+        this.avionForm.reset(); // Reinicia el formulario después de crear la aeronave
+      },
+      error: (error) => {
+        console.error('Error al crear la aeronave:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Hubo un problema al crear la aeronave. Por favor, inténtalo de nuevo.',
+          confirmButtonText: 'Aceptar'
+        });
+      }
+    });
 
-    this.submitted = true; // Marcar como enviado para mostrar validaciones
-
-    if(this.avionForm.invalid){
-      return; // Si el formulario es inválido, no continuar
-    }
-
-    const avion = this.avionForm.value; // Obtener valores del formulario
-
-    console.log(avion); // TODO: Reemplazar con llamada al servicio
 
   }
 

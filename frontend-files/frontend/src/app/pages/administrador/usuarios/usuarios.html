@@ -1,0 +1,111 @@
+<div class="admin-container">
+
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Centro de Usuarios</h1>
+        <p>Gestión y administración de usuarios</p>
+      </div>
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) }}
+        </div>
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Directorio de Usuarios</h2>
+    </div>
+
+    <section class="content-panel">
+
+      <div class="panel-header">
+        <h3>Usuarios Registrados</h3>
+        <div class="filter-group">
+          <button class="filter-btn active">Todos</button>
+          <button class="filter-btn">Activos</button>
+          <button class="filter-btn">Inactivos</button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Usuario</th>
+              <th>Contacto</th>
+              <th>Rol</th>
+              <th>Fecha Registro</th>
+              <th>Estado</th>
+              <th class="text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of usuarios; track user.id) {
+              <tr>
+
+                <td class="id-cell">#{{ user.id }}</td>
+
+                <td class="usuario-cell">
+                  <div class="avatar-mini">{{ user.nombre.charAt(0) }}{{ user.apellido.charAt(0) }}</div>
+                  <div class="usuario-info">
+                    <span class="nombre">{{ user.nombre }} {{ user.apellido }}</span>
+                    <span class="email">{{ user.email }}</span>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="telefono">{{ user.telefono || '—' }}</span>
+                </td>
+
+                <td>
+                  <span class="rol-badge" [ngClass]="getRolClase(user.rol)">
+                    {{ user.rol }}
+                  </span>
+                </td>
+
+                <td>
+                  <span class="fecha">{{ user.fechaRegistro }}</span>
+                </td>
+
+                <td>
+                  @if (user.activo) {
+                    <span class="status-badge status-success">Activo</span>
+                  } @else {
+                    <span class="status-badge status-error">Inactivo</span>
+                  }
+                </td>
+
+                <td class="action-cell">
+                  <button class="icon-btn edit-btn" title="Editar usuario">
+                    <span  class="material-symbols-rounded">edit></span>
+                  </button>
+                <button class="btn-action btn-delete" title="Eliminar" (click)="onDelete(user.id)">
+                    <span class="material-symbols-rounded">delete</span>
+                </button>
+                 
+                </td>
+
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-row">
+                  <i class="fas fa-users-slash"></i>
+                  <span>No hay usuarios registrados</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<app-accesibilidad></app-accesibilidad>

@@ -1,12 +1,16 @@
 package com.paeldav.backend.infraestructure.repository;
 
+import com.paeldav.backend.application.dto.nomina.NominaDTO;
 import com.paeldav.backend.domain.entity.Nomina;
 import com.paeldav.backend.domain.enums.EstadoNomina;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -69,7 +73,7 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
      * @param personalId ID del personal
      * @return suma total de nóminas pagadas
      */
-    @Query("SELECT COALESCE(SUM(n.totalNeto), 0) FROM Nomina n WHERE n.personal.id = :personalId AND n.estado = 'PAGADA'")
+    @Query("SELECT COALESCE(SUM(n.totalNeto), 0) FROM Nomina n WHERE n.personal.id = :personalId ")
     Double sumTotalNetoByPersonalIdAndEstadoPagada(@Param("personalId") Long personalId);
 
     /**
@@ -100,4 +104,22 @@ public interface NominaRepository extends JpaRepository<Nomina, Long> {
             @Param("mesFin") Integer mesFin,
             @Param("anoFin") Integer anoFin
     );
+
+
+
+    @Query("""
+        SELECT n FROM Nomina n
+        WHERE (:estadoNomina IS NULL OR n.estado = :estadoNomina)
+        AND (:mes IS NULL OR n.mes = :mes)
+        AND (:anio IS NULL OR n.ano = :anio)
+        AND (:personaId IS NULL OR n.personal.id = :personaId)
+        """)
+    Page<Nomina> findByFiltros(
+            @Param("estadoNomina") EstadoNomina estadoNomina,
+            @Param("mes") Integer mes,
+            @Param("anio") Integer anio,
+            @Param("personaId") Integer personaId,
+            Pageable pageable
+    );
+
 }

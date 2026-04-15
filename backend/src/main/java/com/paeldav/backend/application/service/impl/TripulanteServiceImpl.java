@@ -9,12 +9,16 @@ import com.paeldav.backend.application.service.integration.ValidadorCertificacio
 import com.paeldav.backend.domain.entity.Tripulante;
 import com.paeldav.backend.domain.entity.Usuario;
 import com.paeldav.backend.domain.enums.EstadoTripulante;
+import com.paeldav.backend.domain.enums.RolUsuario;
 import com.paeldav.backend.exception.TripulanteNoEncontradoException;
 import com.paeldav.backend.exception.TripulanteYaExisteException;
 import com.paeldav.backend.exception.UsuarioNoEncontradoException;
 import com.paeldav.backend.infraestructure.repository.TripulanteRepository;
 import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +58,7 @@ public class TripulanteServiceImpl implements TripulanteService {
         // Convertir DTO a entidad
         Tripulante tripulante = tripulanteMapper.toEntity(tripulanteCreateDTO);
         tripulante.setUsuario(usuario);
-
+        usuario.setRol(RolUsuario.TRIPULACION);
         // Guardar en base de datos
         tripulante = tripulanteRepository.save(tripulante);
 
@@ -103,12 +107,10 @@ public class TripulanteServiceImpl implements TripulanteService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TripulanteDTO> obtenerAuxiliares() {
-        // Obtiene todos los tripulantes que son auxiliares (no pilotos)
-        List<Tripulante> auxiliares = tripulanteRepository.findAll().stream()
-                .filter(t -> t.getEsPiloto() == null || !t.getEsPiloto())
-                .collect(Collectors.toList());
-        return tripulanteMapper.toDTOList(auxiliares);
+    public Page<TripulanteDTO> obtenerAuxiliares(int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Tripulante> auxiliares = tripulanteRepository.findAll(pageable);
+        return auxiliares.map(tripulanteMapper::toDTO);
     }
 
     @Override

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment} from '../../../environments/environment';
+import { TokenService } from '../token_service/token-service';
 
 export interface Usuario {
   id: number;
@@ -35,7 +36,7 @@ export interface CambiarPasswordRequest {
 export class UserService {
   private apiUrl = environment.apiUrl + '/usuarios';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private tokenService: TokenService) {}
 
   getUser(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
@@ -53,4 +54,15 @@ export class UserService {
   deactivateUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getAllUsers(): Observable<Usuario[]> {
+    const token = this.tokenService.getToken();
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    };
+    return this.http.get<Usuario[]>(`${this.apiUrl}`, { headers });
+
+  }
+
 }
