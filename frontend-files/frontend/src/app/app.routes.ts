@@ -43,6 +43,8 @@ import { MyProfile } from './shared/my-profile/my-profile';
 import { VerificacionDosFactoresComponent } from './pages/auth/verificacionDos-factores/verificacion-dos-factores.component';
 import { CreateRoster } from './pages/administrador/roster/create-roster/create-roster';
 import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detalles-aeronave';
+import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tripulante';
+import { Usuarios } from './pages/administrador/usuarios/usuarios';
 
 export const routes: Routes = [
   {
@@ -172,6 +174,10 @@ export const routes: Routes = [
        component: NewEmployed,
       },
       {
+        path: 'nuevo-tripulante',
+        component: NuevoTripulante  
+      },
+      {
         path: 'reportes',
         component: ReportesAdminComponent
       },
@@ -186,6 +192,10 @@ export const routes: Routes = [
       {
         path: 'create-roster',
         component: CreateRoster
+      },
+      {
+        path: 'usuarios',
+        component: Usuarios
       }
     ]
   },
