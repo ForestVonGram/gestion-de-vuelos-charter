@@ -9,23 +9,25 @@ import { EstadoAeronave } from '../../../models/avion/estado-avion';
 import { AeronaveDTO } from '../../../models/avion/avion';
 import { Aeronave } from '../../../services/vuelos/aeronave_service';
 import { ChangeDetectorRef } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-detalles-aeronave',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent, FormsModule],
   templateUrl: './detalles-aeronave.html',
   styleUrl: './detalles-aeronave.css'
 })
 export class DetallesAeronave implements OnInit {
 
   currentUser: User | null = null;
-  aeronave: AeronaveDTO | null = null;
+  aeronave!: AeronaveDTO ;
   estados = Object.values(EstadoAeronave);
   mostrarModalEliminar = false;
   imagenesPreview: { url: string; nombre: string; file: File }[] = [];
   archivosSeleccionados: File[] = [];
+  horasAIncrementar: number = 0;
 
   editForm: FormGroup;
 
@@ -70,8 +72,16 @@ export class DetallesAeronave implements OnInit {
   guardarCambios(): void {
     if (this.editForm.invalid || !this.aeronave) return;
     this.aeronaveService.actualizarAeronave(this.aeronave.id, this.editForm.value).subscribe({
-      next: () => this.router.navigate(['/admin/flota']),
-      error: (e) => console.error('Error actualizando:', e)
+      next: () => {
+        console.log(this.editForm.value);
+        Swal.fire('Éxito', 'La aeronave ha sido actualizada correctamente.', 'success');
+        this.cargarAeronave(this.aeronave!.id); // Recargar para mostrar cambios
+      },
+      error: (e) => {
+        console.error('Error actualizando aeronave:', e);
+        Swal.fire('Error', 'Hubo un problema al actualizar la aeronave.', 'error');
+      }
+
     });
   }
 
@@ -144,4 +154,27 @@ export class DetallesAeronave implements OnInit {
       error: (e) => console.error('Error eliminando imagen:', e)
     });
   }
+
+  formatearEstado(estado: string): string {
+    return estado
+      .toLowerCase()
+      .replace(/_/g, ' ') 
+      .replace(/\b\w/g, letra => letra.toUpperCase());
+  }
+
+incrementarHoras() {
+  if (!this.horasAIncrementar || this.horasAIncrementar <= 0) return;
+
+  this.aeronaveService.incrementarHorasVuelo(this.aeronave.id, this.horasAIncrementar)
+    .subscribe({
+      next: () => {
+        this.aeronave.horasVueloTotales += this.horasAIncrementar;
+        this.horasAIncrementar = 0;
+        this.cdr.detectChanges(); // Actualizar la vista con el nuevo total de horas
+      },
+      error: (err) => {
+        console.error(err);
+      }
+    });
+}
 }

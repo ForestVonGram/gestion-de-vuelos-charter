@@ -45,6 +45,8 @@ import { CreateRoster } from './pages/administrador/roster/create-roster/create-
 import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detalles-aeronave';
 import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tripulante';
 import { Usuarios } from './pages/administrador/usuarios/usuarios';
+import { EditNomina } from './pages/administrador/roster/edit-nomina/edit-nomina';
+
 
 export const routes: Routes = [
   {
@@ -142,6 +144,10 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
+        path: 'my-profile',
+        component: ProfileComponent
+       },
+      {
         path: 'dashboard',
         component: AdminDashboardComponent
       },
@@ -169,6 +175,10 @@ export const routes: Routes = [
         path: 'nomina',
         component: NominaAdminComponent,
       },
+      {
+        path: 'nomina/:id',
+        component: EditNomina
+       }, 
       {
        path: 'nuevo-empleado',
        component: NewEmployed,

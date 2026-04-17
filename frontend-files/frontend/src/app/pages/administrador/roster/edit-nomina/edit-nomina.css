@@ -1,0 +1,358 @@
+/* --- LAYOUT GENERAL --- */
+.nomina-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #1a1a3e;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.welcome-box h1 {
+  font-family: 'Jost', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.welcome-box p {
+  font-family: 'Libre Franklin', sans-serif;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.avatar-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* --- SECTION HEADER --- */
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-family: 'Jost', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+/* --- NOMINA INFO CARD --- */
+.nomina-info-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(123, 140, 255, 0.08);
+  border: 1px solid rgba(123, 140, 255, 0.2);
+  border-left: 4px solid #7b8cff;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.nomina-info-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.badge-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.nomina-info-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nomina-empleado {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.nomina-periodo {
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- ESTADO CHIPS --- */
+.estado-chip {
+  display: inline-block;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.estado-pendiente   { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.3); }
+.estado-aprobado    { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+.estado-pagado      { background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+.estado-cancelado   { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+
+/* --- FORM CARD --- */
+.form-card {
+  background-color: rgba(20, 20, 40, 0.6);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* --- GRID --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+/* --- SEPARADOR DE SECCIÓN --- */
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-top: 0.25rem;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* --- GRUPOS --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-family: 'Libre Franklin', sans-serif;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+/* --- INPUTS / SELECT / TEXTAREA --- */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: white;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #7b8cff;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* --- SELECT OPCIONES --- */
+.form-group select {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.form-group select option {
+  background: #1a1a3e;
+  color: white;
+}
+
+/* --- TEXTAREA --- */
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* --- FULL WIDTH --- */
+.full-width {
+  grid-column: span 2;
+}
+
+/* --- INPUT CON PREFIJO $ --- */
+.input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+.input-prefix-wrap:focus-within {
+  border-color: #7b8cff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input-prefix {
+  padding: 10px 12px;
+  background: rgba(123, 140, 255, 0.1);
+  color: #7b8cff;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  user-select: none;
+}
+
+.input-prefix-wrap input {
+  border: none;
+  background: transparent;
+  border-radius: 0;
+  flex: 1;
+  box-shadow: none;
+}
+
+.input-prefix-wrap input:focus {
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+/* --- ERRORES --- */
+.error {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  font-family: 'Libre Franklin', sans-serif;
+}
+
+/* --- BOTONES --- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 0.8rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #4f5fcf, #7b8cff);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(123, 140, 255, 0.35);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 24px;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .full-width,
+  .form-actions {
+    grid-column: span 1;
+  }
+
+  .form-actions {
+    justify-content: center;
+    flex-direction: column-reverse;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .nomina-info-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .welcome-box h1 {
+    font-size: 1.4rem;
+  }
+}

@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { TokenService } from '../token_service/token-service';
 import { HttpHeaders } from '@angular/common/http';
 import { createAvion } from '../../models/avion/create-avion';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -74,5 +75,15 @@ export class Aeronave {
       'Authorization': `Bearer ${token}`
     });
     return this.http.delete(`${this.apiUrl}/${aeronaveId}/imagenes/${imagenId}`, { headers });
+  }
+
+  incrementarHorasVuelo(id: number, horas: number): Observable<any> {
+    const token = this.tokenService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    let params = new HttpParams().set('horasVuelo', horas.toString());
+    return this.http.post(`${this.apiUrl}/${id}/incrementar-horas`, null, { headers, params });
   }
 }

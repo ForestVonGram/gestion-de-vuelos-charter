@@ -34,7 +34,6 @@ export class Tripulante {
     });
     return this.http.delete(`${this.apiUrl}/${id}`, { headers });
   }
-
   editarTripulante(id: number, data: CreateTripulanteDto): Observable<any> {
     const token= this.tokenService.getToken();
     const headers = new HttpHeaders({
@@ -43,7 +42,7 @@ export class Tripulante {
     });
     return this.http.put(`${this.apiUrl}/${id}`, data, { headers });
   }
-
+  
   obtnerTripulantes(page: number): Observable<any> {
     const token= this.tokenService.getToken();
     const headers = new HttpHeaders({
@@ -53,7 +52,6 @@ export class Tripulante {
     let params = new HttpParams().set('page', page.toString());
     return this.http.get(`${this.apiUrl}/auxiliares`, { headers, params });
   }
-
 
   
 }

@@ -81,4 +81,22 @@ obtenerNominas(page: number = 0, estadoNomina?: string, mes?: number, anio?: num
     return this.http.get(`${this.apiUrl}/personal/${id}/total-pagado`, { headers });
     
   }
+
+  actualizarNomina(id: number, nomina: NominaDTO): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.patch(`${this.apiUrl}/${id}`, nomina, { headers });
+  }
+
+  obtenerNominaPorId(id: number): Observable<any> {
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.get(`${this.apiUrl}/${id}`, { headers });
+  }
 }

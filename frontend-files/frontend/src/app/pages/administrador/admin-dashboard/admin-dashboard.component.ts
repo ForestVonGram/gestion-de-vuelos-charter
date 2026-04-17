@@ -77,4 +77,8 @@ export class AdminDashboardComponent implements OnInit {
       default: return 'status-pending';
     }
   }
+
+  navigate(): void {
+    this.router.navigate(['/admin/my-profile']);
+  }
 }

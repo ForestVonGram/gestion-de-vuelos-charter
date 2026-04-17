@@ -1,0 +1,141 @@
+<div class="nomina-layout">
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <div class="main-content">
+
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Gestión de nómina</h1>
+        <p>Registro y administración de la nómina</p>
+      </div>
+      <div class="avatar-circle">
+        {{ currentUser?.nombreCompleto?.charAt(0) }}
+      </div>
+    </header>
+
+    <div class="section-header">
+      <h2 class="page-title">Actualizar nómina</h2>
+    </div>
+
+    <!-- PREVIEW DE LA NÓMINA SELECCIONADA -->
+    @if (nominaSeleccionada) {
+      <div class="nomina-info-card">
+        <div class="nomina-info-badge">
+          <span class="badge-icon">📋</span>
+          <div class="nomina-info-detail">
+            <span class="nomina-empleado">{{ nominaSeleccionada.empleadoNombre }}</span>
+            <span class="nomina-periodo">
+              Período: {{ nominaSeleccionada.mes }} / {{ nominaSeleccionada.ano }}
+            </span>
+          </div>
+        </div>
+        <div class="nomina-estado-actual">
+          <span class="estado-chip" >
+            {{ nominaSeleccionada.estado }}
+          </span>
+        </div>
+      </div>
+    }
+
+    <div class="form-card">
+      <form [formGroup]="nominaUpdateForm">
+        <div class="form-grid">
+
+          <!-- 1. VALORES ECONÓMICOS EDITABLES -->
+          <div class="form-section-title full-width">
+            <span class="section-line"></span>
+            <span>Valores económicos</span>
+            <span class="section-line"></span>
+          </div>
+
+          <div class="form-group">
+            <label>Bonificaciones</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input type="number" formControlName="bonificaciones" placeholder="0.00" />
+            </div>
+            @if (f['bonificaciones'].touched && f['bonificaciones'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Deducciones</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input type="number" formControlName="deducciones" placeholder="0.00" />
+            </div>
+            @if (f['deducciones'].touched && f['deducciones'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Descuento impuesto</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input type="number" formControlName="descuentoImpuesto" placeholder="0.00" />
+            </div>
+            @if (f['descuentoImpuesto'].touched && f['descuentoImpuesto'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Descuento afiliación</label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">$</span>
+              <input type="number" formControlName="descuentoAfiliacion" placeholder="0.00" />
+            </div>
+            @if (f['descuentoAfiliacion'].touched && f['descuentoAfiliacion'].hasError('min')) {
+              <span class="error">No puede ser negativo</span>
+            }
+          </div>
+
+          <!-- 2. ESTADO -->
+          <div class="form-section-title full-width">
+            <span class="section-line"></span>
+            <span>Estado y observaciones</span>
+            <span class="section-line"></span>
+          </div>
+
+          <div class="form-group">
+            <label>Estado</label>
+            <select formControlName="estado">
+              <option value="">-- Selecciona un estado --</option>
+              @for (estado of estados; track estado) {
+                <option [value]="estado">{{ estado }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- 3. OBSERVACIONES -->
+          <div class="form-group full-width">
+            <label>Observaciones</label>
+            <textarea
+              formControlName="observaciones"
+              rows="3"
+              placeholder="Observaciones opcionales...">
+            </textarea>
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="onReset()">Cancelar</button>
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="nominaUpdateForm.invalid || nominaUpdateForm.pristine"
+            (click)="onUpdate()">
+            Actualizar nómina
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
