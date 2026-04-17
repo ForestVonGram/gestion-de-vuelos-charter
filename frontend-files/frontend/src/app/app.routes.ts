@@ -6,6 +6,7 @@ import { RecuperarSolicitudComponent } from './pages/auth/solicitud_recuperacion
 import { RecuperarContraseniaComponent } from './pages/auth/recuperar_contraseña/recuperar_contraseña.component';
 
 import { ClientDashboardComponent } from './pages/cliente/dashboard_cliente/dashboard-cliente.component';
+import { BoletaComponent} from './pages/boleta/boleta.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
 
@@ -79,7 +80,12 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: ClientDashboardComponent,
-
+    children: [
+      {
+        path: 'agendar-vuelo',
+        component: BoletaComponent
+      }
+    ]
   },
   {
     path: 'terminos-condiciones',
