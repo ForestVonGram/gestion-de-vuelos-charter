@@ -13,7 +13,9 @@
       <div class="user-profile">
         <div class="avatar-circle">
           <!-- Muestra la inicial del nombre del usuario -->
+          <a (click)="navigate()">
           {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+          </a>
         </div>
       </div>
     </header>
