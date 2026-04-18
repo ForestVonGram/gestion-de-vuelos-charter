@@ -919,6 +919,10 @@
   border-top: 1px solid rgba(255,255,255,0.08);
 }
 
+.boleta-wrapper {
+  padding-top: 200px; /* Deja espacio para el header fijo */
+}
+
 /* ════════════════════════════════════════════
    PRINT STYLES — para la descarga PDF
    ════════════════════════════════════════════ */

@@ -80,12 +80,10 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: ClientDashboardComponent,
-    children: [
-      {
-        path: 'agendar-vuelo',
-        component: BoletaComponent
-      }
-    ]
+  },
+  {
+    path: 'agendar-vuelo',
+    component: BoletaComponent
   },
   {
     path: 'terminos-condiciones',

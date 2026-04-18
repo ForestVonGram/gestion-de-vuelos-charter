@@ -1,77 +1,18 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
-// ─────────────────────────────────────────────
-// Interfaces alineadas con los DTOs del backend
-// ─────────────────────────────────────────────
+import { AuthService} from '../../services/auth/auth.service';
+import { VueloService, VueloCreateDTO, VueloDTO} from '../../services/vuelos/vuelo.service';
+import { DisponibilidadService} from '../../services/vuelos/disponibilidad.service';
 
-export interface VueloDTO {
-  id: number;
-  usuarioId: number;
-  usuarioNombre: string;
-  aeronaveId: number;
-  aeronaveMatricula: string;
-  tripulacionIds: number[];
-  origen: string;
-  destino: string;
-  fechaSalidaProgramada: string; // ISO string desde el backend
-  fechaLlegadaProgramada: string;
-  fechaSalidaReal?: string;
-  fechaLlegadaReal?: string;
-  numeroPasajeros: number;
-  estado: EstadoVuelo;
-  proposito?: string;
-  observaciones?: string;
-  fechaSolicitud: string;
-  costoEstimado: number;
-}
-
-export interface PasajeroVueloDTO {
-  id: number;
-  vueloId: number;
-  nombre: string;
-  apellido: string;
-  nombreCompleto: string;
-  documentoIdentidad: string;
-  tipoDocumento: string;
-  nacionalidad: string;
-  telefono: string;
-  email: string;
-  contactoEmergencia?: string;
-  telefonoEmergencia?: string;
-  restriccionesMedicas?: string;
-  restriccionesAlimentarias?: string;
-  equipajeEspecial?: string;
-  asientoPreferido?: string;
-  observaciones?: string;
-}
-
-export interface UsuarioDTO {
-  id: number;
-  nombre: string;
-  apellido: string;
-  email: string;
-  telefono: string;
-  rol: string;
-}
-
-export type EstadoVuelo =
-  | 'SOLICITADO'
-  | 'CONFIRMADO'
-  | 'EN_CURSO'
-  | 'COMPLETADO'
-  | 'CANCELADO'
-  | 'DEMORADO';
-
-// ─────────────────────────────────────────────
-// Interfaces internas del componente
-// ─────────────────────────────────────────────
+export type EstadoVuelo = 'SOLICITADO' | 'CONFIRMADO' | 'EN_CURSO' | 'COMPLETADO' | 'CANCELADO' | 'DEMORADO';
 
 export interface BoletaData {
   vuelo: VueloDTO;
-  pasajero: PasajeroVueloDTO;
+  pasajero: any;
   codigoReserva: string;
   numeroAsiento: string;
   puertaEmbarque: string;
@@ -83,47 +24,6 @@ export interface BoletaData {
   transaccionId: string;
 }
 
-// ─────────────────────────────────────────────
-// Datos mock de prueba (reemplazar por llamadas HTTP)
-// ─────────────────────────────────────────────
-
-const MOCK_VUELO: VueloDTO = {
-  id: 1042,
-  usuarioId: 7,
-  usuarioNombre: 'Carlos Mendoza',
-  aeronaveId: 3,
-  aeronaveMatricula: 'HK-5291',
-  tripulacionIds: [12, 15, 18],
-  origen: 'Bogotá (BOG)',
-  destino: 'Medellín (MDE)',
-  fechaSalidaProgramada: '2026-05-15T08:30:00',
-  fechaLlegadaProgramada: '2026-05-15T09:45:00',
-  numeroPasajeros: 1,
-  estado: 'CONFIRMADO',
-  proposito: 'Viaje de negocios',
-  observaciones: '',
-  fechaSolicitud: '2026-04-13T14:22:00',
-  costoEstimado: 1250000,
-};
-
-const MOCK_PASAJERO: PasajeroVueloDTO = {
-  id: 88,
-  vueloId: 1042,
-  nombre: 'Carlos',
-  apellido: 'Mendoza',
-  nombreCompleto: 'Carlos Mendoza',
-  documentoIdentidad: '1023456789',
-  tipoDocumento: 'CC',
-  nacionalidad: 'Colombiana',
-  telefono: '+57 310 5556789',
-  email: 'carlos.mendoza@email.com',
-  asientoPreferido: '4A',
-};
-
-// ─────────────────────────────────────────────
-// Component
-// ─────────────────────────────────────────────
-
 @Component({
   selector: 'app-boleta',
   standalone: true,
@@ -134,62 +34,86 @@ const MOCK_PASAJERO: PasajeroVueloDTO = {
 export class BoletaComponent implements OnInit {
   @ViewChild('boletaRef') boletaRef!: ElementRef;
 
-  /** Controla qué pantalla se muestra */
   vistaActual: 'formulario' | 'recibo' = 'formulario';
-
-  /** Datos finales de la boleta generada */
   boletaData: BoletaData | null = null;
-
-  /** Estado de carga del formulario */
   cargando = false;
-
-  /** Formulario reactivo */
   form!: FormGroup;
-
-  /** Clase de vuelo disponible */
   clasesServicio = ['Ejecutiva', 'Primera Clase', 'Corporativa'];
 
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private vueloService: VueloService,
+    private disponibilidadService: DisponibilidadService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.inicializarFormulario();
   }
 
-  // ── Formulario ──────────────────────────────
-
   private inicializarFormulario(): void {
+    const currentUser = this.authService.currentUserValue;
+
+    let nombre = '';
+    let apellido = '';
+    if (currentUser?.nombreCompleto) {
+      const partes = currentUser.nombreCompleto.trim().split(' ');
+      nombre = partes[0] || '';
+      apellido = partes.slice(1).join(' ') || '';
+    }
+
+    const email = currentUser?.email || '';
+
     this.form = this.fb.group({
-      // Datos del vuelo
       origen: ['Bogotá (BOG)', [Validators.required, Validators.minLength(2)]],
       destino: ['Medellín (MDE)', [Validators.required, Validators.minLength(2)]],
-      fechaSalida: ['2026-05-15T08:30', Validators.required],
-      fechaLlegada: ['2026-05-15T09:45', Validators.required],
+      fechaSalida: ['', Validators.required],
+      fechaLlegada: ['', Validators.required],
       numeroPasajeros: [1, [Validators.required, Validators.min(1), Validators.max(500)]],
-      proposito: ['Viaje de negocios'],
+      proposito: [''],
       claseServicio: ['Ejecutiva', Validators.required],
-
-      // Datos del pasajero
-      nombre: ['Carlos', Validators.required],
-      apellido: ['Mendoza', Validators.required],
-      tipoDocumento: ['CC', Validators.required],
-      documentoIdentidad: ['1023456789', Validators.required],
-      nacionalidad: ['Colombiana'],
-      telefono: ['+57 310 5556789'],
-      email: ['carlos.mendoza@email.com', [Validators.required, Validators.email]],
-      asientoPreferido: ['4A'],
-      restriccionesMedicas: [''],
-      restriccionesAlimentarias: [''],
-      contactoEmergencia: ['Ana Mendoza'],
-      telefonoEmergencia: ['+57 301 8889900'],
       observaciones: [''],
 
-      // Pago
+      nombre: [nombre, Validators.required],
+      apellido: [apellido, Validators.required],
+      tipoDocumento: ['CC', Validators.required],
+      documentoIdentidad: ['', Validators.required],
+      nacionalidad: ['Colombiana'],
+      telefono: [''],
+      email: [email, [Validators.required, Validators.email]],
+      asientoPreferido: [''],
+      restriccionesMedicas: [''],
+      restriccionesAlimentarias: [''],
+      contactoEmergencia: [''],
+      telefonoEmergencia: [''],
+
       metodoPago: ['Transferencia bancaria', Validators.required],
+    });
+
+    const ahora = new Date();
+    const salida = new Date(ahora);
+    salida.setDate(salida.getDate() + 1);
+    salida.setHours(8, 0, 0, 0);
+    const llegada = new Date(salida);
+    llegada.setHours(10, 30, 0, 0);
+
+    this.form.patchValue({
+      fechaSalida: this.formatDateTimeLocal(salida),
+      fechaLlegada: this.formatDateTimeLocal(llegada)
     });
   }
 
-  /** Valida el formulario y simula el proceso de pago/aceptación */
-  procesarSolicitud(): void {
+  private formatDateTimeLocal(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
+  async procesarSolicitud(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -197,78 +121,133 @@ export class BoletaComponent implements OnInit {
 
     this.cargando = true;
 
-    // ── TODO: Reemplazar por llamadas reales al backend ──────────────────
-    // 1. POST /api/vuelos           → VueloDTO
-    // 2. POST /api/pasajeros-vuelo  → PasajeroVueloDTO
-    // 3. POST /api/pagos            → PaymentDTO (con transaccionId)
-    // ────────────────────────────────────────────────────────────────────
+    try {
+      const rawValues = this.form.value;
+      const currentUser = this.authService.currentUserValue;
+      if (!currentUser?.userId) {
+        throw new Error('Usuario no autenticado');
+      }
 
-    setTimeout(() => {
-      const v = this.form.value;
+      // Función helper: si el valor está vacío, devuelve "N/A"
+      const nvl = (val: any) => (val === null || val === undefined || val === '') ? 'N/A' : val;
 
-      const vueloDB: VueloDTO = {
-        ...MOCK_VUELO,
-        origen: v.origen,
-        destino: v.destino,
-        fechaSalidaProgramada: v.fechaSalida,
-        fechaLlegadaProgramada: v.fechaLlegada,
-        numeroPasajeros: v.numeroPasajeros,
-        proposito: v.proposito,
-        costoEstimado: this.calcularCosto(v.claseServicio),
+      const v = {
+        ...rawValues,
+        proposito: nvl(rawValues.proposito),
+        observaciones: nvl(rawValues.observaciones),
+        telefono: nvl(rawValues.telefono),
+        asientoPreferido: nvl(rawValues.asientoPreferido),
+        restriccionesMedicas: nvl(rawValues.restriccionesMedicas),
+        restriccionesAlimentarias: nvl(rawValues.restriccionesAlimentarias),
+        contactoEmergencia: nvl(rawValues.contactoEmergencia),
+        telefonoEmergencia: nvl(rawValues.telefonoEmergencia)
       };
 
-      const pasajeroDB: PasajeroVueloDTO = {
-        ...MOCK_PASAJERO,
+      const vueloCreate: VueloCreateDTO = {
+        usuarioId: currentUser.userId,
+        origen: v.origen,
+        destino: v.destino,
+        fechaSalidaProgramada: new Date(v.fechaSalida).toISOString(),
+        fechaLlegadaProgramada: new Date(v.fechaLlegada).toISOString(),
+        numeroPasajeros: v.numeroPasajeros,
+        proposito: v.proposito === 'N/A' ? undefined : v.proposito,
+        observaciones: v.observaciones === 'N/A' ? undefined : v.observaciones
+      };
+
+      const vueloCreado = await firstValueFrom(this.vueloService.crearVuelo(vueloCreate));
+      console.log('✅ Vuelo creado:', vueloCreado);
+
+      const pasajeroSimulado = {
+        id: 0,
+        vueloId: vueloCreado.id,
         nombre: v.nombre,
         apellido: v.apellido,
         nombreCompleto: `${v.nombre} ${v.apellido}`,
-        tipoDocumento: v.tipoDocumento,
         documentoIdentidad: v.documentoIdentidad,
+        tipoDocumento: v.tipoDocumento,
         nacionalidad: v.nacionalidad,
         telefono: v.telefono,
         email: v.email,
-        asientoPreferido: v.asientoPreferido || this.asignarAsientoAuto(),
-        restriccionesMedicas: v.restriccionesMedicas,
-        restriccionesAlimentarias: v.restriccionesAlimentarias,
         contactoEmergencia: v.contactoEmergencia,
         telefonoEmergencia: v.telefonoEmergencia,
-        observaciones: v.observaciones,
+        restriccionesMedicas: v.restriccionesMedicas,
+        restriccionesAlimentarias: v.restriccionesAlimentarias,
+        asientoPreferido: v.asientoPreferido,
+        observaciones: v.observaciones
       };
 
+      let aeronaveAsignada = false;
+      try {
+        const aeronavesDisponibles = await firstValueFrom(
+          this.disponibilidadService.consultarAeronavesDisponibles(
+            vueloCreado.fechaSalidaProgramada,
+            vueloCreado.fechaLlegadaProgramada,
+            vueloCreado.numeroPasajeros
+          )
+        );
+        if (aeronavesDisponibles.length > 0) {
+          const aeronave = aeronavesDisponibles[0];
+          await firstValueFrom(
+            this.vueloService.asignarAeronave(vueloCreado.id, {
+              aeronaveId: aeronave.id,
+              observaciones: 'Asignación automática por disponibilidad'
+            })
+          );
+          vueloCreado.aeronaveId = aeronave.id;
+          vueloCreado.aeronaveMatricula = aeronave.matricula;
+          aeronaveAsignada = true;
+          console.log('✅ Aeronave asignada:', aeronave.matricula);
+        }
+      } catch (error) {
+        console.warn('⚠️ No se pudo asignar aeronave automáticamente:', error);
+      }
+
+      if (!aeronaveAsignada) {
+        vueloCreado.aeronaveMatricula = 'Por asignar';
+      }
+
+      const costoEstimado = this.calcularCosto(v.claseServicio);
       this.boletaData = {
-        vuelo: vueloDB,
-        pasajero: pasajeroDB,
+        vuelo: vueloCreado,
+        pasajero: pasajeroSimulado,
         codigoReserva: this.generarCodigoReserva(),
-        numeroAsiento: pasajeroDB.asientoPreferido || '4A',
+        numeroAsiento: v.asientoPreferido !== 'N/A' ? v.asientoPreferido : this.asignarAsientoAuto(),
         puertaEmbarque: this.asignarPuerta(),
         claseServicio: v.claseServicio,
-        codigoQR: this.generarCodigoQR(),
+        codigoQR: this.generarCodigoQR(vueloCreado.id),
         fechaEmision: new Date().toISOString(),
-        montoTotal: vueloDB.costoEstimado,
+        montoTotal: costoEstimado,
         metodoPago: v.metodoPago,
-        transaccionId: this.generarTransaccionId(),
+        transaccionId: this.generarTransaccionId()
       };
 
       this.cargando = false;
       this.vistaActual = 'recibo';
+      this.cdr.detectChanges();
 
-      // Esperamos a que Angular renderice el ticket en el DOM
-      // antes de abrir la ventana de impresión/descarga PDF.
-      // 600 ms es suficiente para el cambio de vista + carga de fuentes.
-      setTimeout(() => this.descargarPDF(), 600);
-    }, 1800);
+      setTimeout(() => {
+        if (this.boletaRef && this.boletaData) {
+          this.descargarPDF();
+        } else {
+          console.warn('No se pudo generar PDF automáticamente. Usa el botón "Descargar PDF".');
+        }
+      }, 600);
+
+    } catch (error) {
+      console.error('❌ Error en el proceso de reserva:', error);
+      alert('Ocurrió un error al procesar tu solicitud. Por favor intenta nuevamente.');
+      this.cargando = false;
+    }
   }
 
-  // ── Helpers de generación ────────────────────
-
+  // ── Helpers de generación (se mantienen igual) ────────────────────
   private generarCodigoReserva(): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   }
 
-  private generarCodigoQR(): string {
-    // TODO: Integrar librería real de QR (qrcode.js) con el ID del vuelo
-    return `ANV-${Date.now()}`;
+  private generarCodigoQR(vueloId: number): string {
+    return `ANV-${vueloId}-${Date.now()}`;
   }
 
   private generarTransaccionId(): string {
@@ -297,7 +276,6 @@ export class BoletaComponent implements OnInit {
   }
 
   // ── Formatters ───────────────────────────────
-
   formatFecha(iso: string): string {
     if (!iso) return '';
     const d = new Date(iso);
@@ -330,40 +308,49 @@ export class BoletaComponent implements OnInit {
     return match ? match[1] : '';
   }
 
-  // ── PDF Download (HTML nativo, sin dependencias) ─────────────
-
-  /**
-   * Abre una ventana emergente con solo el HTML del ticket, inyecta
-   * los estilos necesarios y dispara window.print(). El navegador
-   * ofrece "Guardar como PDF" de forma nativa — sin librerías externas.
-   *
-   * El archivo de estilos del ticket se carga desde la misma URL base
-   * de la aplicación Angular. Si cambias la ruta del componente,
-   * actualiza el href en injectStyles().
-   */
-  descargarPDF(): void {
-    if (!this.boletaRef) return;
-
-    const ticketHTML = this.boletaRef.nativeElement.outerHTML as string;
-    const codigo     = this.boletaData?.codigoReserva ?? 'boleta';
-    const pasajero   = this.boletaData?.pasajero.nombreCompleto ?? '';
-
-    const printWindow = window.open('', '_blank', 'width=1100,height=750');
-    if (!printWindow) return;
-
-    printWindow.document.write(this.buildPrintDocument(ticketHTML, codigo, pasajero));
-    printWindow.document.close();
-
-    // Esperamos a que carguen imágenes y fuentes antes de imprimir
-    printWindow.onload = () => {
-      printWindow.focus();
-      printWindow.print();
-      // Cerramos la ventana después de que el usuario interactúe con el diálogo
-      printWindow.onafterprint = () => printWindow.close();
-    };
+  campoInvalido(campo: string): boolean {
+    const c = this.form.get(campo);
+    return !!(c && c.invalid && c.touched);
   }
 
-  /** Construye el documento HTML completo para la ventana de impresión */
+  volverAlFormulario(): void {
+    this.vistaActual = 'formulario';
+    this.boletaData = null;
+    this.inicializarFormulario();
+  }
+
+  // ── PDF Download con estilos COMPLETOS ─────────────────────
+  descargarPDF(): void {
+    if (!this.boletaRef || !this.boletaData) {
+      console.warn('No se puede generar PDF: faltan datos');
+      return;
+    }
+
+    try {
+      const ticketHTML = this.boletaRef.nativeElement.outerHTML;
+      const codigo = this.boletaData.codigoReserva;
+      const pasajero = this.boletaData.pasajero.nombreCompleto;
+
+      const printWindow = window.open('', '_blank', 'width=1100,height=750');
+      if (!printWindow) {
+        alert('El navegador bloqueó la ventana emergente. Permite ventanas emergentes para este sitio.');
+        return;
+      }
+
+      printWindow.document.write(this.buildPrintDocument(ticketHTML, codigo, pasajero));
+      printWindow.document.close();
+
+      printWindow.onload = () => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.onafterprint = () => printWindow.close();
+      };
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('No se pudo generar el PDF. Puedes intentar descargarlo manualmente.');
+    }
+  }
+
   private buildPrintDocument(ticketHTML: string, codigo: string, pasajero: string): string {
     return `
 <!DOCTYPE html>
@@ -372,16 +359,15 @@ export class BoletaComponent implements OnInit {
   <meta charset="UTF-8" />
   <title>Boleta AstraNimbus — ${codigo}</title>
 
-  <!-- Fuentes del proyecto -->
+  <!-- Fuentes -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Jost:wght@300;400;600&family=Libre+Franklin:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* ── Reset ─────────────────────────────────── */
+    /* ── RESET Y VARIABLES ────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Variables ─────────────────────────────── */
     :root {
       --an-dark:      #1a1a4e;
       --an-mid:       #5c5c99;
@@ -395,10 +381,8 @@ export class BoletaComponent implements OnInit {
       --radius-md:    12px;
       --radius-lg:    20px;
       --radius-xl:    28px;
-      --shadow-xl:    0 16px 60px rgba(26,26,78,.22);
     }
 
-    /* ── Página de impresión ────────────────────── */
     @page {
       size: A4 landscape;
       margin: 12mm 16mm;
@@ -406,7 +390,7 @@ export class BoletaComponent implements OnInit {
 
     body {
       font-family: 'Libre Franklin', sans-serif;
-      background: #fff;
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -415,7 +399,7 @@ export class BoletaComponent implements OnInit {
       print-color-adjust: exact;
     }
 
-    /* ── Encabezado del documento ───────────────── */
+    /* ── ENCABEZADO DEL DOCUMENTO ─────────────────── */
     .print-doc-header {
       width: 100%;
       max-width: 880px;
@@ -442,10 +426,10 @@ export class BoletaComponent implements OnInit {
       line-height: 1.6;
     }
 
-    /* ── Ticket outer ───────────────────────────── */
+    /* ── CONTENEDOR DEL TICKET ────────────────────── */
     .ticket-outer { width: 100%; max-width: 880px; }
 
-    /* ── Ticket card ────────────────────────────── */
+    /* ── TICKET CARD ──────────────────────────────── */
     .ticket {
       background: var(--an-white);
       border-radius: var(--radius-xl);
@@ -453,7 +437,7 @@ export class BoletaComponent implements OnInit {
       border: 1.5px solid var(--an-light-mid);
     }
 
-    /* ── Header ─────────────────────────────────── */
+    /* CABECERA */
     .ticket-header {
       background: linear-gradient(135deg, var(--an-dark) 0%, var(--an-mid) 100%);
       padding: 20px 32px;
@@ -515,7 +499,7 @@ export class BoletaComponent implements OnInit {
       color: rgba(255,255,255,.5);
     }
 
-    /* ── Ruta ───────────────────────────────────── */
+    /* RUTA */
     .ticket-route {
       display: flex;
       align-items: center;
@@ -549,7 +533,7 @@ export class BoletaComponent implements OnInit {
     .route-plane { color: var(--an-mid); flex-shrink: 0; }
     .route-direct { font-size: 0.64rem; color: var(--an-subtext); text-transform: uppercase; letter-spacing: .06em; }
 
-    /* ── Details ────────────────────────────────── */
+    /* DETALLES */
     .ticket-details {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -579,7 +563,7 @@ export class BoletaComponent implements OnInit {
       font-size: 0.7rem; font-weight: 700; width: fit-content;
     }
 
-    /* ── Perforado ──────────────────────────────── */
+    /* PERFORADO */
     .ticket-perforated {
       position: relative; display: flex; align-items: center; padding: 0;
     }
@@ -598,7 +582,7 @@ export class BoletaComponent implements OnInit {
       background: repeating-linear-gradient(90deg, var(--an-light-mid) 0, var(--an-light-mid) 8px, transparent 8px, transparent 14px);
     }
 
-    /* ── Stub ───────────────────────────────────── */
+    /* STUB */
     .ticket-stub {
       background: linear-gradient(135deg, var(--an-light) 0%, #ebebf8 100%);
       padding: 24px 32px;
@@ -618,7 +602,7 @@ export class BoletaComponent implements OnInit {
 
     .stub-divider { width: 1px; height: 44px; background: var(--an-light-mid); flex-shrink: 0; }
 
-    /* ── QR ─────────────────────────────────────── */
+    /* QR */
     .stub-qr { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
 
     .qr-placeholder {
@@ -643,7 +627,7 @@ export class BoletaComponent implements OnInit {
     .qr-text { font-size: 0.5rem; font-weight: 700; color: var(--an-mid); letter-spacing: .1em; text-align: center; position: absolute; bottom: 1px; }
     .qr-caption { font-size: 0.62rem; color: var(--an-subtext); text-align: center; }
 
-    /* ── Pie de documento ───────────────────────── */
+    /* PIE DEL DOCUMENTO */
     .print-doc-footer {
       width: 100%;
       max-width: 880px;
@@ -660,10 +644,16 @@ export class BoletaComponent implements OnInit {
       color: var(--an-subtext);
     }
 
-    /* ── Ocultar lo que no debe aparecer ────────── */
-    .transaction-card { display: none; }
+    /* OCULTAR ELEMENTOS NO DESEADOS EN PDF */
+    .transaction-card,
+    .confirmation-banner,
+    .btn-download,
+    .btn-new,
+    .confirmation-actions { display: none !important; }
 
-    /* ── Print ──────────────────────────────────── */
+    /* Para que el ticket se vea bien en pantalla también */
+    .ticket-outer .ticket { margin: 0 auto; }
+
     @media print {
       body { padding: 0; }
       .print-doc-header,
@@ -694,20 +684,5 @@ export class BoletaComponent implements OnInit {
 
 </body>
 </html>`;
-  }
-
-  // ── Navegación ───────────────────────────────
-
-  volverAlFormulario(): void {
-    this.vistaActual = 'formulario';
-    this.boletaData = null;
-    this.inicializarFormulario();
-  }
-
-  // ── Helpers de validación en template ────────
-
-  campoInvalido(campo: string): boolean {
-    const c = this.form.get(campo);
-    return !!(c && c.invalid && c.touched);
   }
 }
