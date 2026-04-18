@@ -16,6 +16,7 @@ import com.paeldav.backend.exception.UsuarioNoEncontradoException;
 import com.paeldav.backend.infraestructure.repository.TripulanteRepository;
 import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TripulanteServiceImpl implements TripulanteService {
 
     private final TripulanteRepository tripulanteRepository; // Repositorio de tripulantes
@@ -40,6 +42,8 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional
     public TripulanteDTO registrarTripulante(TripulanteCreateDTO tripulanteCreateDTO) {
+        log.info("Registrando nuevo tripulante - Licencia: {}, Usuario ID: {}",
+                tripulanteCreateDTO.getNumeroLicencia(), tripulanteCreateDTO.getUsuarioId());
         // Registra un nuevo tripulante en el sistema
 
         // Verificar que el usuario exista
@@ -62,6 +66,7 @@ public class TripulanteServiceImpl implements TripulanteService {
         // Guardar en base de datos
         tripulante = tripulanteRepository.save(tripulante);
 
+        log.info("Tripulante registrado - ID: {}, Licencia: {}", tripulante.getId(), tripulante.getNumeroLicencia());
         return tripulanteMapper.toDTO(tripulante);
     }
 
@@ -116,6 +121,7 @@ public class TripulanteServiceImpl implements TripulanteService {
     @Override
     @Transactional
     public TripulanteDTO editarTripulante(Long id, TripulanteUpdateDTO tripulanteUpdateDTO) {
+        log.info("Editando tripulante ID: {}", id);
         // Edita los datos de un tripulante existente
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
@@ -126,29 +132,34 @@ public class TripulanteServiceImpl implements TripulanteService {
         tripulanteMapper.updateEntityFromUpdateDTO(tripulanteUpdateDTO, tripulante);
 
         tripulante = tripulanteRepository.save(tripulante);
+        log.info("Tripulante ID: {} actualizado correctamente", id);
         return tripulanteMapper.toDTO(tripulante);
     }
 
     @Override
     @Transactional
     public void eliminarTripulante(Long id) {
+        log.info("Eliminando tripulante ID: {}", id);
         // Elimina un tripulante del sistema
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
                 ));
         tripulanteRepository.delete(tripulante);
+        log.info("Tripulante ID: {} eliminado", id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public void validarTripulante(Long id) {
+        log.info("Validando tripulante ID: {}", id);
         // Valida que un tripulante cumpla con todas las certificaciones requeridas
         Tripulante tripulante = tripulanteRepository.findById(id)
                 .orElseThrow(() -> new TripulanteNoEncontradoException(
                         "Tripulante no encontrado con ID: " + id
                 ));
         validadorCertificaciones.validarTripulanteCompleto(tripulante);
+        log.info("Tripulante ID: {} validado correctamente", id);
     }
 
     @Override

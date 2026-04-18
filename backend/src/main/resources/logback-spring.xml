@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <!-- Carpeta de logs en el directorio del proyecto -->
+    <property name="LOGS" value="./logs" />
+
+    <!-- Consola -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) [%thread] %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Autenticación / Usuarios -->
+    <appender name="AuthFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/autenticacion.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOGS}/autenticacion.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- Vuelos -->
+    <appender name="VuelosFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/vuelos.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOGS}/vuelos.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- Errores -->
+    <appender name="ErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS}/errores.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOGS}/errores.%i.log.zip</fileNamePattern>
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>5MB</maxFileSize>
+        </triggeringPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <!-- LOGGERS específicos -->
+    <logger name="com.paeldav.backend.application.service.impl.AuthServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="AuthFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.paeldav.backend.presentation.controller.AuthController" level="INFO" additivity="false">
+        <appender-ref ref="AuthFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.paeldav.backend.application.service.impl.UsuarioServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="AuthFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.paeldav.backend.application.service.impl.VueloServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="VuelosFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.paeldav.backend.application.service.impl.DisponibilidadOperativaServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="VuelosFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <logger name="com.paeldav.backend.application.service.impl.AeronaveServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="VuelosFile" />
+        <appender-ref ref="Console" />
+    </logger>
+
+    <!-- Raíz -->
+    <root level="INFO">
+        <appender-ref ref="Console" />
+        <appender-ref ref="ErrorFile" />
+    </root>
+</configuration>

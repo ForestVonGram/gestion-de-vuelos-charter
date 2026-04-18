@@ -10,6 +10,7 @@ import com.paeldav.backend.exception.UsuarioNoEncontradoException;
 import com.paeldav.backend.exception.UsuarioYaExisteException;
 import com.paeldav.backend.infraestructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UsuarioServiceImpl implements UsuarioService {
 
     // Dependencias inyectadas para persistencia, mapeo y seguridad (cifrado de contraseñas)
@@ -32,8 +34,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO crearUsuario(UsuarioCreateDTO usuarioCreateDTO) {
+        log.info("Intentando registrar usuario con email: {}", usuarioCreateDTO.getEmail());
+
         // Regla de negocio: El email debe ser único en todo el sistema
         if (usuarioRepository.existsByEmail(usuarioCreateDTO.getEmail())) {
+            log.warn("Registro fallido: email {} ya existe", usuarioCreateDTO.getEmail());
             throw new UsuarioYaExisteException(
                     "Ya existe un usuario con el email: " + usuarioCreateDTO.getEmail()
             );
@@ -50,6 +55,9 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         // Guardar el registro en la base de datos y retornar el DTO resultante
         usuario = usuarioRepository.save(usuario);
+
+        log.info("Usuario registrado exitosamente - ID: {}, Email: {}, Rol: {}",
+                usuario.getId(), usuario.getEmail(), usuario.getRol());
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -77,6 +85,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioDTO editarUsuario(Long id, UsuarioUpdateDTO usuarioUpdateDTO) {
+        log.info("Editando usuario ID: {}", id);
         // Recuperar el usuario actual para aplicar las modificaciones
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -87,6 +96,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (usuarioUpdateDTO.getEmail() != null &&
                 !usuarioUpdateDTO.getEmail().equals(usuario.getEmail()) &&
                 usuarioRepository.existsByEmail(usuarioUpdateDTO.getEmail())) {
+            log.warn("Edición fallida: email {} ya está en uso", usuarioUpdateDTO.getEmail());
             throw new UsuarioYaExisteException(
                     "Ya existe un usuario con el email: " + usuarioUpdateDTO.getEmail()
             );
@@ -98,10 +108,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Si la petición incluye una nueva contraseña, encriptarla y sobreescribir la anterior
         if (usuarioUpdateDTO.getPassword() != null && !usuarioUpdateDTO.getPassword().isEmpty()) {
             usuario.setPassword(passwordEncoder.encode(usuarioUpdateDTO.getPassword()));
+            log.debug("Contraseña actualizada para usuario ID: {}", id);
         }
 
         // Guardar los cambios estructurales en la base de datos
         usuario = usuarioRepository.save(usuario);
+        log.info("Usuario ID: {} actualizado correctamente", id);
 
         return usuarioMapper.toDTO(usuario);
     }
@@ -109,6 +121,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public void desactivarUsuario(Long id) {
+        log.info("Desactivando usuario ID: {}", id);
         // Buscar el usuario objetivo
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -118,11 +131,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Revocar el acceso al sistema mediante el borrado lógico (estado inactivo)
         usuario.setActivo(false);
         usuarioRepository.save(usuario);
+        log.info("Usuario ID: {} desactivado", id);
     }
 
     @Override
     @Transactional
     public void activarUsuario(Long id) {
+        log.info("Activando usuario ID: {}", id);
         // Buscar el usuario objetivo
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -132,11 +147,13 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Restaurar el acceso al sistema
         usuario.setActivo(true);
         usuarioRepository.save(usuario);
+        log.info("Usuario ID: {} activado", id);
     }
 
     @Override
     @Transactional
     public void cambiarPassword(Long id, String nuevaPassword) {
+        log.info("Cambio de contraseña para usuario ID: {}", id);
         // Recuperar el usuario que solicitó el cambio de credenciales
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioNoEncontradoException(
@@ -146,5 +163,6 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Cifrar la nueva contraseña ingresada y actualizar la entidad
         usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         usuarioRepository.save(usuario);
+        log.info("Contraseña actualizada para usuario ID: {}", id);
     }
 }

@@ -17,6 +17,7 @@ import com.paeldav.backend.infraestructure.repository.AeronaveRepository;
 import com.paeldav.backend.infraestructure.repository.TripulanteRepository;
 import com.paeldav.backend.infraestructure.repository.VueloRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperativaService {
 
     private final VueloRepository vueloRepository;
@@ -142,6 +144,9 @@ public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperati
             LocalDateTime fechaFin,
             Integer capacidadMinima) {
 
+        log.info("Consulta de aeronaves disponibles entre {} y {} (capacidad mínima: {})",
+                fechaInicio, fechaFin, capacidadMinima);
+
         // Obtener IDs de aeronaves que tienen vuelos en el rango
         List<Long> aeronaveIdsOcupadas = vueloRepository.findAeronaveIdsConVuelosEnRango(
                 fechaInicio, fechaFin, ESTADOS_VUELO_ACTIVOS);
@@ -150,11 +155,14 @@ public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperati
         List<Aeronave> aeronavesDisponibles = aeronaveRepository.findByEstado(EstadoAeronave.DISPONIBLE);
 
         // Filtrar las que no tienen conflictos y cumplen capacidad mínima
-        return aeronavesDisponibles.stream()
+        List<AeronaveDTO> resultado = aeronavesDisponibles.stream()
                 .filter(a -> !aeronaveIdsOcupadas.contains(a.getId()))
                 .filter(a -> capacidadMinima == null || a.getCapacidadPasajeros() >= capacidadMinima)
                 .map(aeronaveMapper::toDTO)
                 .collect(Collectors.toList());
+
+        log.debug("Aeronaves disponibles encontradas: {}", resultado.size());
+        return resultado;
     }
 
     @Override
@@ -164,6 +172,9 @@ public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperati
             LocalDateTime fechaFin,
             Boolean soloPilotos) {
 
+        log.info("Consulta de tripulantes disponibles entre {} y {} (solo pilotos: {})",
+                fechaInicio, fechaFin, soloPilotos);
+
         // Obtener IDs de tripulantes que tienen vuelos en el rango
         List<Long> tripulanteIdsOcupados = vueloRepository.findTripulanteIdsConVuelosEnRango(
                 fechaInicio, fechaFin, ESTADOS_VUELO_ACTIVOS);
@@ -172,11 +183,14 @@ public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperati
         List<Tripulante> tripulantesDisponibles = tripulanteRepository.findByEstado(EstadoTripulante.DISPONIBLE);
 
         // Filtrar los que no tienen conflictos
-        return tripulantesDisponibles.stream()
+        List<TripulanteDTO> resultado = tripulantesDisponibles.stream()
                 .filter(t -> !tripulanteIdsOcupados.contains(t.getId()))
                 .filter(t -> soloPilotos == null || !soloPilotos || (t.getEsPiloto() != null && t.getEsPiloto()))
                 .map(tripulanteMapper::toDTO)
                 .collect(Collectors.toList());
+
+        log.debug("Tripulantes disponibles encontrados: {}", resultado.size());
+        return resultado;
     }
 
     @Override
@@ -220,9 +234,9 @@ public class DisponibilidadOperativaServiceImpl implements DisponibilidadOperati
         String resumen = disponible
                 ? "Todos los recursos están disponibles para el rango solicitado"
                 : String.format("Se detectaron %d conflicto(s): %d de aeronave, %d de tripulación",
-                    conflictosAeronave.size() + conflictosTripulacion.size(),
-                    conflictosAeronave.size(),
-                    conflictosTripulacion.size());
+                conflictosAeronave.size() + conflictosTripulacion.size(),
+                conflictosAeronave.size(),
+                conflictosTripulacion.size());
 
         return ResultadoValidacionDTO.builder()
                 .disponible(disponible)

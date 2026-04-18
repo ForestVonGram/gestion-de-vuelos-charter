@@ -12,6 +12,7 @@ import com.paeldav.backend.domain.enums.EstadoVuelo;
 import com.paeldav.backend.exception.*;
 import com.paeldav.backend.infraestructure.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VueloServiceImpl implements VueloService {
 
     private final VueloRepository vueloRepository; // Repositorio de vuelos
@@ -44,6 +46,8 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO crearVuelo(VueloCreateDTO vueloCreateDTO) {
+        log.info("Solicitud de creación de vuelo - Usuario ID: {}, Origen: {}, Destino: {}",
+                vueloCreateDTO.getUsuarioId(), vueloCreateDTO.getOrigen(), vueloCreateDTO.getDestino());
         // Crea una nueva solicitud de vuelo
 
         // Validar que el usuario solicitante existe
@@ -61,6 +65,9 @@ public class VueloServiceImpl implements VueloService {
 
         // Guardar en base de datos
         vuelo = vueloRepository.save(vuelo);
+
+        log.info("Vuelo creado - ID: {}, Estado: SOLICITADO, Pasajeros: {}",
+                vuelo.getId(), vuelo.getNumeroPasajeros());
 
         return vueloMapper.toDTO(vuelo);
     }
@@ -105,6 +112,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public void cancelarVuelo(Long id) {
+        log.info("Cancelando vuelo ID: {}", id);
         // Cancela un vuelo existente
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -127,11 +135,13 @@ public class VueloServiceImpl implements VueloService {
         // Cambiar estado a cancelado
         vuelo.setEstado(EstadoVuelo.CANCELADO);
         vueloRepository.save(vuelo);
+        log.info("Vuelo ID: {} cancelado", id);
     }
 
     @Override
     @Transactional
     public VueloDTO cambiarEstadoVuelo(Long id, EstadoVuelo nuevoEstado) {
+        log.info("Cambiando estado del vuelo ID: {} a {}", id, nuevoEstado);
         // Cambia el estado de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -155,6 +165,7 @@ public class VueloServiceImpl implements VueloService {
         // Cambiar estado
         vuelo.setEstado(nuevoEstado);
         vuelo = vueloRepository.save(vuelo);
+        log.info("Vuelo ID: {} ahora está en estado {}", id, nuevoEstado);
 
         return vueloMapper.toDTO(vuelo);
     }
@@ -217,6 +228,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO aprobarSolicitud(Long vueloId, SolicitudAprobacionDTO dto) {
+        log.info("Aprobando solicitud de vuelo ID: {}", vueloId);
         // Aprueba una solicitud de vuelo pendiente
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -246,12 +258,14 @@ public class VueloServiceImpl implements VueloService {
         registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.CONFIRMADO, "APROBACION",
                 dto != null ? dto.getMotivo() : "Solicitud aprobada");
 
+        log.info("Vuelo ID: {} aprobado, estado: CONFIRMADO", vueloId);
         return vueloMapper.toDTO(vuelo);
     }
 
     @Override
     @Transactional
     public VueloDTO rechazarSolicitud(Long vueloId, SolicitudRechazoDTO dto) {
+        log.info("Rechazando solicitud de vuelo ID: {}, Motivo: {}", vueloId, dto.getMotivo());
         // Rechaza una solicitud de vuelo pendiente
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -274,6 +288,7 @@ public class VueloServiceImpl implements VueloService {
         // Registrar en historial con motivo obligatorio
         registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.CANCELADO, "RECHAZO", dto.getMotivo());
 
+        log.info("Vuelo ID: {} rechazado", vueloId);
         return vueloMapper.toDTO(vuelo);
     }
 
@@ -282,6 +297,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO asignarAeronave(Long vueloId, AsignacionAeronaveDTO dto) {
+        log.info("Asignando aeronave {} al vuelo ID: {}", dto.getAeronaveId(), vueloId);
         // Asigna una aeronave a un vuelo
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -350,12 +366,14 @@ public class VueloServiceImpl implements VueloService {
         registrarHistorial(vuelo, vuelo.getEstado(), vuelo.getEstado(), "ASIGNACION_AERONAVE",
                 "Aeronave asignada: " + aeronave.getMatricula());
 
+        log.info("Aeronave {} asignada al vuelo ID: {}", aeronave.getMatricula(), vueloId);
         return vueloMapper.toDTO(vuelo);
     }
 
     @Override
     @Transactional
     public VueloDTO asignarTripulacion(Long vueloId, AsignacionTripulacionDTO dto) {
+        log.info("Asignando tripulación al vuelo ID: {}", vueloId);
         // Asigna la tripulación a un vuelo
         Vuelo vuelo = vueloRepository.findById(vueloId)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -443,6 +461,7 @@ public class VueloServiceImpl implements VueloService {
         registrarHistorial(vuelo, vuelo.getEstado(), vuelo.getEstado(), "ASIGNACION_TRIPULACION",
                 "Tripulación asignada: " + tripulantes.size() + " miembros");
 
+        log.info("Tripulación asignada al vuelo ID: {} ({} miembros)", vueloId, tripulantes.size());
         return vueloMapper.toDTO(vuelo);
     }
 
@@ -476,6 +495,7 @@ public class VueloServiceImpl implements VueloService {
     @Override
     @Transactional
     public VueloDTO registrarSalidaVuelo(Long id) {
+        log.info("Registrando salida de vuelo ID: {}", id);
         // Registra la salida real de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -502,12 +522,14 @@ public class VueloServiceImpl implements VueloService {
         registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.EN_CURSO, "SALIDA_REGISTRADA",
                 "Vuelo despegó a las " + vuelo.getFechaSalidaReal());
 
+        log.info("Vuelo ID: {} despegó a las {}", id, vuelo.getFechaSalidaReal());
         return vueloMapper.toDTO(vuelo);
     }
 
     @Override
     @Transactional
     public VueloDTO registrarLlegadaVuelo(Long id) {
+        log.info("Registrando llegada de vuelo ID: {}", id);
         // Registra la llegada real de un vuelo
         Vuelo vuelo = vueloRepository.findById(id)
                 .orElseThrow(() -> new VueloNoEncontradoException(
@@ -541,6 +563,7 @@ public class VueloServiceImpl implements VueloService {
         registrarHistorial(vuelo, estadoAnterior, EstadoVuelo.COMPLETADO, "LLEGADA_REGISTRADA",
                 "Vuelo aterrizó a las " + vuelo.getFechaLlegadaReal());
 
+        log.info("Vuelo ID: {} aterrizó a las {}", id, vuelo.getFechaLlegadaReal());
         return vueloMapper.toDTO(vuelo);
     }
 
