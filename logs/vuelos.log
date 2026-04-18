@@ -1,0 +1,10 @@
+2026-04-18 17:41:21 INFO  - Actualizando aeronave con ID: 1
+2026-04-18 17:41:21 INFO  - Aeronave actualizada exitosamente con ID: 1
+2026-04-18 17:41:30 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 3.0
+2026-04-18 17:41:30 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 6.0
+2026-04-18 17:42:30 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 6.0
+2026-04-18 17:42:30 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 12.0
+2026-04-18 17:43:26 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 12.0
+2026-04-18 17:43:26 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 24.0
+2026-04-18 17:46:07 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 24.0
+2026-04-18 17:46:07 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 48.0
