@@ -7,10 +7,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Tripulante } from '../../../services/personal/tripulante';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-nuevo-tripulante',
-  imports: [AdminSidebarComponent, ReactiveFormsModule, AccesibilidadComponent],
+  imports: [AdminSidebarComponent, ReactiveFormsModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './nuevo-tripulante.html',
   styleUrl: './nuevo-tripulante.css',
 })

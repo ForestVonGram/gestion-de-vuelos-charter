@@ -9,10 +9,12 @@ import { EstadoNomina } from '../../../../models/personal/estado-nomina';
 import Swal from 'sweetalert2';
 import { AccesibilidadComponent } from '../../../../shared/accesibilidad/accesibilidad.component';
 import { NominaService } from '../../../../services/personal/nomina-service';
+import {ChatbotWidgetComponent} from '../../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-create-roster',
-  imports: [AdminSidebarComponent, AccesibilidadComponent,FormsModule, RouterModule, ReactiveFormsModule],
+  imports: [AdminSidebarComponent, AccesibilidadComponent, FormsModule, RouterModule, ReactiveFormsModule, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './create-roster.html',
   styleUrl: './create-roster.css',
 })
@@ -99,7 +101,7 @@ generateRoster(): void {
       }
     });
   }
-  
+
 
   // Getter para acceder fácilmente a los controles en el HTML
   get f() {
@@ -133,7 +135,7 @@ generateRoster(): void {
     }
   }
 
-  
+
 
 
 

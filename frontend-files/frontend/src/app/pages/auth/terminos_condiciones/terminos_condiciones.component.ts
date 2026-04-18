@@ -2,13 +2,15 @@ import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-terminos-condiciones',
   templateUrl: './terminos_condiciones.component.html',
   styleUrls: ['./terminos_condiciones.component.css'],
   standalone: true,
-  imports: [CommonModule, AccesibilidadComponent]
+  imports: [CommonModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent]
 })
 export class TerminosCondicionesComponent implements OnInit, OnDestroy {
   // Estado para controlar si el modo oscuro está activo

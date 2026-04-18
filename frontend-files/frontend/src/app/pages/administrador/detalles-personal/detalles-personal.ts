@@ -11,10 +11,12 @@ import { ActivatedRoute } from '@angular/router';
 import { NominaService } from '../../../services/personal/nomina-service';
 import Swal from 'sweetalert2';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-detalles-personal',
-  imports: [AdminSidebarComponent, CommonModule, FormsModule, AccesibilidadComponent],
+  imports: [AdminSidebarComponent, CommonModule, FormsModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './detalles-personal.html',
   styleUrl: './detalles-personal.css',
 })
@@ -29,7 +31,7 @@ export class DetallesPersonal implements OnInit {
 
 
   constructor(private personalService: PersonalService, private authService: AuthService,
-    private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef, 
+    private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef,
     private nominaService: NominaService) {
     this.currentUser = this.authService.currentUserValue;
     this.ngOnInit();
@@ -49,7 +51,7 @@ export class DetallesPersonal implements OnInit {
       });
       this.nominaService.obtnerNominaPorPersonalId(+id).subscribe({
         next: (response) => {
-          this.nominas = response; 
+          this.nominas = response;
           this.cdr.detectChanges();
         },
         error: (error) => {

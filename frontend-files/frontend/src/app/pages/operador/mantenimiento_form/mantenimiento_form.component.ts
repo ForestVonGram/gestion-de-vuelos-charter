@@ -5,13 +5,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MantenimientoService, Mantenimiento } from '../../../services/operador/mantenimiento/mantenimiento.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-mantenimiento-form',
   templateUrl: './mantenimiento_form.component.html',
   styleUrls: ['./mantenimiento_form.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, AccesibilidadComponent]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent]
 })
 export class MantenimientoFormComponent implements OnInit {
   // --- Propiedades de Estado y Control ---

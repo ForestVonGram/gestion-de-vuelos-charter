@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-dashboard-operadorj',
   templateUrl: './dashboard_operadorj.component.html',
   styleUrls: ['./dashboard_operadorj.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, AccesibilidadComponent]
+  imports: [CommonModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent]
 })
 export class DashboardOperadorJComponent implements OnInit {
   // --- Propiedades de Perfil y Estado ---

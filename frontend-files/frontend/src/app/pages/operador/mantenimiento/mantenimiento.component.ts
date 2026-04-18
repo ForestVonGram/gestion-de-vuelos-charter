@@ -6,13 +6,15 @@ import { MantenimientoService, Mantenimiento } from '../../../services/operador/
 import { TruncatePipe } from '../pipes/truncate.pipe';
 import { AuthService } from '../../../services/auth/auth.service';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-mantenimiento',
   templateUrl: './mantenimiento.component.html',
   styleUrls: ['./mantenimiento.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, TruncatePipe, RouterModule, AccesibilidadComponent]
+  imports: [CommonModule, FormsModule, TruncatePipe, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent]
 })
 export class MantenimientoComponent implements OnInit {
   // --- Listados de datos ---

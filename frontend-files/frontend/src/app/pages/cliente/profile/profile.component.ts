@@ -8,6 +8,8 @@ import { finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 // Validador personalizado para fortaleza de contraseña
 function passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
@@ -34,7 +36,9 @@ function passwordStrengthValidator(control: AbstractControl): ValidationErrors |
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-    AccesibilidadComponent
+    AccesibilidadComponent,
+    ChatbotWidgetComponent,
+    WhatsAppButtonComponent
   ]
 })
 export class ProfileComponent implements OnInit, OnDestroy {

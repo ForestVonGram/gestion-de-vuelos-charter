@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/
 import { CommonModule } from '@angular/common';
 import {Router, RouterModule} from '@angular/router';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   // Selector que permite usar el componente en HTML como <app-politica-privacidad>
@@ -17,7 +19,7 @@ import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibili
   standalone: true,
 
   // Módulos que utiliza el componente
-  imports: [CommonModule, AccesibilidadComponent],
+  imports: [CommonModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
 })
 export class PoliticaPrivacidadComponent implements OnInit, OnDestroy {
 

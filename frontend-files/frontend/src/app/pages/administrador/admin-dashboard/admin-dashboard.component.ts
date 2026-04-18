@@ -4,6 +4,8 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService, User} from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 /**
  * Componente del dashboard principal para administradores.
@@ -12,7 +14,7 @@ import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilida
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })

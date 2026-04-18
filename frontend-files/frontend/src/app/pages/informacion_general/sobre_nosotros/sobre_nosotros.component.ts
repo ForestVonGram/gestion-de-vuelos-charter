@@ -2,11 +2,13 @@ import { Component, OnInit, OnDestroy, HostListener, Renderer2 } from '@angular/
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-sobre-nosotros',
   standalone: true,
-  imports: [CommonModule, RouterModule, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './sobre_nosotros.component.html',
   styleUrls: ['./sobre_nosotros.component.css']
 })

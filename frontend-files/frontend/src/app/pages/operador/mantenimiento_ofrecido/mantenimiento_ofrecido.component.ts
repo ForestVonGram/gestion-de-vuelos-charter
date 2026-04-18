@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 // Interfaz interna para definir la estructura de los servicios ofrecidos
 interface TipoMantenimiento {
@@ -18,7 +20,7 @@ interface TipoMantenimiento {
   templateUrl: './mantenimiento_ofrecido.component.html',
   styleUrls: ['./mantenimiento_ofrecido.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, AccesibilidadComponent]
+  imports: [CommonModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent]
 })
 export class MantenimientoOfrecidoComponent implements OnInit {
   // --- Propiedades de Usuario y Estado ---

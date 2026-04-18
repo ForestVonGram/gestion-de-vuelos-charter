@@ -9,11 +9,13 @@ import { EstadoNomina } from '../../../../models/personal/estado-nomina';
 import { NominaDTO } from '../../../../models/personal/nomina-dto';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-nomina-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './nomina-admin.component.html',
   styleUrls: ['./nomina-admin.component.css']
 })

@@ -5,10 +5,12 @@ import { ProfileService } from '../../../services/auth/profile-service';
 import { ProfileDto } from '../../../models/users/profile-dto';
 import { ChangeDetectorRef } from '@angular/core';
 import { AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-tripulante',
-  imports: [CommonModule, HeaderTripulante, AccesibilidadComponent],
+  imports: [CommonModule, HeaderTripulante, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './tripulante.component.html',
   styleUrls: ['./tripulante.component.css']
 })

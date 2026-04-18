@@ -7,6 +7,9 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService} from '../../services/auth/auth.service';
 import { VueloService, VueloCreateDTO, VueloDTO} from '../../services/vuelos/vuelo.service';
 import { DisponibilidadService} from '../../services/vuelos/disponibilidad.service';
+import {AccesibilidadComponent} from '../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../shared/whatsapp-button/whatsapp-button.component';
 
 export type EstadoVuelo = 'SOLICITADO' | 'CONFIRMADO' | 'EN_CURSO' | 'COMPLETADO' | 'CANCELADO' | 'DEMORADO';
 
@@ -27,7 +30,7 @@ export interface BoletaData {
 @Component({
   selector: 'app-boleta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './boleta.component.html',
   styleUrls: ['./boleta.component.css'],
 })

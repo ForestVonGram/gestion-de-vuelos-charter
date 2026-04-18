@@ -9,6 +9,8 @@ import { CargoPersonal } from '../../../models/personal/cargo';
 import { EstadoPersonal } from '../../../models/personal/estado-personal';
 import Swal from 'sweetalert2';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 /**
  * Componente que muestra y gestiona la lista de personal.
@@ -16,7 +18,7 @@ import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilida
  */
 @Component({
   selector: 'app-personal',
-  imports: [FormsModule, AdminSidebarComponent, RouterModule, AccesibilidadComponent],
+  imports: [FormsModule, AdminSidebarComponent, RouterModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './personal.html',
   styleUrl: './personal.css',
 })

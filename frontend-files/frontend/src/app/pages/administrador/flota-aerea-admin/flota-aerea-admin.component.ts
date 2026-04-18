@@ -9,6 +9,8 @@ import { AeronaveDTO } from '../../../models/avion/avion';
 import { Aeronave } from '../../../services/vuelos/aeronave_service';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 // --- ENUMS Y DTOs ---
 
 /**
@@ -26,7 +28,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-flota-aerea-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './flota-aerea-admin.component.html',
   styleUrls: ['./flota-aerea-admin.component.css']
 })
@@ -44,7 +46,7 @@ export class FlotaAereaAdminComponent implements OnInit {
    * @param router servicio de navegación
    * @param avionService servicio para operaciones con aeronaves
    */
-  constructor(private authService: AuthService, private router: Router, private avionService: Aeronave, 
+  constructor(private authService: AuthService, private router: Router, private avionService: Aeronave,
     private cdr: ChangeDetectorRef
   ) {}
 

@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-trabaja-con-nosotros',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './trabaja_con_nosotros.component.html',
   styleUrls: ['./trabaja_con_nosotros.component.css']
 })

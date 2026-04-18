@@ -6,6 +6,8 @@ import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilida
 import { Aeronave } from '../../../services/vuelos/aeronave_service';
 import { AuthService } from '../../../services/auth/auth.service';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 /**
  * Componente para la creación de nuevas aeronaves.
@@ -13,7 +15,7 @@ import Swal from 'sweetalert2';
  */
 @Component({
   selector: 'app-create-plane',
-  imports: [ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './create-plane.html',
   styleUrl: './create-plane.css',
 })

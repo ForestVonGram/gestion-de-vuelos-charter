@@ -3,10 +3,12 @@ import { HeaderTripulante} from '../../../shared/header-tripulante/header-tripul
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-reportes',
-  imports: [HeaderTripulante, ReactiveFormsModule, AccesibilidadComponent],
+  imports: [HeaderTripulante, ReactiveFormsModule, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './reportes.component.html',
   styleUrl: './reportes.component.css',
 })

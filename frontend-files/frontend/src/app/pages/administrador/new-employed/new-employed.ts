@@ -6,6 +6,8 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { PersonalService } from '../../../services/personal/personal-service';
 import Swal from 'sweetalert2';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 /**
  * Componente para la creación de nuevo personal.
@@ -13,7 +15,7 @@ import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilida
  */
 @Component({
   selector: 'app-new-employed',
-  imports: [ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './new-employed.html',
   styleUrl: './new-employed.css',
 })

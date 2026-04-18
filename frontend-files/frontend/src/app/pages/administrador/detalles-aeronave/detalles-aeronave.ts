@@ -10,11 +10,13 @@ import { AeronaveDTO } from '../../../models/avion/avion';
 import { Aeronave } from '../../../services/vuelos/aeronave_service';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 @Component({
   selector: 'app-detalles-aeronave',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, AdminSidebarComponent, AccesibilidadComponent, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './detalles-aeronave.html',
   styleUrl: './detalles-aeronave.css'
 })
@@ -123,7 +125,7 @@ export class DetallesAeronave implements OnInit {
   subirImagenes(): void {
     if (!this.aeronave) return;
     const formData = new FormData();
-  
+
     this.archivosSeleccionados.forEach(f => formData.append('files', f)); // 'files' no 'imagenes'
     formData.append('tipo', 'EXTERIOR'); //  requerido por el backend
 

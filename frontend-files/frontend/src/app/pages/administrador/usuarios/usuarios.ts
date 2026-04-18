@@ -6,9 +6,11 @@ import { UserService, Usuario } from '../../../services/user/user.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import Swal from 'sweetalert2';
+import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
+import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
 @Component({
   selector: 'app-usuarios',
-  imports: [AdminSidebarComponent, AccesibilidadComponent, CommonModule],
+  imports: [AdminSidebarComponent, AccesibilidadComponent, CommonModule, ChatbotWidgetComponent, WhatsAppButtonComponent],
   templateUrl: './usuarios.html',
   styleUrl: './usuarios.css',
 })
