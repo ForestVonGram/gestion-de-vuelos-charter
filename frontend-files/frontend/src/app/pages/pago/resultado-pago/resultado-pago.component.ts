@@ -16,6 +16,7 @@ export class ResultadoPagoComponent implements OnInit {
   paymentId: string = '';
   preferenceId: string = '';
   externalReference: string = '';
+  vueloId: number | null = null;
   loading: boolean = true;
 
   constructor(
@@ -35,40 +36,37 @@ export class ResultadoPagoComponent implements OnInit {
         this.confirmarPago();
       } else {
         this.loading = false;
+        if (this.externalReference) {
+          this.pagoService.obtenerPagoPorId(Number(this.externalReference)).subscribe(p => {
+            this.vueloId = p.vueloId;
+          });
+        }
       }
     });
   }
 
   confirmarPago(): void {
-    // El externalReference debería ser el ID de nuestro registro de Pago
-    // o el ID del vuelo si lo guardamos así. 
-    // En PagoServiceImpl, usamos el ID del pago autogenerado.
-    // Pero en MercadoPagoService pusimos externalReference = vueloId.
-    // Esto es un pequeño desajuste que debemos corregir o manejar.
-    
-    // Si externalReference es el vueloId, necesitamos buscar el pago pendiente para ese vuelo.
-    // Por simplicidad, asumiremos que externalReference es el ID del PAGO si lo ajustamos en el backend.
-    
     const pagoId = Number(this.externalReference);
     
     if (pagoId) {
       this.pagoService.confirmarPago(pagoId, this.paymentId).subscribe({
-        next: () => {
+        next: (pagoActualizado) => {
+          this.vueloId = pagoActualizado.vueloId;
           this.loading = false;
           Swal.fire({
             title: '¡Pago Exitoso!',
             text: 'Tu vuelo ha sido confirmado correctamente.',
             icon: 'success',
-            confirmButtonText: 'Ir a mis vuelos',
+            confirmButtonText: 'Ver mi Boleta',
             confirmButtonColor: '#007bff'
           }).then(() => {
-            this.router.navigate(['/cliente/dashboard']);
+            this.router.navigate(['/agendar-vuelo'], { queryParams: { id: this.vueloId } });
           });
         },
         error: (err) => {
           console.error('Error confirmando pago:', err);
           this.loading = false;
-          Swal.fire('Error', 'No pudimos registrar tu pago, por favor contacta a soporte.', 'error');
+          Swal.fire('Error', 'No pudimos registrar tu pago localmente, pero Mercado Pago confirmó la transacción. Contacta a soporte con tu ID de pago.', 'error');
         }
       });
     } else {

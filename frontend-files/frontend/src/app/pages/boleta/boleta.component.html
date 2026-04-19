@@ -212,7 +212,7 @@
         </div>
 
         <div class="payment-options">
-          <label class="payment-option" *ngFor="let metodo of ['Transferencia bancaria', 'Tarjeta de crédito', 'Tarjeta débito', 'PSE']">
+          <label class="payment-option" *ngFor="let metodo of ['Mercado Pago', 'Transferencia bancaria', 'Tarjeta de crédito', 'Tarjeta débito', 'PSE']">
             <input type="radio" formControlName="metodoPago" [value]="metodo" class="payment-radio" />
             <span class="payment-option-label">{{ metodo }}</span>
           </label>

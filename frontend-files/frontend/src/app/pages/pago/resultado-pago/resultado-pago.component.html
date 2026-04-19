@@ -38,8 +38,9 @@
     </div>
 
     <div class="action-buttons">
-      <button class="btn-primary" [routerModule]="['/cliente/dashboard']">Volver al Dashboard</button>
-      <button class="btn-secondary" *ngIf="status !== 'approved'" [routerModule]="['/cliente/mis-vuelos']">Ver mis vuelos</button>
+      <button class="btn-primary" *ngIf="status === 'approved' && vueloId" [routerLink]="['/agendar-vuelo']" [queryParams]="{id: vueloId}">Ver mi Boleta</button>
+      <button class="btn-primary" *ngIf="status !== 'approved' && vueloId" [routerLink]="['/agendar-vuelo']" [queryParams]="{id: vueloId}">Reintentar pago</button>
+      <button class="btn-secondary" [routerLink]="['/cliente/dashboard']">Volver al Dashboard</button>
     </div>
   </div>
 

@@ -7,6 +7,9 @@ import { firstValueFrom } from 'rxjs';
 import { AuthService} from '../../services/auth/auth.service';
 import { VueloService, VueloCreateDTO, VueloDTO} from '../../services/vuelos/vuelo.service';
 import { DisponibilidadService} from '../../services/vuelos/disponibilidad.service';
+import { PagoService, PagoCreateDTO } from '../../services/pago/pago.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import Swal from 'sweetalert2';
 import {AccesibilidadComponent} from '../../shared/accesibilidad/accesibilidad.component';
 import {ChatbotWidgetComponent} from '../../shared/chatbot-widget/chatbot-widget.component';
 import {WhatsAppButtonComponent} from '../../shared/whatsapp-button/whatsapp-button.component';
@@ -25,6 +28,7 @@ export interface BoletaData {
   montoTotal: number;
   metodoPago: string;
   transaccionId: string;
+  pagoId?: number;
 }
 
 @Component({
@@ -48,11 +52,54 @@ export class BoletaComponent implements OnInit {
     private authService: AuthService,
     private vueloService: VueloService,
     private disponibilidadService: DisponibilidadService,
+    private pagoService: PagoService,
+    private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.inicializarFormulario();
+    this.route.queryParams.subscribe(params => {
+      const vueloId = params['id'];
+      if (vueloId) {
+        this.cargarBoletaExistente(Number(vueloId));
+      }
+    });
+  }
+
+  private async cargarBoletaExistente(vueloId: number): Promise<void> {
+    this.cargando = true;
+    try {
+      const vuelo = await firstValueFrom(this.vueloService.obtenerVueloPorId(vueloId));
+      if (vuelo) {
+        // Simular datos de pasajero y boleta para un vuelo ya creado
+        // En una app real, esto vendría de una tabla de Boletas o Pasajeros
+        const currentUser = this.authService.currentUserValue;
+        this.boletaData = {
+          vuelo: vuelo,
+          pasajero: {
+            nombreCompleto: currentUser?.nombreCompleto || 'Pasajero',
+            email: currentUser?.email || ''
+          },
+          codigoReserva: this.generarCodigoReserva(),
+          numeroAsiento: this.asignarAsientoAuto(),
+          puertaEmbarque: this.asignarPuerta(),
+          claseServicio: 'Ejecutiva',
+          codigoQR: this.generarCodigoQR(vuelo.id),
+          fechaEmision: vuelo.fechaCreacion || new Date().toISOString(),
+          montoTotal: this.calcularCosto('Ejecutiva'),
+          metodoPago: 'Mercado Pago',
+          transaccionId: this.generarTransaccionId()
+        };
+        this.vistaActual = 'recibo';
+        this.cdr.detectChanges();
+      }
+    } catch (error) {
+      console.error('Error cargando vuelo:', error);
+    } finally {
+      this.cargando = false;
+    }
   }
 
   private inicializarFormulario(): void {
@@ -91,7 +138,7 @@ export class BoletaComponent implements OnInit {
       contactoEmergencia: [''],
       telefonoEmergencia: [''],
 
-      metodoPago: ['Transferencia bancaria', Validators.required],
+      metodoPago: ['Mercado Pago', Validators.required],
     });
 
     const ahora = new Date();
@@ -210,6 +257,35 @@ export class BoletaComponent implements OnInit {
       }
 
       const costoEstimado = this.calcularCosto(v.claseServicio);
+      
+      // Lógica de Pago con Mercado Pago
+      if (v.metodoPago === 'Mercado Pago') {
+        Swal.fire({
+          title: 'Redirigiendo a Mercado Pago',
+          text: 'Por favor completa tu pago para confirmar la reserva.',
+          icon: 'info',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const pagoCreate: PagoCreateDTO = {
+          vueloId: vueloCreado.id,
+          monto: costoEstimado,
+          emailCliente: v.email,
+          usuarioId: currentUser.userId,
+          descripcion: `Reserva de Vuelo ${v.origen} - ${v.destino}`
+        };
+
+        const pagoIniciado = await firstValueFrom(this.pagoService.iniciarPago(pagoCreate));
+        
+        if (pagoIniciado.urlPago) {
+          window.location.href = pagoIniciado.urlPago;
+          return; // Detener ejecución ya que redirigimos
+        }
+      }
+
       this.boletaData = {
         vuelo: vueloCreado,
         pasajero: pasajeroSimulado,
