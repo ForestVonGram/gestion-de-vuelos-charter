@@ -93,7 +93,7 @@ export class BoletaComponent implements OnInit {
       contactoEmergencia: [''],
       telefonoEmergencia: [''],
 
-      metodoPago: ['Transferencia bancaria', Validators.required],
+      metodoPago: ['', Validators.required],
     });
 
     const ahora = new Date();

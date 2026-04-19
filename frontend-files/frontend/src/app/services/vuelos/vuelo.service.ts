@@ -1,3 +1,4 @@
+// src/app/services/vuelos/vuelo.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -70,6 +71,26 @@ export class VueloService {
   getVuelosPorUsuario(usuarioId: number): Observable<VueloDTO[]> {
     console.log(`[VueloService] Solicitando vuelos para usuario ${usuarioId}`);
     return this.http.get<VueloDTO[]>(`${this.apiUrl}/usuario/${usuarioId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  /**
+   * Obtiene un vuelo por su ID.
+   * Endpoint: GET /api/vuelos/{id}
+   */
+  getVueloById(id: number): Observable<VueloDTO> {
+    return this.http.get<VueloDTO>(`${this.apiUrl}/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  /**
+   * Cancela un vuelo existente.
+   * Endpoint: DELETE /api/vuelos/{id}
+   */
+  cancelarVuelo(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders()
     });
   }

@@ -1,5 +1,5 @@
 // src/app/components/dashboard-cliente/dashboard-cliente.component.ts
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, OnInit, Renderer2, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
@@ -7,8 +7,10 @@ import { VueloService, VueloDTO } from '../../../services/vuelos/vuelo.service';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 import { ChatbotWidgetComponent } from '../../../shared/chatbot-widget/chatbot-widget.component';
 import { WhatsAppButtonComponent } from '../../../shared/whatsapp-button/whatsapp-button.component';
+import { finalize } from 'rxjs/operators';
 
 interface Vuelo {
+  id: number;               // <- NUEVO
   origin: string;
   destination: string;
   date: string;
@@ -62,24 +64,25 @@ export class ClientDashboardComponent implements OnInit {
   // --- Noticias aéreas (se cargarán del servicio) ---
   newsItems: Noticia[] = [];
 
-  // Indicador de carga para los vuelos
-  loadingFlights: boolean = true;
+  // Estado de carga unificado
+  loadingData: boolean = true;
+  dataError: boolean = false;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private renderer: Renderer2,
-    private vueloService: VueloService
+    private vueloService: VueloService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    console.log('=== [Dashboard] ngOnInit ===');
     this.loadUserData();
-    this.loadUserStats();
-    this.loadUpcomingFlights();
+    this.loadAllVuelosData(); // Una sola llamada para todo
     this.loadNewsItems();
     this.setWelcomeMessage();
 
-    // Restaura la preferencia de tema
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.isDarkMode = true;
@@ -89,91 +92,98 @@ export class ClientDashboardComponent implements OnInit {
 
   private loadUserData(): void {
     const currentUser = this.authService.currentUserValue;
+    console.log('[Dashboard] Usuario actual:', currentUser);
     if (currentUser) {
       this.userName = currentUser.nombreCompleto || currentUser.email?.split('@')[0] || 'Usuario';
       this.userEmail = currentUser.email || '';
     }
   }
 
-  private loadUserStats(): void {
-    const currentUser = this.authService.currentUserValue;
-    const userId = currentUser?.userId; // Soporte para ambos nombres
-    if (!userId) return;
-
-    this.vueloService.getVuelosPorUsuario(userId).subscribe({
-      next: (vuelos) => {
-        this.userStats.totalFlights = vuelos.length;
-
-        const horasTotales = vuelos.reduce((acc, v) => {
-          if (v.fechaSalidaReal && v.fechaLlegadaReal) {
-            const diff = new Date(v.fechaLlegadaReal).getTime() - new Date(v.fechaSalidaReal).getTime();
-            return acc + diff / (1000 * 60 * 60);
-          }
-          return acc;
-        }, 0);
-        this.userStats.flightHours = Math.round(horasTotales);
-        this.userStats.loyaltyPoints = vuelos.length * 100;
-
-        if (vuelos.length >= 20) this.userStats.tier = 'Platinum';
-        else if (vuelos.length >= 10) this.userStats.tier = 'Gold';
-        else if (vuelos.length >= 5) this.userStats.tier = 'Silver';
-        else this.userStats.tier = 'Bronze';
-      },
-      error: (err) => console.error('[Dashboard] Error cargando estadísticas', err)
-    });
-  }
-
-  private loadUpcomingFlights(): void {
+  /**
+   * Carga los vuelos del usuario y actualiza tanto estadísticas como próximos vuelos.
+   * Esto evita múltiples peticiones y reduce el tiempo de renderizado.
+   */
+  private loadAllVuelosData(): void {
     const currentUser = this.authService.currentUserValue;
     const userId = currentUser?.userId;
-    console.log('[Dashboard] Iniciando carga de próximos vuelos para userId:', userId);
+    console.log('[Dashboard] Iniciando carga de vuelos para userId:', userId);
 
     if (!userId) {
-      console.warn('[Dashboard] No hay userId, no se pueden cargar vuelos');
-      this.upcomingFlights = [];
-      this.loadingFlights = false;
+      console.warn('[Dashboard] No hay userId');
+      this.loadingData = false;
+      this.dataError = true;
       return;
     }
 
-    this.vueloService.getVuelosPorUsuario(userId).subscribe({
-      next: (vuelos) => {
-        console.log('[Dashboard] ✅ Respuesta recibida. Total vuelos:', vuelos.length);
-        console.log('[Dashboard] Vuelos crudos:', JSON.stringify(vuelos, null, 2));
-
-        const vuelosFuturos = vuelos.filter(v =>
-          v.estado !== 'COMPLETADO' && v.estado !== 'CANCELADO'
-        );
-        console.log('[Dashboard] Vuelos futuros (filtrados):', vuelosFuturos.length);
-
-        const proximos = vuelosFuturos
-          .sort((a, b) =>
-            new Date(a.fechaSalidaProgramada).getTime() - new Date(b.fechaSalidaProgramada).getTime()
-          )
-          .slice(0, 2);
-        console.log('[Dashboard] Próximos 2 vuelos:', proximos);
-
-        this.upcomingFlights = proximos.map(v => ({
-          origin: this.extraerCodigo(v.origen),
-          destination: this.extraerCodigo(v.destino),
-          date: this.formatearFechaVuelo(v.fechaSalidaProgramada),
-          status: this.traducirEstado(v.estado),
-          statusClass: this.obtenerClaseEstado(v.estado)
-        }));
-
-        this.loadingFlights = false;
-      },
-      error: (err) => {
-        console.error('[Dashboard] ❌ Error HTTP:', err.status, err.statusText);
-        console.error('[Dashboard] Cuerpo del error:', err.error);
-        this.upcomingFlights = [];
-        this.loadingFlights = false;
-        // Opcional: mostrar un mensaje en la UI
-        alert('No se pudieron cargar los vuelos. Revisa tu conexión o inicia sesión nuevamente.');
-      }
-    });
+    this.vueloService.getVuelosPorUsuario(userId)
+      .pipe(
+        finalize(() => {
+          this.loadingData = false;
+          this.cdr.detectChanges(); // Forzar actualización de la vista
+          console.log('[Dashboard] Finalizada la carga de vuelos');
+        })
+      )
+      .subscribe({
+        next: (vuelos) => {
+          console.log('[Dashboard] ✅ Vuelos recibidos:', vuelos.length);
+          this.processVuelosData(vuelos);
+          this.dataError = false;
+        },
+        error: (err) => {
+          console.error('[Dashboard] ❌ Error cargando vuelos:', err);
+          this.dataError = true;
+          this.upcomingFlights = [];
+          this.userStats.totalFlights = 0;
+        }
+      });
   }
 
-  // Métodos auxiliares para formateo (se mantienen igual)
+  private processVuelosData(vuelos: VueloDTO[]): void {
+    // --- Estadísticas del usuario ---
+    this.userStats.totalFlights = vuelos.length;
+
+    const horasTotales = vuelos.reduce((acc, v) => {
+      if (v.fechaSalidaReal && v.fechaLlegadaReal) {
+        const diff = new Date(v.fechaLlegadaReal).getTime() - new Date(v.fechaSalidaReal).getTime();
+        return acc + diff / (1000 * 60 * 60);
+      }
+      return acc;
+    }, 0);
+    this.userStats.flightHours = Math.round(horasTotales);
+    this.userStats.loyaltyPoints = vuelos.length * 100;
+
+    if (vuelos.length >= 20) this.userStats.tier = 'Platinum';
+    else if (vuelos.length >= 10) this.userStats.tier = 'Gold';
+    else if (vuelos.length >= 5) this.userStats.tier = 'Silver';
+    else this.userStats.tier = 'Bronze';
+
+    // --- Últimos vuelos añadidos (los más recientes) ---
+    // Filtramos vuelos cancelados para no mostrarlos (opcional)
+    const vuelosValidos = vuelos.filter(v => v.estado !== 'CANCELADO');
+
+    // Ordenar por fecha de solicitud descendente (más reciente primero)
+    const ultimosVuelos = vuelosValidos
+      .sort((a, b) =>
+        new Date(b.fechaSolicitud).getTime() - new Date(a.fechaSolicitud).getTime()
+      )
+      .slice(0, 2);
+
+    console.log('[Dashboard] Últimos 2 vuelos añadidos:', ultimosVuelos);
+
+    this.upcomingFlights = ultimosVuelos.map(v => ({
+      id: v.id,                // <- NUEVO
+      origin: this.extraerCodigo(v.origen),
+      destination: this.extraerCodigo(v.destino),
+      date: this.formatearFechaVuelo(v.fechaSalidaProgramada),
+      status: this.traducirEstado(v.estado),
+      statusClass: this.obtenerClaseEstado(v.estado)
+    }));
+
+    // Forzar actualización de la vista
+    this.cdr.detectChanges();
+  }
+
+  // Métodos auxiliares (sin cambios)
   private extraerCodigo(lugar: string): string {
     if (!lugar) return '???';
     const match = lugar.match(/\(([^)]+)\)/);
@@ -256,6 +266,27 @@ export class ClientDashboardComponent implements OnInit {
       this.welcomeMessage = 'Esperamos que estés teniendo una tarde productiva. Tu próxima aventura te espera.';
     } else {
       this.welcomeMessage = 'Buenas noches. ¿Soñando con tu próximo destino?';
+    }
+  }
+
+  // ---------- NUEVOS MÉTODOS PARA BOTONES ----------
+  verDetalles(vueloId: number): void {
+    this.router.navigate(['/vuelo', vueloId]);
+  }
+
+  cancelarVuelo(vueloId: number, event: Event): void {
+    event.stopPropagation(); // Evitar que se active el clic del contenedor
+    if (confirm('¿Estás seguro de que deseas cancelar este vuelo? Esta acción no se puede deshacer.')) {
+      this.vueloService.cancelarVuelo(vueloId).subscribe({
+        next: () => {
+          alert('Vuelo cancelado exitosamente.');
+          this.loadAllVuelosData(); // Recargar los datos
+        },
+        error: (err) => {
+          console.error('Error al cancelar vuelo:', err);
+          alert('No se pudo cancelar el vuelo. Intenta nuevamente.');
+        }
+      });
     }
   }
 
