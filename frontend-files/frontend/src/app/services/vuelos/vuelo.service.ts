@@ -14,6 +14,7 @@ export interface VueloCreateDTO {
   numeroPasajeros: number;
   proposito?: string;
   observaciones?: string;
+  costoEstimado?: number;
 }
 
 export interface VueloDTO {

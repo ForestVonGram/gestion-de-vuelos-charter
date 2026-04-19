@@ -47,6 +47,7 @@ import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detall
 import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tripulante';
 import { Usuarios } from './pages/administrador/usuarios/usuarios';
 import { EditNomina } from './pages/administrador/roster/edit-nomina/edit-nomina';
+import {AgendarVueloComponent} from './pages/agendar-vuelo/agendar-vuelo.component';
 
 
 export const routes: Routes = [
@@ -85,7 +86,17 @@ export const routes: Routes = [
   },
   {
     path: 'agendar-vuelo',
-    component: BoletaComponent
+    component: AgendarVueloComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'boleta/:id',
+    component: BoletaComponent,
+    canActivate: [authGuard]
+  },
+  {
+    path: 'vuelo/:id',
+    redirectTo: 'boleta/:id' // opcional, para compatibilidad
   },
   {
     path: 'terminos-condiciones',
@@ -182,7 +193,7 @@ export const routes: Routes = [
       {
         path: 'nomina/:id',
         component: EditNomina
-       }, 
+       },
       {
        path: 'nuevo-empleado',
        component: NewEmployed,

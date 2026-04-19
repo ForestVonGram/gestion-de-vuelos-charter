@@ -1,0 +1,239 @@
+<div class="boleta-wrapper">
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-header-inner">
+      <div class="breadcrumb">
+        <a routerLink="/dashboard">Inicio</a>
+        <span class="breadcrumb-sep">›</span>
+        <span>Reservar vuelo</span>
+      </div>
+      <h1 class="page-title">Reserva tu vuelo</h1>
+      <p class="page-subtitle">Completa los datos para solicitar tu vuelo ejecutivo con AstraNimbus</p>
+    </div>
+  </div>
+
+  <!-- Form card -->
+  <div class="form-container">
+    <form [formGroup]="form" (ngSubmit)="procesarSolicitud()" novalidate>
+
+      <!-- Sección: Datos del vuelo -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21 4 19 2 17 0 15 0 13.5 1.5L10 5 1.8 6.2c-.5.1-.9.6-.6 1.1l1.5 2.5c.3.5.9.6 1.3.3l4-2.5 2 2-4.5 4.5c-.4.4-.4 1 0 1.4L7 22c.4.4 1 .4 1.4 0L17 13.4l2.5 4c.3.5.9.6 1.3.3l2.5-1.5c.5-.3.6-.8.5-1.3z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Datos del vuelo</h2>
+            <p class="section-desc">Origen, destino y fechas del itinerario</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="origen">Ciudad de origen *</label>
+            <input id="origen" type="text" class="form-input" formControlName="origen"
+                   placeholder="Ej: Bogotá (BOG)" [class.is-invalid]="campoInvalido('origen')" />
+            <span class="error-msg" *ngIf="campoInvalido('origen')">El origen es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="destino">Ciudad de destino *</label>
+            <input id="destino" type="text" class="form-input" formControlName="destino"
+                   placeholder="Ej: Medellín (MDE)" [class.is-invalid]="campoInvalido('destino')" />
+            <span class="error-msg" *ngIf="campoInvalido('destino')">El destino es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="fechaSalida">Fecha y hora de salida *</label>
+            <input id="fechaSalida" type="datetime-local" class="form-input" formControlName="fechaSalida"
+                   [class.is-invalid]="campoInvalido('fechaSalida')" />
+            <span class="error-msg" *ngIf="campoInvalido('fechaSalida')">La fecha de salida es obligatoria</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="fechaLlegada">Fecha y hora de llegada *</label>
+            <input id="fechaLlegada" type="datetime-local" class="form-input" formControlName="fechaLlegada"
+                   [class.is-invalid]="campoInvalido('fechaLlegada')" />
+            <span class="error-msg" *ngIf="campoInvalido('fechaLlegada')">La fecha de llegada es obligatoria</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="numeroPasajeros">N.º de pasajeros *</label>
+            <input id="numeroPasajeros" type="number" class="form-input" formControlName="numeroPasajeros"
+                   min="1" max="500" [class.is-invalid]="campoInvalido('numeroPasajeros')" />
+            <span class="error-msg" *ngIf="campoInvalido('numeroPasajeros')">Número de pasajeros inválido</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="claseServicio">Clase de servicio *</label>
+            <select id="claseServicio" class="form-input form-select" formControlName="claseServicio">
+              <option *ngFor="let clase of clasesServicio" [value]="clase">{{ clase }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="proposito">Propósito del vuelo</label>
+            <input id="proposito" type="text" class="form-input" formControlName="proposito"
+                   placeholder="Ej: Viaje de negocios" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección: Datos del pasajero -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Datos del comprador</h2>
+            <p class="section-desc">Información personal del viajero principal</p>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="nombre">Nombre *</label>
+            <input id="nombre" type="text" class="form-input" formControlName="nombre"
+                   placeholder="Nombre" [class.is-invalid]="campoInvalido('nombre')" />
+            <span class="error-msg" *ngIf="campoInvalido('nombre')">El nombre es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="apellido">Apellido *</label>
+            <input id="apellido" type="text" class="form-input" formControlName="apellido"
+                   placeholder="Apellido" [class.is-invalid]="campoInvalido('apellido')" />
+            <span class="error-msg" *ngIf="campoInvalido('apellido')">El apellido es obligatorio</span>
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-3">
+          <div class="form-group">
+            <label class="form-label" for="tipoDocumento">Tipo de documento *</label>
+            <select id="tipoDocumento" class="form-input form-select" formControlName="tipoDocumento">
+              <option value="CC">Cédula de ciudadanía</option>
+              <option value="CE">Cédula de extranjería</option>
+              <option value="PP">Pasaporte</option>
+              <option value="TI">Tarjeta de identidad</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="documentoIdentidad">Número de documento *</label>
+            <input id="documentoIdentidad" type="text" class="form-input" formControlName="documentoIdentidad"
+                   placeholder="Número de documento" [class.is-invalid]="campoInvalido('documentoIdentidad')" />
+            <span class="error-msg" *ngIf="campoInvalido('documentoIdentidad')">El documento es obligatorio</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="nacionalidad">Nacionalidad</label>
+            <input id="nacionalidad" type="text" class="form-input" formControlName="nacionalidad"
+                   placeholder="Nacionalidad" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="email">Correo electrónico *</label>
+            <input id="email" type="email" class="form-input" formControlName="email"
+                   placeholder="correo@ejemplo.com" [class.is-invalid]="campoInvalido('email')" />
+            <span class="error-msg" *ngIf="campoInvalido('email')">Ingresa un correo válido</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="telefono">Teléfono</label>
+            <input id="telefono" type="tel" class="form-input" formControlName="telefono"
+                   placeholder="+57 300 0000000" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="restriccionesAlimentarias">Restricciones alimentarias</label>
+            <input id="restriccionesAlimentarias" type="text" class="form-input" formControlName="restriccionesAlimentarias"
+                   placeholder="Ej: Sin gluten, vegetariano" />
+          </div>
+        </div>
+
+        <div class="form-grid form-grid-2">
+          <div class="form-group">
+            <label class="form-label" for="contactoEmergencia">Contacto de emergencia</label>
+            <input id="contactoEmergencia" type="text" class="form-input" formControlName="contactoEmergencia"
+                   placeholder="Nombre del contacto" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="telefonoEmergencia">Teléfono de emergencia</label>
+            <input id="telefonoEmergencia" type="tel" class="form-input" formControlName="telefonoEmergencia"
+                   placeholder="+57 300 0000000" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="restriccionesMedicas">Restricciones médicas</label>
+          <textarea id="restriccionesMedicas" class="form-input form-textarea" formControlName="restriccionesMedicas"
+                    placeholder="Indica cualquier condición médica relevante para el vuelo..." rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="observaciones">Observaciones adicionales</label>
+          <textarea id="observaciones" class="form-input form-textarea" formControlName="observaciones"
+                    placeholder="Cualquier requerimiento especial o nota adicional..." rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- Sección: Pago -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="section-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <div>
+            <h2 class="section-title">Método de pago</h2>
+            <p class="section-desc">Selecciona cómo deseas realizar el pago</p>
+          </div>
+        </div>
+
+        <div class="payment-options">
+          <label class="payment-option" *ngFor="let metodo of metodosPago">
+            <input type="radio" formControlName="metodoPago" [value]="metodo" class="payment-radio" />
+            <span class="payment-option-label">{{ metodo }}</span>
+          </label>
+        </div>
+        <span class="error-msg" *ngIf="campoInvalido('metodoPago')">Debes seleccionar un método de pago</span>
+      </div>
+
+      <!-- Resumen y botón de envío -->
+      <div class="form-summary">
+        <div class="summary-disclaimer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Al continuar aceptas nuestros <a href="/terminos-condiciones" target="_blank">Términos y Condiciones</a> y la
+          <a href="/politica-privacidad" target="_blank">Política de Privacidad</a> de AstraNimbus Aviation.
+        </div>
+        <button type="submit" class="btn-submit" [disabled]="cargando">
+          <span class="btn-submit-content" *ngIf="!cargando">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            Confirmar y pagar
+          </span>
+          <span class="btn-submit-loading" *ngIf="cargando">
+            <span class="spinner"></span>
+            Procesando solicitud...
+          </span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<app-accesibilidad></app-accesibilidad>
+<app-chatbot-widget></app-chatbot-widget>
+<app-whatsapp-button></app-whatsapp-button>

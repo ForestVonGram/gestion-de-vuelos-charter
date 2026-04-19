@@ -38,3 +38,12 @@
 2026-04-18 20:09:54 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Armenia (ARM), Destino: Pereira (PEI)
 2026-04-18 20:09:54 INFO  - Vuelo creado - ID: 14, Estado: SOLICITADO, Pasajeros: 1
 2026-04-18 20:09:55 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-06-25T15:30 (capacidad mínima: 1)
+2026-04-18 20:38:26 INFO  - Cancelando vuelo ID: 14
+2026-04-18 20:38:26 INFO  - Vuelo ID: 14 cancelado
+2026-04-18 21:02:59 INFO  - Cancelando vuelo ID: 13
+2026-04-18 21:02:59 INFO  - Vuelo ID: 13 cancelado
+2026-04-18 21:04:57 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Armenia (ARM), Destino: Cali (CAL)
+2026-04-18 21:04:57 INFO  - Vuelo creado - ID: 15, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 21:17:26 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 21:17:27 INFO  - Vuelo creado - ID: 16, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 21:17:27 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
