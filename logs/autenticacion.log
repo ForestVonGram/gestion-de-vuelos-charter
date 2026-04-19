@@ -62,3 +62,9 @@
 2026-04-18 21:02:31 INFO  - Login exitoso para: juan.pablo.lopez.gomez2005@gmail.com
 2026-04-18 21:02:31 INFO  - dispositivo: Escritorio
 2026-04-18 21:02:31 INFO  - direccionIp: 0:0:0:0:0:0:0:1
+2026-04-18 21:28:53 WARN  - Credenciales inválidas para email: juan.pablo.lopez.gomez2005@gmail.com
+2026-04-18 21:28:53 WARN  - Credenciales inválidas para: juan.pablo.lopez.gomez2005@gmail.com
+2026-04-18 21:28:56 INFO  - Login exitoso para usuario: juan.pablo.lopez.gomez2005@gmail.com
+2026-04-18 21:28:56 INFO  - Login exitoso para: juan.pablo.lopez.gomez2005@gmail.com
+2026-04-18 21:28:56 INFO  - dispositivo: Escritorio
+2026-04-18 21:28:56 INFO  - direccionIp: 0:0:0:0:0:0:0:1

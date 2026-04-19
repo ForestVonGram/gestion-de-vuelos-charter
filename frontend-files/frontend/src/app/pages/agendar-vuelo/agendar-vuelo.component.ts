@@ -104,30 +104,6 @@ export class AgendarVueloComponent implements OnInit {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  private calcularCosto(clase: string, fechaSalida: string, fechaLlegada: string, numPasajeros: number): number {
-    const salida = new Date(fechaSalida);
-    const llegada = new Date(fechaLlegada);
-    const diffHoras = (llegada.getTime() - salida.getTime()) / (1000 * 60 * 60);
-    const dias = Math.ceil(diffHoras / 24);
-    const tarifaBaseDiaria = 500000; // COP
-    const multiplicadores: Record<string, number> = {
-      'Ejecutiva': 1.0,
-      'Primera Clase': 1.8,
-      'Corporativa': 2.5,
-    };
-    const mult = multiplicadores[clase] ?? 1.0;
-    const factorAnticipacion = this.factorAnticipacion(fechaSalida);
-    return Math.round(tarifaBaseDiaria * dias * numPasajeros * mult * factorAnticipacion);
-  }
-
-  private factorAnticipacion(fechaSalida: string): number {
-    const diasAnticipacion = (new Date(fechaSalida).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
-    if (diasAnticipacion <= 2) return 1.5;
-    if (diasAnticipacion <= 7) return 1.2;
-    if (diasAnticipacion >= 30) return 0.85;
-    return 1.0;
-  }
-
   async procesarSolicitud(): Promise<void> {
     const metodoPagoControl = this.form.get('metodoPago');
     if (!metodoPagoControl?.value) {
@@ -164,14 +140,6 @@ export class AgendarVueloComponent implements OnInit {
         telefonoEmergencia: nvl(rawValues.telefonoEmergencia)
       };
 
-      // Calcular costo
-      const costoEstimado = this.calcularCosto(
-        v.claseServicio,
-        v.fechaSalida,
-        v.fechaLlegada,
-        v.numeroPasajeros
-      );
-
       const vueloCreate: VueloCreateDTO = {
         usuarioId: currentUser.userId,
         origen: v.origen,
@@ -180,14 +148,21 @@ export class AgendarVueloComponent implements OnInit {
         fechaLlegadaProgramada: new Date(v.fechaLlegada).toISOString(),
         numeroPasajeros: v.numeroPasajeros,
         proposito: v.proposito === 'N/A' ? undefined : v.proposito,
-        observaciones: v.observaciones === 'N/A' ? undefined : v.observaciones,
-        costoEstimado: costoEstimado   // <-- Agregar al DTO de creación
+        observaciones: v.observaciones === 'N/A' ? undefined : v.observaciones
       };
 
       const vueloCreado = await firstValueFrom(this.vueloService.crearVuelo(vueloCreate));
       console.log('✅ Vuelo creado:', vueloCreado);
 
-      // Asignar aeronave (opcional)
+      // Calcular precio dinámico
+      const costoEstimado = this.calcularCosto(
+        v.claseServicio,
+        v.fechaSalida,
+        v.fechaLlegada,
+        v.numeroPasajeros
+      );
+
+      // Intentar asignar aeronave (opcional)
       try {
         const aeronavesDisponibles = await firstValueFrom(
           this.disponibilidadService.consultarAeronavesDisponibles(
@@ -210,10 +185,20 @@ export class AgendarVueloComponent implements OnInit {
         console.warn('⚠️ No se pudo asignar aeronave automáticamente:', error);
       }
 
-      // Guardar datos del pasajero (simulación, idealmente endpoint separado)
-      // ...
+      // Guardar datos del pasajero y precio en localStorage temporalmente
+      const datosAdicionales = {
+        pasajero: {
+          nombreCompleto: `${v.nombre} ${v.apellido}`,
+          tipoDocumento: v.tipoDocumento,
+          documentoIdentidad: v.documentoIdentidad
+        },
+        claseServicio: v.claseServicio,
+        metodoPago: v.metodoPago,
+        costoEstimado: costoEstimado
+      };
+      localStorage.setItem(`vuelo_${vueloCreado.id}_extra`, JSON.stringify(datosAdicionales));
 
-      // Redirigir a la boleta del vuelo recién creado
+      // Redirigir a la boleta
       this.router.navigate(['/boleta', vueloCreado.id]);
 
     } catch (error) {
@@ -221,6 +206,30 @@ export class AgendarVueloComponent implements OnInit {
       alert('Ocurrió un error al procesar tu solicitud. Por favor intenta nuevamente.');
       this.cargando = false;
     }
+  }
+
+  private calcularCosto(clase: string, fechaSalida: string, fechaLlegada: string, numPasajeros: number): number {
+    const salida = new Date(fechaSalida);
+    const llegada = new Date(fechaLlegada);
+    const diffHoras = (llegada.getTime() - salida.getTime()) / (1000 * 60 * 60);
+    const dias = Math.ceil(diffHoras / 24);
+    const tarifaBaseDiaria = 500000; // COP
+    const multiplicadores: Record<string, number> = {
+      'Ejecutiva': 1.0,
+      'Primera Clase': 1.8,
+      'Corporativa': 2.5,
+    };
+    const mult = multiplicadores[clase] ?? 1.0;
+    const factorAnticipacion = this.factorAnticipacion(fechaSalida);
+    return Math.round(tarifaBaseDiaria * dias * numPasajeros * mult * factorAnticipacion);
+  }
+
+  private factorAnticipacion(fechaSalida: string): number {
+    const diasAnticipacion = (new Date(fechaSalida).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (diasAnticipacion <= 2) return 1.5;
+    if (diasAnticipacion <= 7) return 1.2;
+    if (diasAnticipacion >= 30) return 0.85;
+    return 1.0;
   }
 
   campoInvalido(campo: string): boolean {

@@ -57,24 +57,50 @@ export class BoletaComponent implements OnInit {
     this.cargando = true;
     this.vueloService.getVueloById(this.vueloId).subscribe({
       next: (vuelo) => {
-        // Nota: Los datos del pasajero (documento, tipo) no vienen en el DTO del vuelo.
-        // Idealmente deberías tener un endpoint que devuelva el pasajero asociado.
-        // Por ahora simulamos con valores por defecto.
+        // Intentar recuperar datos adicionales guardados al agendar
+        const extraKey = `vuelo_${vuelo.id}_extra`;
+        const extraStr = localStorage.getItem(extraKey);
+        let extra: any = {};
+        if (extraStr) {
+          try {
+            extra = JSON.parse(extraStr);
+            // No eliminar de localStorage para permitir ver detalles múltiples veces
+          } catch (e) {}
+        }
+
+        // Construir objeto pasajero con prioridad: extra > datos del usuario actual
+        const pasajero = extra.pasajero || {
+          nombreCompleto: vuelo.usuarioNombre || 'Pasajero',
+          tipoDocumento: 'CC',
+          documentoIdentidad: 'N/A'
+        };
+
+        const claseServicio = extra.claseServicio || 'Ejecutiva';
+        const metodoPago = extra.metodoPago || 'No especificado';
+
+        // Precio: usar el calculado o el del vuelo (si existe)
+        let montoTotal = extra.costoEstimado || vuelo.costoEstimado || 0;
+        if (montoTotal === 0) {
+          // Calcular en el momento
+          montoTotal = this.calcularCosto(
+            claseServicio,
+            vuelo.fechaSalidaProgramada,
+            vuelo.fechaLlegadaProgramada,
+            vuelo.numeroPasajeros
+          );
+        }
+
         this.boletaData = {
           vuelo: vuelo,
-          pasajero: {
-            nombreCompleto: vuelo.usuarioNombre || 'Pasajero',
-            tipoDocumento: 'CC',
-            documentoIdentidad: 'N/A'
-          },
+          pasajero: pasajero,
           codigoReserva: this.generarCodigoReserva(),
           numeroAsiento: this.asignarAsientoAuto(),
           puertaEmbarque: this.asignarPuerta(),
-          claseServicio: 'Ejecutiva', // Debería venir en el vuelo (campo claseServicio)
+          claseServicio: claseServicio,
           codigoQR: this.generarCodigoQR(vuelo.id),
           fechaEmision: vuelo.fechaSolicitud,
-          montoTotal: vuelo.costoEstimado || 0,
-          metodoPago: 'No especificado',
+          montoTotal: montoTotal,
+          metodoPago: metodoPago,
           transaccionId: this.generarTransaccionId()
         };
         this.cargando = false;
@@ -111,6 +137,30 @@ export class BoletaComponent implements OnInit {
   private asignarPuerta(): string {
     const numero = Math.floor(Math.random() * 30) + 1;
     return `G${numero}`;
+  }
+
+  private calcularCosto(clase: string, fechaSalida: string, fechaLlegada: string, numPasajeros: number): number {
+    const salida = new Date(fechaSalida);
+    const llegada = new Date(fechaLlegada);
+    const diffHoras = (llegada.getTime() - salida.getTime()) / (1000 * 60 * 60);
+    const dias = Math.ceil(diffHoras / 24);
+    const tarifaBaseDiaria = 500000;
+    const multiplicadores: Record<string, number> = {
+      'Ejecutiva': 1.0,
+      'Primera Clase': 1.8,
+      'Corporativa': 2.5,
+    };
+    const mult = multiplicadores[clase] ?? 1.0;
+    const factorAnticipacion = this.factorAnticipacion(fechaSalida);
+    return Math.round(tarifaBaseDiaria * dias * numPasajeros * mult * factorAnticipacion);
+  }
+
+  private factorAnticipacion(fechaSalida: string): number {
+    const diasAnticipacion = (new Date(fechaSalida).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (diasAnticipacion <= 2) return 1.5;
+    if (diasAnticipacion <= 7) return 1.2;
+    if (diasAnticipacion >= 30) return 0.85;
+    return 1.0;
   }
 
   formatFecha(iso: string): string {
@@ -177,8 +227,7 @@ export class BoletaComponent implements OnInit {
   }
 
   private buildPrintDocument(ticketHTML: string, codigo: string, pasajero: string): string {
-    return `
-<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -395,7 +444,7 @@ export class BoletaComponent implements OnInit {
     .qr-dot-2,.qr-dot-4,.qr-dot-5,.qr-dot-7,.qr-dot-10,.qr-dot-11,.qr-dot-13,.qr-dot-15 { background: transparent; }
     .qr-text { font-size: 0.5rem; font-weight: 700; color: var(--an-mid); letter-spacing: .1em; text-align: center; position: absolute; bottom: 1px; }
     .qr-caption { font-size: 0.62rem; color: var(--an-subtext); text-align: center; }
-    /* PIE */
+    /* PIE DEL DOCUMENTO */
     .print-doc-footer {
       width: 100%;
       max-width: 880px;
@@ -406,17 +455,13 @@ export class BoletaComponent implements OnInit {
       justify-content: space-between;
       align-items: center;
     }
-    .print-doc-footer p {
-      font-size: 0.68rem;
-      color: var(--an-subtext);
-    }
-    /* OCULTAR ELEMENTOS NO DESEADOS EN PDF */
+    .print-doc-footer p { font-size: 0.68rem; color: var(--an-subtext); }
+    /* OCULTAR ELEMENTOS NO DESEADOS */
     .transaction-card,
     .confirmation-banner,
     .btn-download,
     .btn-new,
     .confirmation-actions { display: none !important; }
-    .ticket-outer .ticket { margin: 0 auto; }
     @media print {
       body { padding: 0; }
       .print-doc-header,
