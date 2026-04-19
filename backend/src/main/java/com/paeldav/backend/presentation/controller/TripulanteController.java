@@ -61,6 +61,7 @@ public class TripulanteController {
         return ResponseEntity.ok(tripulantes);
     }
 
+
     /**
      * Obtiene todos los pilotos.
      */

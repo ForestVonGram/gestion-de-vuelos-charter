@@ -34,7 +34,7 @@
     <div class="section-header">
 
       <!-- Título de la página -->
-      <h2 class="page-title">Directorio de VuelosComponent</h2>
+      <h2 class="page-title">Directorio de Vuelos</h2>
 
       <!-- Botón para crear un nuevo vuelo -->
       <button class="btn-primary">
@@ -87,7 +87,8 @@
           <tbody>
 
           <!-- Iteración de la lista de vuelos -->
-          <tr *ngFor="let vuelo of vuelos">
+           @for (vuelo of vuelos; track vuelo.id) {
+          <tr>
 
             <!-- ID del vuelo -->
             <td class="id-cell">
@@ -155,25 +156,40 @@
             <td>
 
               <!-- Badge con clase dinámica según el estado -->
-              <span class="status-badge" [ngClass]="getEstadoClase(vuelo.estado)">
+              <span class="status-badge" [ngClass]="getEstadoVueloClass(vuelo.estado)">
                 {{ vuelo.estado | titlecase }}
               </span>
 
-            </td>
+                <td class="action-cell">
+                  <div class="action-btns">
 
-            <!-- Acciones -->
-            <td class="action-cell">
+                <!-- VER -->
+               <button class="icon-btn btn-view"
+                [routerLink]="['/admin/vuelo', vuelo.id]"
+                title="Ver"
+                >
+              <span class="material-symbols-rounded">visibility</span>
+            </button>
 
-              <!-- Botón para editar vuelo -->
-              <button class="icon-btn edit-btn" title="Editar Vuelo">
-
-                <img src="assets/icons/edit.svg" alt="Editar" class="svg-icon">
-
+                <!-- APROBAR -->
+              <button class="icon-btn btn-approve"
+              title="Aprobar"
+              (click)="aceptarSolicitud(vuelo.id)">
+              <span class="material-symbols-rounded">check_circle</span>
               </button>
 
+                    <!-- RECHAZAR -->
+              <button class="icon-btn btn-reject"
+                    title="Rechazar"
+                    (click)="cancelarVuelo(vuelo.id)">
+                <span class="material-symbols-rounded">cancel</span>
+              </button>
+
+            </div>
             </td>
 
           </tr>
+        }
 
           </tbody>
 

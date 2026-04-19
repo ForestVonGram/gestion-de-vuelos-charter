@@ -101,8 +101,18 @@ public class VueloServiceImpl implements VueloService {
                         "Vuelo no encontrado con ID: " + id
                 ));
 
-        // Actualizar campos (el mapper ignora nulos)
         vueloMapper.updateEntityFromDTO(vueloUpdateDTO, vuelo);
+        if (vueloUpdateDTO.getAeronaveId() != null) {
+            Aeronave aeronave = aeronaveRepository.findById(vueloUpdateDTO.getAeronaveId())
+                    .orElseThrow(() -> new RuntimeException("Aeronave no encontrada"));
+
+            vuelo.setAeronave(aeronave);
+        }
+
+        if (vueloUpdateDTO.getTripulacionIds() != null) {
+            List<Tripulante> tripulacion = tripulanteRepository.findAllById(vueloUpdateDTO.getTripulacionIds());
+            vuelo.setTripulacion(tripulacion);
+        }
 
         vuelo = vueloRepository.save(vuelo);
 
