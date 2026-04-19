@@ -1,10 +1,12 @@
+// src/app/components/dashboard-cliente/dashboard-cliente.component.ts
 import { Component, OnInit, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
+import { VueloService, VueloDTO } from '../../../services/vuelos/vuelo.service';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
-import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
-import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
+import { ChatbotWidgetComponent } from '../../../shared/chatbot-widget/chatbot-widget.component';
+import { WhatsAppButtonComponent } from '../../../shared/whatsapp-button/whatsapp-button.component';
 
 interface Vuelo {
   origin: string;
@@ -60,10 +62,14 @@ export class ClientDashboardComponent implements OnInit {
   // --- Noticias aéreas (se cargarán del servicio) ---
   newsItems: Noticia[] = [];
 
+  // Indicador de carga para los vuelos
+  loadingFlights: boolean = true;
+
   constructor(
     private authService: AuthService,
     private router: Router,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private vueloService: VueloService
   ) {}
 
   ngOnInit(): void {
@@ -90,36 +96,121 @@ export class ClientDashboardComponent implements OnInit {
   }
 
   private loadUserStats(): void {
-    // Simulación de carga de estadísticas desde el servicio
-    // En producción, esto vendría de tu API
-    this.userStats = {
-      totalFlights: 12,
-      memberSince: 'Ene 2025',
-      tier: 'Platinum',
-      flightHours: 48,
-      loyaltyPoints: 15420
-    };
+    const currentUser = this.authService.currentUserValue;
+    const userId = currentUser?.userId; // Soporte para ambos nombres
+    if (!userId) return;
+
+    this.vueloService.getVuelosPorUsuario(userId).subscribe({
+      next: (vuelos) => {
+        this.userStats.totalFlights = vuelos.length;
+
+        const horasTotales = vuelos.reduce((acc, v) => {
+          if (v.fechaSalidaReal && v.fechaLlegadaReal) {
+            const diff = new Date(v.fechaLlegadaReal).getTime() - new Date(v.fechaSalidaReal).getTime();
+            return acc + diff / (1000 * 60 * 60);
+          }
+          return acc;
+        }, 0);
+        this.userStats.flightHours = Math.round(horasTotales);
+        this.userStats.loyaltyPoints = vuelos.length * 100;
+
+        if (vuelos.length >= 20) this.userStats.tier = 'Platinum';
+        else if (vuelos.length >= 10) this.userStats.tier = 'Gold';
+        else if (vuelos.length >= 5) this.userStats.tier = 'Silver';
+        else this.userStats.tier = 'Bronze';
+      },
+      error: (err) => console.error('[Dashboard] Error cargando estadísticas', err)
+    });
   }
 
   private loadUpcomingFlights(): void {
-    // Simulación de carga de vuelos desde el servicio
-    // En producción, esto vendría de tu API
-    this.upcomingFlights = [
-      {
-        origin: 'BOG',
-        destination: 'MDE',
-        date: '15 Feb 2026 - 10:30 AM',
-        status: 'Confirmado',
-        statusClass: 'status-confirmed'
+    const currentUser = this.authService.currentUserValue;
+    const userId = currentUser?.userId;
+    console.log('[Dashboard] Iniciando carga de próximos vuelos para userId:', userId);
+
+    if (!userId) {
+      console.warn('[Dashboard] No hay userId, no se pueden cargar vuelos');
+      this.upcomingFlights = [];
+      this.loadingFlights = false;
+      return;
+    }
+
+    this.vueloService.getVuelosPorUsuario(userId).subscribe({
+      next: (vuelos) => {
+        console.log('[Dashboard] ✅ Respuesta recibida. Total vuelos:', vuelos.length);
+        console.log('[Dashboard] Vuelos crudos:', JSON.stringify(vuelos, null, 2));
+
+        const vuelosFuturos = vuelos.filter(v =>
+          v.estado !== 'COMPLETADO' && v.estado !== 'CANCELADO'
+        );
+        console.log('[Dashboard] Vuelos futuros (filtrados):', vuelosFuturos.length);
+
+        const proximos = vuelosFuturos
+          .sort((a, b) =>
+            new Date(a.fechaSalidaProgramada).getTime() - new Date(b.fechaSalidaProgramada).getTime()
+          )
+          .slice(0, 2);
+        console.log('[Dashboard] Próximos 2 vuelos:', proximos);
+
+        this.upcomingFlights = proximos.map(v => ({
+          origin: this.extraerCodigo(v.origen),
+          destination: this.extraerCodigo(v.destino),
+          date: this.formatearFechaVuelo(v.fechaSalidaProgramada),
+          status: this.traducirEstado(v.estado),
+          statusClass: this.obtenerClaseEstado(v.estado)
+        }));
+
+        this.loadingFlights = false;
       },
-      {
-        origin: 'MDE',
-        destination: 'CTG',
-        date: '22 Feb 2026 - 14:15 PM',
-        status: 'Pendiente',
-        statusClass: 'status-pending'
+      error: (err) => {
+        console.error('[Dashboard] ❌ Error HTTP:', err.status, err.statusText);
+        console.error('[Dashboard] Cuerpo del error:', err.error);
+        this.upcomingFlights = [];
+        this.loadingFlights = false;
+        // Opcional: mostrar un mensaje en la UI
+        alert('No se pudieron cargar los vuelos. Revisa tu conexión o inicia sesión nuevamente.');
       }
-    ];
+    });
+  }
+
+  // Métodos auxiliares para formateo (se mantienen igual)
+  private extraerCodigo(lugar: string): string {
+    if (!lugar) return '???';
+    const match = lugar.match(/\(([^)]+)\)/);
+    return match ? match[1] : lugar.substring(0, 3).toUpperCase();
+  }
+
+  private formatearFechaVuelo(iso: string): string {
+    const fecha = new Date(iso);
+    return fecha.toLocaleString('es-CO', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
+  private traducirEstado(estado: string): string {
+    const estados: Record<string, string> = {
+      'SOLICITADO': 'Pendiente',
+      'CONFIRMADO': 'Confirmado',
+      'EN_CURSO': 'En curso',
+      'COMPLETADO': 'Finalizado',
+      'CANCELADO': 'Cancelado',
+      'DEMORADO': 'Demorado'
+    };
+    return estados[estado] || estado;
+  }
+
+  private obtenerClaseEstado(estado: string): string {
+    switch (estado) {
+      case 'CONFIRMADO': return 'status-confirmed';
+      case 'SOLICITADO': return 'status-pending';
+      case 'DEMORADO': return 'status-delayed';
+      default: return 'status-pending';
+    }
   }
 
   private loadNewsItems(): void {

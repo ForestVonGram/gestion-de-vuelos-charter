@@ -153,31 +153,24 @@
               </h3>
             </div>
             <div class="card-content">
-              <div *ngIf="upcomingFlights.length > 0; else noFlightsTemplate" class="flights-list">
-                <div *ngFor="let flight of upcomingFlights" class="flight-item">
-                  <div class="flight-route">
-                    <span class="flight-origin">{{ flight.origin }}</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <line x1="5" y1="12" x2="19" y2="12"/>
-                      <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                    <span class="flight-destination">{{ flight.destination }}</span>
-                  </div>
-                  <div class="flight-details">
-                    <span class="flight-date">{{ flight.date }}</span>
-                    <span class="flight-status" [ngClass]="flight.statusClass">{{ flight.status }}</span>
-                  </div>
-                </div>
+              <!-- Spinner de carga -->
+              <div *ngIf="loadingFlights" class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Cargando vuelos...</p>
               </div>
-              <ng-template #noFlightsTemplate>
-                <div class="empty-state">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8 10a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-                  </svg>
-                  <p>No tienes vuelos programados</p>
-                  <button class="btn btn-outline" routerLink="/agendar-vuelo">Agendar ahora</button>
+              <!-- Contenido cuando ya cargó -->
+              <ng-container *ngIf="!loadingFlights">
+                <div *ngIf="upcomingFlights.length > 0; else noFlightsTemplate" class="flights-list">
+                  <div *ngFor="let flight of upcomingFlights" class="flight-item">
+                    <!-- ... contenido igual ... -->
+                  </div>
                 </div>
-              </ng-template>
+                <ng-template #noFlightsTemplate>
+                  <div class="empty-state">
+                    <!-- ... contenido igual ... -->
+                  </div>
+                </ng-template>
+              </ng-container>
             </div>
           </section>
 

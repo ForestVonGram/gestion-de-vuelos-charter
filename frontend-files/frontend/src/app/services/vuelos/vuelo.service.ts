@@ -62,4 +62,15 @@ export class VueloService {
   asignarAeronave(vueloId: number, dto: AsignacionAeronaveDTO): Observable<VueloDTO> {
     return this.http.put<VueloDTO>(`${this.apiUrl}/${vueloId}/aeronave`, dto, { headers: this.getHeaders() });
   }
+
+  /**
+   * Obtiene todos los vuelos de un usuario específico.
+   * Endpoint: GET /api/vuelos/usuario/{usuarioId}
+   */
+  getVuelosPorUsuario(usuarioId: number): Observable<VueloDTO[]> {
+    console.log(`[VueloService] Solicitando vuelos para usuario ${usuarioId}`);
+    return this.http.get<VueloDTO[]>(`${this.apiUrl}/usuario/${usuarioId}`, {
+      headers: this.getHeaders()
+    });
+  }
 }

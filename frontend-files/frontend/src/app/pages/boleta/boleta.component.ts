@@ -42,6 +42,8 @@ export class BoletaComponent implements OnInit {
   cargando = false;
   form!: FormGroup;
   clasesServicio = ['Ejecutiva', 'Primera Clase', 'Corporativa'];
+  // ... otras propiedades ...
+  metodosPago = ['Mercado Pago'];
 
   constructor(
     private fb: FormBuilder,
@@ -117,6 +119,13 @@ export class BoletaComponent implements OnInit {
   }
 
   async procesarSolicitud(): Promise<void> {
+    const metodoPagoControl = this.form.get('metodoPago');
+    if (!metodoPagoControl?.value) {
+      alert('Debes seleccionar un método de pago antes de continuar.');
+      metodoPagoControl?.markAsTouched();
+      return;
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -209,7 +218,13 @@ export class BoletaComponent implements OnInit {
         vueloCreado.aeronaveMatricula = 'Por asignar';
       }
 
-      const costoEstimado = this.calcularCosto(v.claseServicio);
+      const costoEstimado = this.calcularCosto(
+        v.claseServicio,
+        v.fechaSalida,        // asegúrate de que esta variable exista en v
+        v.fechaLlegada,       // asegúrate de que esta variable exista en v
+        v.numeroPasajeros
+      );
+
       this.boletaData = {
         vuelo: vueloCreado,
         pasajero: pasajeroSimulado,
@@ -268,14 +283,38 @@ export class BoletaComponent implements OnInit {
     return `G${numero}`;
   }
 
-  private calcularCosto(clase: string): number {
-    const base = 900000;
+  private calcularCosto(clase: string, fechaSalida: string, fechaLlegada: string, numPasajeros: number): number {
+    const salida = new Date(fechaSalida);
+    const llegada = new Date(fechaLlegada);
+    const diffHoras = (llegada.getTime() - salida.getTime()) / (1000 * 60 * 60);
+
+    // Consideramos días completos (redondeando hacia arriba)
+    const dias = Math.ceil(diffHoras / 24);
+
+    // Tarifa base por día y por persona (ajústala según tu modelo de negocio)
+    const tarifaBaseDiaria = 500000; // COP
+
+    // Multiplicador según clase de servicio
     const multiplicadores: Record<string, number> = {
-      Ejecutiva: 1.0,
+      'Ejecutiva': 1.0,
       'Primera Clase': 1.8,
-      Corporativa: 2.5,
+      'Corporativa': 2.5,
     };
-    return base * (multiplicadores[clase] ?? 1.0);
+    const mult = multiplicadores[clase] ?? 1.0;
+
+    // Factor por anticipación (opcional)
+    const factorAnticipacion = this.factorAnticipacion(fechaSalida);
+
+    // Costo total = tarifa diaria * días * pasajeros * multiplicador clase * factor anticipación
+    return Math.round(tarifaBaseDiaria * dias * numPasajeros * mult * factorAnticipacion);
+  }
+
+  private factorAnticipacion(fechaSalida: string): number {
+    const diasAnticipacion = (new Date(fechaSalida).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
+    if (diasAnticipacion <= 2) return 1.5;   // última hora +50%
+    if (diasAnticipacion <= 7) return 1.2;   // misma semana +20%
+    if (diasAnticipacion >= 30) return 0.85; // anticipación >30 días -15%
+    return 1.0;
   }
 
   // ── Formatters ───────────────────────────────

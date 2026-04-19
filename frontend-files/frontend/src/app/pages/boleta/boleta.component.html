@@ -100,7 +100,7 @@
             </svg>
           </div>
           <div>
-            <h2 class="section-title">Datos del pasajero</h2>
+            <h2 class="section-title">Datos del comprador</h2>
             <p class="section-desc">Información personal del viajero principal</p>
           </div>
         </div>
@@ -159,11 +159,6 @@
 
         <div class="form-grid form-grid-2">
           <div class="form-group">
-            <label class="form-label" for="asientoPreferido">Asiento preferido</label>
-            <input id="asientoPreferido" type="text" class="form-input" formControlName="asientoPreferido"
-                   placeholder="Ej: 4A" />
-          </div>
-          <div class="form-group">
             <label class="form-label" for="restriccionesAlimentarias">Restricciones alimentarias</label>
             <input id="restriccionesAlimentarias" type="text" class="form-input" formControlName="restriccionesAlimentarias"
                    placeholder="Ej: Sin gluten, vegetariano" />
@@ -212,11 +207,13 @@
         </div>
 
         <div class="payment-options">
-          <label class="payment-option" *ngFor="let metodo of ['Transferencia bancaria', 'Tarjeta de crédito', 'Tarjeta débito', 'PSE']">
+          <label class="payment-option" *ngFor="let metodo of metodosPago">
             <input type="radio" formControlName="metodoPago" [value]="metodo" class="payment-radio" />
             <span class="payment-option-label">{{ metodo }}</span>
           </label>
         </div>
+        <!-- Mensaje de error igual que en cédula -->
+        <span class="error-msg" *ngIf="campoInvalido('metodoPago')">Debes seleccionar un método de pago</span>
       </div>
 
       <!-- ── Resumen y botón de envío ── -->

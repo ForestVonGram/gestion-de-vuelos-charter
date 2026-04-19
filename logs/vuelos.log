@@ -8,3 +8,30 @@
 2026-04-18 17:43:26 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 24.0
 2026-04-18 17:46:07 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 24.0
 2026-04-18 17:46:07 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 48.0
+2026-04-18 17:59:58 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Armenia (ARM), Destino: Medellín (MDE)
+2026-04-18 17:59:58 INFO  - Vuelo creado - ID: 7, Estado: SOLICITADO, Pasajeros: 7
+2026-04-18 17:59:59 INFO  - Consulta de aeronaves disponibles entre 2026-04-30T13:00 y 2026-05-29T15:30 (capacidad mínima: 7)
+2026-04-18 18:00:00 INFO  - Asignando aeronave 1 al vuelo ID: 7
+2026-04-18 18:00:00 INFO  - Aeronave 123123 asignada al vuelo ID: 7
+2026-04-18 18:04:08 INFO  - Incrementando horas de vuelo para aeronave ID: 1. Horas a agregar: 5.0
+2026-04-18 18:04:08 INFO  - Horas de vuelo incrementadas exitosamente. Aeronave ID: 1, Nuevas horas totales: 54.0
+2026-04-18 18:09:48 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 18:09:49 INFO  - Vuelo creado - ID: 8, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 18:09:49 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
+2026-04-18 18:09:50 INFO  - Asignando aeronave 1 al vuelo ID: 8
+2026-04-18 18:09:51 INFO  - Aeronave 123123 asignada al vuelo ID: 8
+2026-04-18 18:17:01 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 18:17:01 INFO  - Vuelo creado - ID: 9, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 18:17:02 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
+2026-04-18 18:17:52 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 18:17:52 INFO  - Vuelo creado - ID: 10, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 18:17:53 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
+2026-04-18 18:38:57 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 18:38:58 INFO  - Vuelo creado - ID: 11, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 18:38:58 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
+2026-04-18 18:46:06 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 18:46:06 INFO  - Vuelo creado - ID: 12, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 18:46:07 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
+2026-04-18 19:31:56 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-18 19:31:56 INFO  - Vuelo creado - ID: 13, Estado: SOLICITADO, Pasajeros: 1
+2026-04-18 19:31:57 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-19T15:30 (capacidad mínima: 1)
