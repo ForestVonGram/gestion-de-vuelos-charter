@@ -1,0 +1,51 @@
+<div class="payment-result-container">
+  <div class="result-card" *ngIf="!loading">
+    <!-- Success State -->
+    <div *ngIf="status === 'approved'" class="state-icon success">
+      <span class="material-symbols-rounded">check_circle</span>
+    </div>
+    
+    <!-- Pending State -->
+    <div *ngIf="status === 'pending'" class="state-icon pending">
+      <span class="material-symbols-rounded">schedule</span>
+    </div>
+    
+    <!-- Failure State -->
+    <div *ngIf="status === 'failure' || status === 'null' || !status" class="state-icon failure">
+      <span class="material-symbols-rounded">cancel</span>
+    </div>
+
+    <h2 class="result-title">
+      {{ status === 'approved' ? '¡Pago Exitoso!' : 
+         status === 'pending' ? 'Pago Pendiente' : 'Hubo un error con tu pago' }}
+    </h2>
+
+    <p class="result-message">
+      {{ status === 'approved' ? 'Tu reserva ha sido confirmada y recibirás un correo con los detalles.' : 
+         status === 'pending' ? 'Tu pago está en proceso de validación. Te avisaremos cuando sea confirmado.' : 
+         'No se pudo completar la transacción. Por favor, intenta de nuevo o usa otro método de pago.' }}
+    </p>
+
+    <div class="result-details">
+      <div class="detail-item" *ngIf="paymentId">
+        <span class="label">ID de Transacción:</span>
+        <span class="value">{{ paymentId }}</span>
+      </div>
+      <div class="detail-item" *ngIf="externalReference">
+        <span class="label">Referencia:</span>
+        <span class="value">{{ externalReference }}</span>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-primary" [routerModule]="['/cliente/dashboard']">Volver al Dashboard</button>
+      <button class="btn-secondary" *ngIf="status !== 'approved'" [routerModule]="['/cliente/mis-vuelos']">Ver mis vuelos</button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-spinner" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Procesando confirmación de pago...</p>
+  </div>
+</div>

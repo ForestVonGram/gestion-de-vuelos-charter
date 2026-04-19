@@ -49,13 +49,12 @@ public class MercadoPagoService {
     /**
      * Crea una preferencia de pago en MercadoPago.
      */
-    public PreferenciaResponse crearPreferencia(Long vueloId, Double monto, String email, String descripcion) {
+    public PreferenciaResponse crearPreferencia(String externalReference, Double monto, String email, String descripcion) {
         try {
             // 1. Crear el ítem a pagar
             PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                    .id(String.valueOf(vueloId))
-                    .title(descripcion)
-                    .description("Pago de vuelo chárter ID: " + vueloId)
+                    .title(descripcion != null ? descripcion : "Pago de vuelo chárter")
+                    .description(descripcion != null ? descripcion : "Servicio de transporte aéreo")
                     .pictureUrl("https://tu-dominio.com/logo-charter.png") // Opcional
                     .categoryId("travel") // Categoría opcional
                     .quantity(1)
@@ -85,7 +84,7 @@ public class MercadoPagoService {
                     .backUrls(backUrls)
                     .autoReturn("approved") // Retorna automáticamente si el pago es exitoso
                     .notificationUrl(webhookUrl) // URL donde MP notificará el estado (Backend)
-                    .externalReference(String.valueOf(vueloId)) // Referencia interna para conciliar
+                    .externalReference(externalReference) // Referencia interna para conciliar
                     .statementDescriptor("VUELOS CHARTER") // Nombre en el resumen de la tarjeta
                     .build();
 

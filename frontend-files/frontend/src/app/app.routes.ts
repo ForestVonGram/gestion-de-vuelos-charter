@@ -46,6 +46,7 @@ import { CreateRoster } from './pages/administrador/roster/create-roster/create-
 import { DetallesAeronave } from './pages/administrador/detalles-aeronave/detalles-aeronave';
 import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tripulante';
 import { Usuarios } from './pages/administrador/usuarios/usuarios';
+import { ResultadoPagoComponent } from './pages/pago/resultado-pago/resultado-pago.component';
 
 export const routes: Routes = [
   {
@@ -76,6 +77,18 @@ export const routes: Routes = [
         component: VerificacionDosFactoresComponent
       }
     ]
+  },
+  {
+    path: 'pagos/exito',
+    component: ResultadoPagoComponent
+  },
+  {
+    path: 'pagos/pendiente',
+    component: ResultadoPagoComponent
+  },
+  {
+    path: 'pagos/error',
+    component: ResultadoPagoComponent
   },
   {
     path: 'dashboard',

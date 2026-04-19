@@ -55,27 +55,32 @@ public class PagoServiceImpl implements PagoService {
                         "Usuario no encontrado con ID: " + pagoCreateDTO.getUsuarioId()
                 ));
 
-        // Crear preferencia en MercadoPago
-        MercadoPagoService.PreferenciaResponse preferencia =
-                mercadoPagoService.crearPreferencia(
-                        pagoCreateDTO.getVueloId(),
-                        pagoCreateDTO.getMonto(),
-                        pagoCreateDTO.getEmailCliente(),
-                        pagoCreateDTO.getDescripcion()
-                );
-
-        // Crear registro de pago
+        // 1. Crear registro de pago inicial (PENDIENTE)
         Pago pago = Pago.builder()
                 .vuelo(vuelo)
                 .usuario(usuario)
                 .monto(pagoCreateDTO.getMonto())
                 .estado(EstadoPago.PENDIENTE)
-                .numeroPreferencia(preferencia.getNumeroPreferencia())
                 .emailCliente(pagoCreateDTO.getEmailCliente())
-                .observaciones("Pago iniciado - Preferencia: " + preferencia.getNumeroPreferencia())
+                .observaciones("Pago iniciado - Esperando preferencia de MercadoPago")
                 .build();
 
         pago = pagoRepository.save(pago);
+
+        // 2. Crear preferencia en MercadoPago usando el ID del pago como externalReference
+        MercadoPagoService.PreferenciaResponse preferencia =
+                mercadoPagoService.crearPreferencia(
+                        String.valueOf(pago.getId()),
+                        pagoCreateDTO.getMonto(),
+                        pagoCreateDTO.getEmailCliente(),
+                        pagoCreateDTO.getDescripcion()
+                );
+
+        // 3. Actualizar el pago con el número de preferencia
+        pago.setNumeroPreferencia(preferencia.getNumeroPreferencia());
+        pago.setObservaciones("Pago iniciado - Preferencia: " + preferencia.getNumeroPreferencia());
+        pago = pagoRepository.save(pago);
+
         log.info("Pago creado exitosamente. ID: {}, Número Preferencia: {}",
                 pago.getId(), preferencia.getNumeroPreferencia());
 
@@ -178,27 +183,54 @@ public class PagoServiceImpl implements PagoService {
 
     @Override
     @Transactional
-    public void procesarWebhook(String referenciaMercadoPago, String estado) {
-        log.info("Procesando webhook de MercadoPago. Referencia: {}, Estado: {}",
-                referenciaMercadoPago, estado);
+    public void procesarWebhook(String paymentId, String estado) {
+        log.info("Procesando webhook de MercadoPago. Payment ID: {}, Estado Sugerido: {}",
+                paymentId, estado);
 
-        // Buscar pago por referencia de MercadoPago
-        pagoRepository.findByReferenciaMercadoPago(referenciaMercadoPago)
-                .ifPresentOrElse(
-                        pago -> {
-                            if ("approved".equalsIgnoreCase(estado)) {
-                                pago.setEstado(EstadoPago.CONFIRMADO);
-                                pago.setFechaPago(LocalDateTime.now());
-                            } else if ("rejected".equalsIgnoreCase(estado) ||
-                                    "cancelled".equalsIgnoreCase(estado)) {
-                                pago.setEstado(EstadoPago.RECHAZADO);
-                            }
+        try {
+            // 1. Consultar el estado real del pago en MercadoPago
+            var paymentMp = mercadoPagoService.consultarEstadoPago(paymentId);
+            
+            if (paymentMp == null) {
+                log.warn("No se pudo obtener información de MercadoPago para el pago: {}", paymentId);
+                return;
+            }
 
-                            pagoRepository.save(pago);
-                            log.info("Webhook procesado para pago ID: {}", pago.getId());
-                        },
-                        () -> log.warn("Pago no encontrado para referencia: {}", referenciaMercadoPago)
-                );
+            String externalReference = paymentMp.getExternalReference();
+            String actualStatus = paymentMp.getStatus();
+            
+            if (externalReference == null) {
+                log.warn("El pago {} de MercadoPago no tiene external_reference", paymentId);
+                return;
+            }
+
+            // 2. Buscar nuestro registro de pago por ID (externalReference)
+            Long pagoId = Long.parseLong(externalReference);
+            pagoRepository.findById(pagoId).ifPresentOrElse(
+                pago -> {
+                    log.info("Actualizando pago ID: {} basado en webhook. Estado MP: {}", pagoId, actualStatus);
+                    
+                    if ("approved".equalsIgnoreCase(actualStatus)) {
+                        pago.setEstado(EstadoPago.CONFIRMADO);
+                        pago.setReferenciaMercadoPago(paymentId);
+                        pago.setFechaPago(LocalDateTime.now());
+                        pago.setObservaciones("Confirmado vía Webhook. MP ID: " + paymentId);
+                    } else if ("rejected".equalsIgnoreCase(actualStatus) || 
+                               "cancelled".equalsIgnoreCase(actualStatus) || 
+                               "refunded".equalsIgnoreCase(actualStatus)) {
+                        pago.setEstado("refunded".equalsIgnoreCase(actualStatus) ? EstadoPago.REEMBOLSADO : EstadoPago.RECHAZADO);
+                        pago.setObservaciones("Actualizado vía Webhook a: " + actualStatus);
+                    }
+                    
+                    pagoRepository.save(pago);
+                    log.info("Pago ID: {} actualizado exitosamente", pagoId);
+                },
+                () -> log.warn("No se encontró registro de pago para ID: {}", externalReference)
+            );
+
+        } catch (Exception e) {
+            log.error("Error al procesar webhook para paymentId {}: {}", paymentId, e.getMessage());
+        }
     }
 
     @Override

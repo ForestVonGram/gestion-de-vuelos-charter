@@ -165,7 +165,12 @@
                   </div>
                   <div class="flight-details">
                     <span class="flight-date">{{ flight.date }}</span>
-                    <span class="flight-status" [ngClass]="flight.statusClass">{{ flight.status }}</span>
+                    <div class="status-container">
+                      <span class="flight-status" [ngClass]="flight.statusClass">{{ flight.status }}</span>
+                      <button *ngIf="flight.status === 'Pendiente'" class="btn-pay-sm" (click)="payFlight(flight)">
+                        Pagar
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -5,13 +5,17 @@ import { AuthService } from '../../../services/auth/auth.service';
 import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibilidad.component';
 import {ChatbotWidgetComponent} from '../../../shared/chatbot-widget/chatbot-widget.component';
 import {WhatsAppButtonComponent} from '../../../shared/whatsapp-button/whatsapp-button.component';
+import { PagoService, PagoCreateDTO } from '../../../services/pago/pago.service';
+import Swal from 'sweetalert2';
 
 interface Vuelo {
+  id: number;
   origin: string;
   destination: string;
   date: string;
   status: string;
   statusClass: string;
+  amount: number;
 }
 
 interface Noticia {
@@ -63,7 +67,8 @@ export class ClientDashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private pagoService: PagoService
   ) {}
 
   ngOnInit(): void {
@@ -106,20 +111,66 @@ export class ClientDashboardComponent implements OnInit {
     // En producción, esto vendría de tu API
     this.upcomingFlights = [
       {
+        id: 1,
         origin: 'BOG',
         destination: 'MDE',
         date: '15 Feb 2026 - 10:30 AM',
         status: 'Confirmado',
-        statusClass: 'status-confirmed'
+        statusClass: 'status-confirmed',
+        amount: 1500000
       },
       {
+        id: 2,
         origin: 'MDE',
         destination: 'CTG',
         date: '22 Feb 2026 - 14:15 PM',
         status: 'Pendiente',
-        statusClass: 'status-pending'
+        statusClass: 'status-pending',
+        amount: 2300000
       }
     ];
+  }
+
+  payFlight(vuelo: Vuelo): void {
+    const currentUser = this.authService.currentUserValue;
+    if (!currentUser) {
+      Swal.fire('Error', 'Debes iniciar sesión para realizar un pago', 'error');
+      return;
+    }
+
+    Swal.fire({
+      title: 'Procesando pago',
+      text: 'Te redirigiremos a Mercado Pago...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const pagoDTO: PagoCreateDTO = {
+      vueloId: vuelo.id,
+      monto: vuelo.amount,
+      emailCliente: currentUser.email || '',
+      usuarioId: currentUser.id,
+      descripcion: `Pago de vuelo ${vuelo.origin} - ${vuelo.destination}`
+    };
+
+    this.pagoService.iniciarPago(pagoDTO).subscribe({
+      next: (res) => {
+        Swal.close();
+        if (res.urlPago) {
+          // Redirigir a Mercado Pago
+          window.location.href = res.urlPago;
+        } else {
+          Swal.fire('Error', 'No se pudo generar la URL de pago', 'error');
+        }
+      },
+      error: (err) => {
+        Swal.close();
+        console.error('Error iniciando pago:', err);
+        Swal.fire('Error', 'Hubo un problema al iniciar el pago', 'error');
+      }
+    });
   }
 
   private loadNewsItems(): void {

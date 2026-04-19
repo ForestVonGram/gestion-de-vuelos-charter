@@ -797,6 +797,29 @@
   color: white;
 }
 
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-pay-sm {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-pay-sm:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
 /* Empty State */
 .empty-state {
   text-align: center;
