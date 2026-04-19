@@ -1,0 +1,125 @@
+<div class="admin-container">
+
+  <!-- SIDEBAR -->
+  <app-admin-sidebar></app-admin-sidebar>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="main-content">
+
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="welcome-box">
+        <h1>Editar Vuelo</h1>
+        <p>Modifica la información del vuelo seleccionado</p>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar-circle">
+          {{ currentUser?.nombreCompleto?.charAt(0) || 'A' }}
+        </div>
+      </div>
+    </header>
+
+    <!-- FORMULARIO -->
+    <section class="content-panel">
+
+      <form [formGroup]="formVuelo" (ngSubmit)="guardarCambios()" class="form-grid">
+
+        <!-- ORIGEN -->
+        <div class="form-group">
+          <label>Origen</label>
+          <input type="text" formControlName="origen">
+        </div>
+
+        <!-- DESTINO -->
+        <div class="form-group">
+          <label>Destino</label>
+          <input type="text" formControlName="destino">
+        </div>
+
+        <!-- FECHA SALIDA -->
+        <div class="form-group">
+          <label>Fecha salida</label>
+          <input type="datetime-local" formControlName="fechaSalidaProgramada">
+        </div>
+
+        <!-- FECHA LLEGADA -->
+        <div class="form-group">
+          <label>Fecha llegada</label>
+          <input type="datetime-local" formControlName="fechaLlegadaProgramada">
+        </div>
+
+        <!-- PASAJEROS -->
+        <div class="form-group">
+          <label>Pasajeros</label>
+          <input type="number" formControlName="numeroPasajeros">
+        </div>
+
+        <!-- AERONAVE -->
+        <div class="form-group">
+          <label>Aeronave</label>
+          <select formControlName="aeronaveId">
+            <option [ngValue]="null">Seleccione</option>
+
+            @for (a of aeronaves; track a.id) {
+              <option [value]="a.id">
+                {{ a.matricula }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- TRIPULACIÓN -->
+        <div class="form-group full-width">
+          <label>Tripulación</label>
+          <div class="multi-select">
+
+            @for (t of tripulacion; track t.id) {
+              <label class="checkbox-item">
+                <input type="checkbox"
+                       [value]="t.id"
+                       (change)="onTripulacionChange($event, t.id)">
+                {{ t.nombre }}
+              </label>
+            }
+
+          </div>
+        </div>
+
+        <!-- PROPÓSITO -->
+        <div class="form-group full-width">
+          <label>Propósito</label>
+          <textarea formControlName="proposito"></textarea>
+        </div>
+
+        <!-- OBSERVACIONES -->
+        <div class="form-group full-width">
+          <label>Observaciones</label>
+          <textarea formControlName="observaciones"></textarea>
+        </div>
+
+        <!-- COSTO -->
+        <div class="form-group">
+          <label>Costo estimado</label>
+          <input type="number" formControlName="costoEstimado">
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">
+            Guardar Cambios
+          </button>
+
+          <button type="button" class="btn-secondary" (click)="volver()">
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </main>
+</div>
+
+<app-accesibilidad></app-accesibilidad>

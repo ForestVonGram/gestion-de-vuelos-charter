@@ -4,46 +4,12 @@ import { RouterModule, Router } from '@angular/router';
 import { AuthService, User } from '../../../services/auth/auth.service';
 import { AdminSidebarComponent } from '../../../shared/admin-sidebar/admin-sidebar.component';
 import {AccesibilidadComponent} from '../../../shared/accesibilidad/accesibilidad.component';
+import { VueloDTO } from '../../../models/Vuelos/vuelo-dto';
+import { EstadoVuelo } from '../../../models/Vuelos/estado-vuleo';
+import { VuelosService } from '../../../services/vuelos/vuelos.service';
+import { ChangeDetectorRef } from '@angular/core';
+import Swal from 'sweetalert2';
 
-// --- ENUMS Y DTOs (Basados en tu backend Java) ---
-
-/**
- * Enumeración de estados posibles para un vuelo.
- * Coincide con el enum EstadoVuelo del backend.
- */
-export enum EstadoVuelo {
-  PENDIENTE = 'PENDIENTE', // Pendiente de aprobación
-  APROBADO = 'APROBADO', // Aprobado pero no programado
-  PROGRAMADO = 'PROGRAMADO', // Programado con fecha
-  EN_VUELO = 'EN_VUELO', // Actualmente en curso
-  COMPLETADO = 'COMPLETADO', // Finalizado exitosamente
-  CANCELADO = 'CANCELADO' // Cancelado
-}
-
-/**
- * DTO que representa un vuelo en el sistema.
- * Coincide con el VueloDTO del backend.
- */
-export interface VueloDTO {
-  id: number; // Identificador único
-  usuarioId: number; // ID del usuario solicitante
-  usuarioNombre: string; // Nombre del usuario solicitante
-  aeronaveId?: number; // ID de la aeronave asignada (opcional)
-  aeronaveMatricula?: string; // Matrícula de la aeronave asignada (opcional)
-  tripulacionIds?: number[]; // IDs de la tripulación asignada (opcional)
-  origen: string; // Ciudad de origen
-  destino: string; // Ciudad de destino
-  fechaSalidaProgramada: string | Date; // Fecha y hora programada de salida
-  fechaLlegadaProgramada: string | Date; // Fecha y hora programada de llegada
-  fechaSalidaReal?: string | Date; // Fecha y hora real de salida (opcional)
-  fechaLlegadaReal?: string | Date; // Fecha y hora real de llegada (opcional)
-  numeroPasajeros: number; // Número de pasajeros
-  estado: EstadoVuelo; // Estado actual del vuelo
-  proposito?: string; // Propósito del vuelo (opcional)
-  observaciones?: string; // Observaciones adicionales (opcional)
-  fechaSolicitud?: string | Date; // Fecha de solicitud (opcional)
-  costoEstimado?: number; // Costo estimado del vuelo (opcional)
-}
 
 /**
  * Componente que muestra y gestiona los vuelos para administradores.
@@ -69,7 +35,10 @@ export class VuelosAdminComponent implements OnInit {
    * @param authService servicio de autenticación
    * @param router servicio de navegación
    */
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router,
+    private vuelosService: VuelosService, private cdr: ChangeDetectorRef) {
+
+    }
 
   /**
    * Inicialización del componente.
@@ -77,7 +46,7 @@ export class VuelosAdminComponent implements OnInit {
    */
   ngOnInit(): void {
     this.currentUser = this.authService.currentUserValue;
-    this.cargarDatosSimulados();
+    this.obtnerVuelos();
   }
 
   /**
@@ -88,64 +57,87 @@ export class VuelosAdminComponent implements OnInit {
     this.router.navigate(['/auth/login']);
   }
 
-  /**
-   * Simula la carga de datos de vuelos desde el backend.
-   * TODO: Reemplazar con llamada real al servicio de vuelos.
-   */
-  cargarDatosSimulados(): void {
-    this.vuelos = [
-      {
-        id: 1045, usuarioId: 1, usuarioNombre: 'Carlos Ruiz', aeronaveMatricula: 'HK-4523',
-        origen: 'BOG (Bogotá)', destino: 'MDE (Medellín)',
-        fechaSalidaProgramada: new Date(new Date().getTime() + 86400000), // Mañana
-        fechaLlegadaProgramada: new Date(new Date().getTime() + 90000000),
-        numeroPasajeros: 4, estado: EstadoVuelo.PROGRAMADO, costoEstimado: 2500.00
+getEstadoVueloClass(estado: EstadoVuelo): string {
+  switch (estado) {
+    case EstadoVuelo.SOLICITADO: return 'status-pending';
+    case EstadoVuelo.CONFIRMADO: return 'status-approved';
+    case EstadoVuelo.COMPLETADO: return 'status-completed';
+    case EstadoVuelo.CANCELADO: return 'status-cancelled';
+    case EstadoVuelo.EN_CURSO: return 'status-error';
+    default: return '';
+  }
+}
+
+  obtnerVuelos(): void {
+    this.vuelosService.obtenerVuelosSolicitados().subscribe({
+      next: (data) => {
+        this.vuelos = data;
+        this.cdr.detectChanges(); // Actualizar la vista con los datos obtenidos
       },
-      {
-        id: 1046, usuarioId: 2, usuarioNombre: 'Ana Gómez', aeronaveMatricula: 'HK-8910',
-        origen: 'CTG (Cartagena)', destino: 'BOG (Bogotá)',
-        fechaSalidaProgramada: new Date(),
-        fechaLlegadaProgramada: new Date(new Date().getTime() + 3600000),
-        numeroPasajeros: 8, estado: EstadoVuelo.EN_VUELO, costoEstimado: 4200.00
-      },
-      {
-        id: 1047, usuarioId: 3, usuarioNombre: 'Luis Mendoza',
-        origen: 'CLO (Cali)', destino: 'BAQ (Barranquilla)',
-        fechaSalidaProgramada: new Date(new Date().getTime() + 172800000), // Pasado mañana
-        fechaLlegadaProgramada: new Date(new Date().getTime() + 180000000),
-        numeroPasajeros: 2, estado: EstadoVuelo.PENDIENTE
-      },
-      {
-        id: 1048, usuarioId: 1, usuarioNombre: 'Carlos Ruiz', aeronaveMatricula: 'HK-3321',
-        origen: 'MDE (Medellín)', destino: 'PEI (Pereira)',
-        fechaSalidaProgramada: new Date(new Date().getTime() - 86400000), // Ayer
-        fechaLlegadaProgramada: new Date(new Date().getTime() - 82800000),
-        numeroPasajeros: 5, estado: EstadoVuelo.COMPLETADO, costoEstimado: 1200.00
-      },
-      {
-        id: 1049, usuarioId: 4, usuarioNombre: 'Sofía Castro',
-        origen: 'BOG (Bogotá)', destino: 'MIA (Miami)',
-        fechaSalidaProgramada: new Date(new Date().getTime() + 432000000),
-        fechaLlegadaProgramada: new Date(new Date().getTime() + 446400000),
-        numeroPasajeros: 10, estado: EstadoVuelo.CANCELADO
+      error: (error) => {
+        console.error('Error al obtener vuelos:', error);
+        Swal.fire('Error', 'No se pudieron cargar los vuelos. Intente nuevamente más tarde.', 'error');
       }
-    ];
+    });
   }
 
-  /**
-   * Obtiene la clase CSS correspondiente al estado del vuelo.
-   * @param estado estado del vuelo
-   * @returns clase CSS para aplicar estilos
-   */
-  getEstadoClase(estado: EstadoVuelo): string {
-    switch (estado) {
-      case EstadoVuelo.EN_VUELO: return 'status-active';
-      case EstadoVuelo.COMPLETADO: return 'status-success';
-      case EstadoVuelo.PENDIENTE: return 'status-pending';
-      case EstadoVuelo.APROBADO: return 'status-approved';
-      case EstadoVuelo.PROGRAMADO: return 'status-scheduled';
-      case EstadoVuelo.CANCELADO: return 'status-error';
-      default: return '';
+  cancelarVuelo(id: number) {
+    Swal.fire({
+      title: 'Motivo del rechazo',
+      input: 'text',
+      inputLabel: 'Escribe el motivo',
+      inputPlaceholder: 'Ej: Documentación incompleta',
+      showCancelButton: true,
+      confirmButtonText: 'Rechazar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Debes escribir un motivo';
+        }
+        return null;
+      }
+    }).then(result => {
+
+      if (result.isConfirmed) {
+        const motivo = result.value;
+
+        this.vuelosService.RechazarSolicitudVuelo(id, { motivo }).subscribe({
+          next: () => {
+            Swal.fire('Rechazado', 'El vuelo fue rechazado correctamente', 'success');
+            this.obtnerVuelos(); // Refresca la lista de vuelos después de rechazar
+            this.cdr.detectChanges(); // Asegura que la vista se actualice con los nuevos datos
+          },
+          error: () => {
+            Swal.fire('Error', 'No se pudo rechazar el vuelo', 'error');
+          }
+        });
     }
+      });
   }
+  aceptarSolicitud(id: number): void {
+    Swal.fire({
+      title: '¿Aprobar vuelo?',
+      text: 'Esta acción aprobará el vuelo seleccionado.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, aprobar',
+      cancelButtonText: 'No, revisar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.vuelosService.apobrarSolicitudVuelo(id).subscribe({
+          next: () => {
+            Swal.fire('¡Aprobado!', 'El vuelo ha sido aprobado.', 'success');
+            this.obtnerVuelos(); // Refresca la lista de vuelos después de aprobar
+            this.cdr.detectChanges(); // Asegura que la vista se actualice con los nuevos datos
+          },
+          error: (error) => {
+            console.error('Error al aprobar vuelo:', error);
+            Swal.fire('Error', 'No se pudo aprobar el vuelo. Intente nuevamente.', 'error');
+          }
+        });
+      }
+    });
+  }
+  
+
 }

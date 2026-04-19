@@ -53,5 +53,14 @@ export class Tripulante {
     return this.http.get(`${this.apiUrl}/auxiliares`, { headers, params });
   }
 
+  obtenerTripulantesNoPage(): Observable<any> {
+    const token= this.tokenService.getToken();
+    const headers = new HttpHeaders({
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+    });
+    return this.http.get(`${this.apiUrl}`, { headers });
+  }
+
   
 }

@@ -87,4 +87,5 @@ export class ClientDashboardComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
   }
+  
 }
