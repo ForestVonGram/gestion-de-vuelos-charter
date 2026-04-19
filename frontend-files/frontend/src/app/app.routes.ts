@@ -48,6 +48,7 @@ import { NuevoTripulante } from './pages/administrador/nuevo-tripulante/nuevo-tr
 import { Usuarios } from './pages/administrador/usuarios/usuarios';
 import { EditNomina } from './pages/administrador/roster/edit-nomina/edit-nomina';
 import {AgendarVueloComponent} from './pages/agendar-vuelo/agendar-vuelo.component';
+import { DetallesVuelo } from './pages/administrador/detalles-vuelo/detalles-vuelo';
 
 
 export const routes: Routes = [
@@ -169,6 +170,10 @@ export const routes: Routes = [
       {
         path: 'vuelos-admin',
         component: VuelosAdminComponent
+      },
+      {
+        path: 'vuelo/:id',
+        component: DetallesVuelo
       },
       {
         path: 'estadisticas',
