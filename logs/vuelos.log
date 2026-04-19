@@ -50,3 +50,10 @@
 2026-04-18 21:28:02 INFO  - Solicitud de creación de vuelo - Usuario ID: 4, Origen: Armenia (ARM), Destino: Miami (MIA)
 2026-04-18 21:28:02 INFO  - Vuelo creado - ID: 17, Estado: SOLICITADO, Pasajeros: 1
 2026-04-18 21:28:03 INFO  - Consulta de aeronaves disponibles entre 2026-04-19T13:00 y 2026-04-21T15:30 (capacidad mínima: 1)
+2026-04-19 13:10:38 INFO  - Solicitud de creación de vuelo - Usuario ID: 11, Origen: Bogotá (BOG), Destino: Medellín (MDE)
+2026-04-19 13:10:39 INFO  - Vuelo creado - ID: 18, Estado: SOLICITADO, Pasajeros: 1
+2026-04-19 13:10:39 INFO  - Consulta de aeronaves disponibles entre 2026-04-20T13:00 y 2026-04-20T15:30 (capacidad mínima: 1)
+2026-04-19 13:10:41 INFO  - Asignando aeronave 1 al vuelo ID: 18
+2026-04-19 13:10:41 INFO  - Aeronave 123123 asignada al vuelo ID: 18
+2026-04-19 13:11:56 INFO  - Cancelando vuelo ID: 18
+2026-04-19 13:11:56 INFO  - Vuelo ID: 18 cancelado

@@ -8,6 +8,7 @@ import { AccesibilidadComponent } from '../../../shared/accesibilidad/accesibili
 import { ChatbotWidgetComponent } from '../../../shared/chatbot-widget/chatbot-widget.component';
 import { WhatsAppButtonComponent } from '../../../shared/whatsapp-button/whatsapp-button.component';
 import { finalize } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 interface Vuelo {
   id: number;               // <- NUEVO
@@ -274,21 +275,47 @@ export class ClientDashboardComponent implements OnInit {
     this.router.navigate(['/vuelo', vueloId]);
   }
 
-  cancelarVuelo(vueloId: number, event: Event): void {
-    event.stopPropagation(); // Evitar que se active el clic del contenedor
-    if (confirm('¿Estás seguro de que deseas cancelar este vuelo? Esta acción no se puede deshacer.')) {
+cancelarVuelo(vueloId: number, event: Event): void {
+  event.stopPropagation();
+
+  Swal.fire({
+    title: '¿Cancelar vuelo?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, cancelar',
+    cancelButtonText: 'No'
+  }).then((result) => {
+    if (result.isConfirmed) {
+
       this.vueloService.cancelarVuelo(vueloId).subscribe({
         next: () => {
-          alert('Vuelo cancelado exitosamente.');
-          this.loadAllVuelosData(); // Recargar los datos
+          Swal.fire({
+            title: 'Cancelado',
+            text: 'El vuelo fue cancelado exitosamente.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+
+          this.loadAllVuelosData();
         },
         error: (err) => {
           console.error('Error al cancelar vuelo:', err);
-          alert('No se pudo cancelar el vuelo. Intenta nuevamente.');
+
+          Swal.fire({
+            title: 'Error',
+            text: 'No se pudo cancelar el vuelo. Intenta nuevamente.',
+            icon: 'error'
+          });
         }
       });
+
     }
-  }
+  });
+}
 
   toggleDarkMode(): void {
     this.isDarkMode = !this.isDarkMode;

@@ -8,6 +8,8 @@ import { VueloDTO } from '../../../models/Vuelos/vuelo-dto';
 import { EstadoVuelo } from '../../../models/Vuelos/estado-vuleo';
 import { VuelosService } from '../../../services/vuelos/vuelos.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { ChatbotWidgetComponent } from '../../../shared/chatbot-widget/chatbot-widget.component';
+import { WhatsAppButtonComponent } from '../../../shared/whatsapp-button/whatsapp-button.component';
 import Swal from 'sweetalert2';
 
 
@@ -18,7 +20,9 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-vuelos-admin',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent],
+  imports: [CommonModule, RouterModule, AdminSidebarComponent, AccesibilidadComponent,
+    ChatbotWidgetComponent, WhatsAppButtonComponent
+  ],
   templateUrl: './vuelos-admin.component.html',
   styleUrls: ['./vuelos-admin.component.css']
 })

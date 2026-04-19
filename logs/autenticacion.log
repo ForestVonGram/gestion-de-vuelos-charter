@@ -68,3 +68,20 @@
 2026-04-18 21:28:56 INFO  - Login exitoso para: juan.pablo.lopez.gomez2005@gmail.com
 2026-04-18 21:28:56 INFO  - dispositivo: Escritorio
 2026-04-18 21:28:56 INFO  - direccionIp: 0:0:0:0:0:0:0:1
+2026-04-19 13:04:14 WARN  - ID Token de Google inválido
+2026-04-19 13:04:14 WARN  - Token de Google inválido o usuario inactivo: Token de Google inválido
+2026-04-19 13:04:33 WARN  - ID Token de Google inválido
+2026-04-19 13:04:33 WARN  - Token de Google inválido o usuario inactivo: Token de Google inválido
+2026-04-19 13:05:03 WARN  - ID Token de Google inválido
+2026-04-19 13:05:03 WARN  - Token de Google inválido o usuario inactivo: Token de Google inválido
+2026-04-19 13:05:26 WARN  - ID Token de Google inválido
+2026-04-19 13:05:26 WARN  - Token de Google inválido o usuario inactivo: Token de Google inválido
+2026-04-19 13:07:21 INFO  - Login exitoso para usuario: elkinlol13@gmail.com
+2026-04-19 13:07:21 INFO  - Login exitoso para: elkinlol13@gmail.com
+2026-04-19 13:07:21 INFO  - dispositivo: Escritorio
+2026-04-19 13:07:21 INFO  - direccionIp: 0:0:0:0:0:0:0:1
+2026-04-19 13:09:35 INFO  - Login exitoso para: pablo.lopez.g2005@gmail.com
+2026-04-19 13:09:35 INFO  - dispositivo: Escritorio
+2026-04-19 13:09:35 INFO  - direccionIp: 0:0:0:0:0:0:0:1
+2026-04-19 13:09:59 INFO  - 2FA verificado exitosamente para usuario: pablo.lopez.g2005@gmail.com
+2026-04-19 13:09:59 INFO  - 2FA verificado exitosamente
