@@ -185,6 +185,24 @@
                       <span class="flight-date">{{ flight.date }}</span>
                       <span class="flight-status" [ngClass]="flight.statusClass">{{ flight.status }}</span>
                     </div>
+                    <!-- Botones de acción -->
+                    <div class="flight-actions">
+                      <button class="btn-flight btn-details" (click)="verDetalles(flight.id)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="1.5"/>
+                          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+                        </svg>
+                        Ver detalles
+                      </button>
+                      <button class="btn-flight btn-cancel" (click)="cancelarVuelo(flight.id, $event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <circle cx="12" cy="12" r="10"/>
+                          <line x1="18" y1="6" x2="6" y2="18"/>
+                          <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Cancelar
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <ng-template #noFlightsTemplate>

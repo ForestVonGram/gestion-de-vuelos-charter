@@ -171,6 +171,48 @@
   height: 24px;
 }
 
+/* Botones de acción dentro de cada vuelo */
+.flight-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-flight {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-family: 'Libre Franklin', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-details {
+  background-color: var(--color-mid);
+  color: white;
+}
+.btn-details:hover {
+  background-color: var(--color-dark);
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background-color: transparent;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+.btn-cancel:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
 .sun-icon,
 .moon-icon {
   transition: transform var(--transition-base);

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService} from '../../services/auth/auth.service';
@@ -42,19 +42,33 @@ export class BoletaComponent implements OnInit {
   cargando = false;
   form!: FormGroup;
   clasesServicio = ['Ejecutiva', 'Primera Clase', 'Corporativa'];
-  // ... otras propiedades ...
-  metodosPago = ['Mercado Pago'];
+  metodosPago = ['Mercado Pago', 'Transferencia bancaria', 'Tarjeta de crédito'];
+
+  // Modo consulta (ver vuelo existente)
+  modoConsulta: boolean = false;
+  vueloId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private vueloService: VueloService,
     private disponibilidadService: DisponibilidadService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.inicializarFormulario();
+    // Detectar si estamos en modo consulta (ruta /vuelo/:id)
+    this.route.params.subscribe(params => {
+      if (params['id']) {
+        this.modoConsulta = true;
+        this.vueloId = +params['id'];
+        this.cargarVueloExistente();
+      } else {
+        this.inicializarFormulario();
+      }
+    });
   }
 
   private inicializarFormulario(): void {
@@ -118,6 +132,42 @@ export class BoletaComponent implements OnInit {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
+  private cargarVueloExistente(): void {
+    if (!this.vueloId) return;
+    this.cargando = true;
+    this.vueloService.getVueloById(this.vueloId).subscribe({
+      next: (vuelo) => {
+        // Construir boletaData con los datos disponibles
+        this.boletaData = {
+          vuelo: vuelo,
+          pasajero: {
+            nombreCompleto: vuelo.usuarioNombre || 'Pasajero',
+            tipoDocumento: 'CC',
+            documentoIdentidad: 'N/A'
+          },
+          codigoReserva: this.generarCodigoReserva(),
+          numeroAsiento: this.asignarAsientoAuto(),
+          puertaEmbarque: this.asignarPuerta(),
+          claseServicio: 'Ejecutiva',
+          codigoQR: this.generarCodigoQR(vuelo.id),
+          fechaEmision: vuelo.fechaSolicitud,
+          montoTotal: vuelo.costoEstimado || 0,
+          metodoPago: 'No especificado',
+          transaccionId: this.generarTransaccionId()
+        };
+        this.vistaActual = 'recibo';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error cargando vuelo:', err);
+        alert('No se pudo cargar el vuelo solicitado.');
+        this.cargando = false;
+        this.router.navigate(['/dashboard']);
+      }
+    });
+  }
+
   async procesarSolicitud(): Promise<void> {
     const metodoPagoControl = this.form.get('metodoPago');
     if (!metodoPagoControl?.value) {
@@ -140,7 +190,6 @@ export class BoletaComponent implements OnInit {
         throw new Error('Usuario no autenticado');
       }
 
-      // Función helper: si el valor está vacío, devuelve "N/A"
       const nvl = (val: any) => (val === null || val === undefined || val === '') ? 'N/A' : val;
 
       const v = {
@@ -220,8 +269,8 @@ export class BoletaComponent implements OnInit {
 
       const costoEstimado = this.calcularCosto(
         v.claseServicio,
-        v.fechaSalida,        // asegúrate de que esta variable exista en v
-        v.fechaLlegada,       // asegúrate de que esta variable exista en v
+        v.fechaSalida,
+        v.fechaLlegada,
         v.numeroPasajeros
       );
 
@@ -258,7 +307,7 @@ export class BoletaComponent implements OnInit {
     }
   }
 
-  // ── Helpers de generación (se mantienen igual) ────────────────────
+  // ── Helpers de generación ────────────────────
   private generarCodigoReserva(): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
@@ -287,33 +336,23 @@ export class BoletaComponent implements OnInit {
     const salida = new Date(fechaSalida);
     const llegada = new Date(fechaLlegada);
     const diffHoras = (llegada.getTime() - salida.getTime()) / (1000 * 60 * 60);
-
-    // Consideramos días completos (redondeando hacia arriba)
     const dias = Math.ceil(diffHoras / 24);
-
-    // Tarifa base por día y por persona (ajústala según tu modelo de negocio)
-    const tarifaBaseDiaria = 500000; // COP
-
-    // Multiplicador según clase de servicio
+    const tarifaBaseDiaria = 500000;
     const multiplicadores: Record<string, number> = {
       'Ejecutiva': 1.0,
       'Primera Clase': 1.8,
       'Corporativa': 2.5,
     };
     const mult = multiplicadores[clase] ?? 1.0;
-
-    // Factor por anticipación (opcional)
     const factorAnticipacion = this.factorAnticipacion(fechaSalida);
-
-    // Costo total = tarifa diaria * días * pasajeros * multiplicador clase * factor anticipación
     return Math.round(tarifaBaseDiaria * dias * numPasajeros * mult * factorAnticipacion);
   }
 
   private factorAnticipacion(fechaSalida: string): number {
     const diasAnticipacion = (new Date(fechaSalida).getTime() - Date.now()) / (1000 * 60 * 60 * 24);
-    if (diasAnticipacion <= 2) return 1.5;   // última hora +50%
-    if (diasAnticipacion <= 7) return 1.2;   // misma semana +20%
-    if (diasAnticipacion >= 30) return 0.85; // anticipación >30 días -15%
+    if (diasAnticipacion <= 2) return 1.5;
+    if (diasAnticipacion <= 7) return 1.2;
+    if (diasAnticipacion >= 30) return 0.85;
     return 1.0;
   }
 
@@ -351,7 +390,7 @@ export class BoletaComponent implements OnInit {
   }
 
   campoInvalido(campo: string): boolean {
-    const c = this.form.get(campo);
+    const c = this.form?.get(campo);
     return !!(c && c.invalid && c.touched);
   }
 
