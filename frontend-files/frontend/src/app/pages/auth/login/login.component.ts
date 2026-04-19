@@ -35,18 +35,35 @@ export class LoginComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private recaptchaV3Service: ReCaptchaV3Service,
-    private cdr: ChangeDetectorRef, // Inyección para control manual de renderizado
+    private cdr: ChangeDetectorRef,
     private googleAuthService: GoogleAuthService,
-
   ) {
     // Redirección automática si el usuario ya tiene una sesión activa
     if (this.authService.isAuthenticated()) {
       const currentUser = this.authService.currentUserValue;
-      if (currentUser?.rol === RolUsuario.ADMINISTRADOR) {
-        this.router.navigate(['/admin/dashboard']);
-      } else {
-        this.router.navigate(['/dashboard']);
+      if (currentUser?.rol) {
+        this.redirectByRole(currentUser.rol); 
       }
+    }
+  }
+  private redirectByRole(rol: RolUsuario): void {
+    switch (rol) {
+      case RolUsuario.ADMINISTRADOR:
+        this.router.navigate(['/admin/dashboard']);
+        break;
+      case RolUsuario.TRIPULACION:
+        this.router.navigate(['/tripulante']);
+        break;
+      case RolUsuario.OPERADOR_LOGISTICA:
+        this.router.navigate(['/operador/dashboard']);
+        break;
+      case RolUsuario.AYUDANTE_MANTENIMIENTO:
+        this.router.navigate(['/operador/mantenimiento']);
+        break;
+      case RolUsuario.USUARIO:
+      default:
+        this.router.navigate(['/dashboard']);
+        break;
     }
   }
 
@@ -115,11 +132,7 @@ export class LoginComponent implements OnInit, OnDestroy {
                     queryParams: { sessionToken: response.sessionToken }
                   });
                 } else {
-                  if (response.rol === RolUsuario.ADMINISTRADOR) {
-                    this.router.navigate(['/admin/dashboard']);
-                  } else {
-                    this.router.navigate(['/dashboard']);
-                  }
+                    this.redirectByRole(response.rol);
                 }
               },
               error: (error) => {

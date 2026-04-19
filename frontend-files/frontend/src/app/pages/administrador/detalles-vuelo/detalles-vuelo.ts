@@ -98,7 +98,9 @@ export class DetallesVuelo implements OnInit {
   cargarTripulacion(): void {
     this.tripulantes.obtenerTripulantesNoPage().subscribe({
       next: (data) => {
-        this.tripulacion = data.content; 
+        console.log('data recibida', data)
+        this.tripulacion = data 
+        console.log('Tripulacion asignada', this.tripulacionSeleccionada)
         this.cdr.detectChanges();
       },
       error: (e) => console.error('Error tripulación:', e)
@@ -144,9 +146,6 @@ export class DetallesVuelo implements OnInit {
       aeronaveId: formValue.aeronaveId ? Number(formValue.aeronaveId) : null,
       tripulacionIds: formValue.tripulacionIds || []
     };
-
-    console.log('Payload FINAL:', payload);
-
     this.vuelosService.actualizarVuelo(this.vuelo.id, payload).subscribe({
       next: () => {
         Swal.fire('Éxito', 'Vuelo actualizado correctamente', 'success');

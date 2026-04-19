@@ -108,3 +108,63 @@ select option {
   background-color: #1e1e3f; 
   color: white;              
 }
+
+/* MULTI-SELECT TRIPULACIÓN CON GRID */
+.multi-select {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 15px;
+  max-height: 300px;
+  overflow-y: auto;
+  
+  /* GRID DE 3 COLUMNAS */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: 0.2s;
+  color: white !important;
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.checkbox-item:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: var(--color-mid);
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 10px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-mid);
+  flex-shrink: 0;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* RESPONSIVE: 2 columnas en pantallas medianas */
+@media (max-width: 900px) {
+  .multi-select {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* RESPONSIVE: 1 columna en móviles */
+@media (max-width: 600px) {
+  .multi-select {
+    grid-template-columns: 1fr;
+  }
+}

@@ -78,8 +78,9 @@
               <label class="checkbox-item">
                 <input type="checkbox"
                        [value]="t.id"
+                       [checked]="formVuelo.get('tripulacionIds')?.value?.includes(t.id)"
                        (change)="onTripulacionChange($event, t.id)">
-                {{ t.nombre }}
+                {{ t.usuarioNombre }}
               </label>
             }
 
