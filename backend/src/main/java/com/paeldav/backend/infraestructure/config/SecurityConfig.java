@@ -100,6 +100,7 @@ public class SecurityConfig {
                 "https://api.astranimbus.com",
                 "http://localhost:4200",
                 "http://192.168.56.1:4200",
+                "http://astranimbus-web.s3-website.us-east-2.amazonaws.com",
                 "https://gestion-de-vuelos-charter.onrender.com"
                 ));
 

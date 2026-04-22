@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.astranimbus.com/api',
+  apiUrl: 'http://18.223.124.46:8081/api',
   recaptcha: {
     siteKey: '6LfIkmwsAAAAABHM4iYcWsi8Jdgz3c34ohTB0k7Q',
   },
