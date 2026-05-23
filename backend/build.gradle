@@ -104,3 +104,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+allprojects {
+    buildDir = "C:/tmp/gradle-build/${rootProject.name}"
+}

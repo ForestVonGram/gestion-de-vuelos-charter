@@ -239,6 +239,13 @@ public class AuthServiceImpl implements AuthService {
             // Crear sesión activa
             sesionService.crearSesion(usuario, token, dispositivo, direccionIp, userAgent);
 
+            // Enviar correo de bienvenida/notificación de registro (similar al login)
+            try {
+                emailService.sendEmailLogin(usuario.getEmail(), usuario.getNombre() + " " + usuario.getApellido(), direccionIp, dispositivo);
+            } catch (Exception e) {
+                log.error("Error al enviar email de registro: {}", e.getMessage());
+            }
+
             log.info("Usuario registrado exitosamente: {}", usuario.getEmail());
 
             return buildAuthResponse(usuario, token);

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://18.223.124.46:8081/api',
+  apiUrl: 'http://52.14.29.205:8081/api',
   recaptcha: {
     siteKey: '6LfIkmwsAAAAABHM4iYcWsi8Jdgz3c34ohTB0k7Q',
   },

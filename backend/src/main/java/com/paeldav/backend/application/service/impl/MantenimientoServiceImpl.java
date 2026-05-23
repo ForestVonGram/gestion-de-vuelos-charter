@@ -7,6 +7,7 @@ import com.paeldav.backend.application.service.base.MantenimientoService;
 import com.paeldav.backend.domain.entity.Aeronave;
 import com.paeldav.backend.domain.entity.Mantenimiento;
 import com.paeldav.backend.domain.entity.Usuario;
+import com.paeldav.backend.domain.enums.EstadoAeronave;
 import com.paeldav.backend.domain.enums.TipoMantenimiento;
 import com.paeldav.backend.exception.AeronaveNoEncontradaException;
 import com.paeldav.backend.exception.MantenimientoNoEncontradoException;
@@ -81,6 +82,11 @@ public class MantenimientoServiceImpl implements MantenimientoService {
 
         // Persistir el registro y devolver el DTO resultante
         Mantenimiento mantenimientoGuardado = mantenimientoRepository.save(mantenimiento);
+        
+        // Cambiar estado de la aeronave a EN_MANTENIMIENTO
+        aeronave.setEstado(EstadoAeronave.EN_MANTENIMIENTO);
+        aeronaveRepository.save(aeronave);
+        
         log.info("Mantenimiento registrado exitosamente con ID: {} para aeronave: {}",
                 mantenimientoGuardado.getId(), aeronave.getMatricula());
 
@@ -202,6 +208,14 @@ public class MantenimientoServiceImpl implements MantenimientoService {
 
         // Guardar la actualización
         Mantenimiento mantenimientoActualizado = mantenimientoRepository.save(mantenimiento);
+        
+        // Cambiar estado de la aeronave a DISPONIBLE al finalizar
+        Aeronave aeronave = mantenimiento.getAeronave();
+        if (aeronave != null) {
+            aeronave.setEstado(EstadoAeronave.DISPONIBLE);
+            aeronaveRepository.save(aeronave);
+        }
+        
         log.info("Mantenimiento completado exitosamente con ID: {}", id);
 
         return mantenimientoMapper.toDTO(mantenimientoActualizado);
