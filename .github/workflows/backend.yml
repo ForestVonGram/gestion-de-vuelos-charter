@@ -165,15 +165,22 @@ jobs:
           echo "Starting ${SERVICE_NAME} service..."
           sudo systemctl start "${SERVICE_NAME}"
 
+          echo "Waiting initial startup delay..."
+          sleep 35
+          
           echo "Waiting for backend health check..."
-          for attempt in $(seq 1 18); do
+          
+          for attempt in $(seq 1 30); do
             if curl -fsS "${HEALTHCHECK_URL}" >/dev/null; then
               echo "Backend deployment completed successfully."
               sudo rm -f "${NEW_JAR}"
               exit 0
             fi
-
-            echo "Health check attempt ${attempt}/18 failed; retrying..."
+        
+            echo "Health check attempt ${attempt}/30 failed; retrying..."
+            
+            sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+            
             sleep 5
           done
 
