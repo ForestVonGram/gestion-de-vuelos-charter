@@ -147,6 +147,25 @@ jobs:
           echo "Preparing backend deployment..."
           sudo mkdir -p "${APP_DIR}"
 
+          # Crear archivo de servicio systemd si no existe
+          echo "Configuring systemd service..."
+          sudo tee "/etc/systemd/system/${SERVICE_NAME}.service" > /dev/null <<SERVICE_EOF
+[Unit]
+Description=AstraNimbus Backend Service
+After=network.target
+
+[Service]
+User=ec2-user
+WorkingDirectory=${APP_DIR}
+ExecStart=/usr/bin/java -jar ${APP_JAR}
+SuccessExitStatus=143
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+SERVICE_EOF
+
           if [ -f "${APP_JAR}" ]; then
             sudo cp "${APP_JAR}" "${BACKUP_JAR}"
           fi
@@ -157,12 +176,10 @@ jobs:
           echo "Installing new backend JAR..."
           sudo cp "${NEW_JAR}" "${APP_JAR}"
           sudo chmod 644 "${APP_JAR}"
-
-          if id "${SERVICE_NAME}" >/dev/null 2>&1; then
-            sudo chown "${SERVICE_NAME}:${SERVICE_NAME}" "${APP_JAR}"
-          fi
+          sudo chown ec2-user:ec2-user "${APP_JAR}"
 
           sudo systemctl daemon-reload
+          sudo systemctl enable "${SERVICE_NAME}"
 
           echo "Starting ${SERVICE_NAME} service..."
           sudo systemctl start "${SERVICE_NAME}"
