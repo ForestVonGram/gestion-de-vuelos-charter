@@ -145,8 +145,9 @@ jobs:
           HEALTHCHECK_URL="http://localhost:8081/actuator/health"
 
           echo "Preparing backend deployment..."
-          sudo mkdir -p "${APP_DIR}"
-          
+          sudo mkdir -p "${APP_DIR}/logs"
+          sudo chown -R ec2-user:ec2-user "${APP_DIR}/logs"
+                              
           if [ -f "${APP_JAR}" ]; then
             sudo cp "${APP_JAR}" "${BACKUP_JAR}"
           fi
