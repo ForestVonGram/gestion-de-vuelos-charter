@@ -105,6 +105,5 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-allprojects {
-    buildDir = "C:/tmp/gradle-build/${rootProject.name}"
-}
+
+// Eliminado el bloque allprojects que forzaba buildDir a una ruta absoluta de Windows

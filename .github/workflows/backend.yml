@@ -32,8 +32,7 @@ jobs:
         run: chmod +x backend/gradlew
 
       - name: Build executable JAR
-        # Overriding buildDir to 'build' to avoid the absolute Windows path from build.gradle
-        run: ./gradlew clean bootJar -PbuildDir=build
+        run: ./gradlew clean bootJar
         working-directory: backend
 
       - name: Upload backend JAR
