@@ -104,7 +104,7 @@ jobs:
           chmod 600 ~/.ssh/ec2-key.pem
 
           HOST_FOR_SCAN="${EC2_HOST#*@}"
-          ssh-keyscan -H "${HOST_FOR_SCAN}" >> ~/.ssh/known_hosts
+          ssh-keyscan -T 10 -H "${HOST_FOR_SCAN}" >> ~/.ssh/known_hosts || true
 
       - name: Deploy JAR to EC2
         run: |
