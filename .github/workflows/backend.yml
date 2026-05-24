@@ -126,7 +126,7 @@ jobs:
           echo "Deploying backend artifact to ${SSH_TARGET}"
 
           scp \
-            -i ~/.ssh/ec2-key.pem \
+            -i ~/.ssh/anpem.pem \
             -o StrictHostKeyChecking=yes \
             "${JAR_FILE}" \
             "${SSH_TARGET}:/tmp/astranimbus-app.jar"
