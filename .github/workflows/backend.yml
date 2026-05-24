@@ -92,16 +92,16 @@ jobs:
           chmod 700 ~/.ssh
 
           if printf '%s' "${EC2_PRIVATE_KEY}" | grep -q "BEGIN .*PRIVATE KEY"; then
-            printf '%s\n' "${EC2_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/ec2-key.pem
+            printf '%s\n' "${EC2_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/anpem.pem
           else
             {
               echo "-----BEGIN RSA PRIVATE KEY-----"
               printf '%s' "${EC2_PRIVATE_KEY}" | tr -d '\r\n ' | fold -w 64
               echo "-----END RSA PRIVATE KEY-----"
-            } > ~/.ssh/ec2-key.pem
+            } > ~/.ssh/anpem.pem
           fi
 
-          chmod 600 ~/.ssh/ec2-key.pem
+          chmod 600 ~/.ssh/anpem.pem
 
           HOST_FOR_SCAN="${EC2_HOST#*@}"
           ssh-keyscan -T 10 -H "${HOST_FOR_SCAN}" >> ~/.ssh/known_hosts || true
@@ -132,7 +132,7 @@ jobs:
             "${SSH_TARGET}:/tmp/astranimbus-app.jar"
 
           ssh \
-            -i ~/.ssh/ec2-key.pem \
+            -i ~/.ssh/anpem.pem \
             -o StrictHostKeyChecking=yes \
             "${SSH_TARGET}" << 'EOF'
           set -euo pipefail
@@ -196,4 +196,4 @@ jobs:
 
       - name: Cleanup SSH key
         if: always()
-        run: rm -f ~/.ssh/ec2-key.pem
+        run: rm -f ~/.ssh/anpem.pem
